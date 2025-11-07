@@ -1,0 +1,113 @@
+/* En: src/views/SubmitWorkLog/SubmitWorkLog.css */
+/* --- ARCHIVO COMPLETAMENTE REDISEÑADO --- */
+
+.submit-work-log-page p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: -15px;
+  margin-bottom: 25px;
+}
+
+/* --- NUEVO: Estilos para la lista de tarjetas de día --- */
+.submit-work-log-page .day-card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.submit-work-log-page .day-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid #eef0f2;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.submit-work-log-page .day-card:hover {
+  transform: translateY(-3px);
+  border-color: #005a3a;
+  box-shadow: 0 6px 15px rgba(0, 90, 58, 0.1);
+}
+
+.submit-work-log-page .day-card-date {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #005a3a;
+}
+.submit-work-log-page .day-card-time {
+  font-size: 1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.submit-work-log-page .day-card-cta {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4A90E2;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* --- Estilos para el formulario (DENTRO DEL MODAL) --- */
+/* (Estos estilos son los que teníamos antes) */
+
+.submit-work-log-page .formGrid,
+.modal-content .formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .submit-work-log-page .formGrid,
+  .modal-content .formGrid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.submit-work-log-page .textarea,
+.modal-content .textarea {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  font-family: inherit;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-sizing: border-box;
+  min-height: 100px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.submit-work-log-page .textarea:focus,
+.modal-content .textarea:focus {
+  border-color: #005a3a;
+  box-shadow: 0 0 0 3px rgba(0,90,58,0.1);
+}
+
+.submit-work-log-page .formDivider,
+.modal-content .formDivider {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 20px 0;
+}
+
+.submit-work-log-page .formActions,
+.modal-content .formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.submit-work-log-page .label-palette,
+.modal-content .label-palette {
+  margin-bottom: 15px;
+}

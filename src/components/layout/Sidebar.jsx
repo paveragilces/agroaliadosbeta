@@ -1,13 +1,13 @@
+// En: src/components/layout/Sidebar.jsx
+// --- ARCHIVO MODIFICADO ---
+
 import React, { useState } from 'react';
 import Icon from '../ui/Icon';
 import { ICONS } from '../../config/icons';
-// Se elimina la importación de LYTIKS_LOGO_URL que ya no se usa
 import './Sidebar.css';
 
 /**
  * Barra Lateral (Sidebar) - REDISEÑADO
- * - Se elimina el botón "Salir" del footer.
- * - La lógica del botón de navegación se mantiene.
  */
 const Sidebar = ({ userRole, currentPage, onNavigate }) => {
 
@@ -41,23 +41,27 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
   return (
     <div className="sidebar">
       <div>
-        {/* Logo ahora sobre fondo blanco */}
         <div className="sidebarLogo">
           <span>Agro</span>
           <span className="sidebarLogoSub">Aliados</span>
         </div>
+
         <nav className="sidebarNav">
           {/* --- Vistas de Productor --- */}
           {userRole === 'producer' && (
             <>
               <SidebarButton page="producerDashboard" iconPath={ICONS.dashboard} label="Dashboard" />
-              <SidebarButton page="reportAlert" iconPath={ICONS.report} label="Reportar Alerta" />
               <SidebarButton page="producerAlertList" iconPath={ICONS.alert} label="Registro de Alertas" />
+              <SidebarButton page="producerTasks" iconPath={ICONS.tasks} label="Tareas Pendientes" />
               <SidebarButton page="visitorApproval" iconPath={ICONS.visit} label="Aprobar Visitas" />
-              <SidebarButton page="producerVisitorLog" iconPath={ICONS.audit} label="Registro de Visitas" />
-              <SidebarButton page="producerTasks" iconPath={ICONS.tasks} label="Mis Tareas" />
+              <SidebarButton page="producerVisitorLog" iconPath={ICONS.report} label="Log de Visitas" />
               <SidebarButton page="producerCertification" iconPath={ICONS.certification} label="Certificación" />
               <SidebarButton page="producerProfile" iconPath={ICONS.user} label="Mis Fincas" />
+              
+              {/* --- CAMBIO 1: Nuevos botones para Productor --- */}
+              <hr className="sidebarDivider" />
+              <SidebarButton page="manageWorkers" iconPath={ICONS.userPlus} label="Mis Trabajadores" />
+              <SidebarButton page="workLogViewer" iconPath={ICONS.report} label="Registro de Labores" />
             </>
           )}
 
@@ -75,21 +79,26 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
           {userRole === 'technician' && (
             <>
               <SidebarButton page="technicianSchedule" iconPath={ICONS.calendar} label="Mi Agenda" />
-              {/* --- ¡NUEVO LINK! --- */}
               <SidebarButton page="technicianProfile" iconPath={ICONS.user} label="Mi Perfil" />
+            </>
+          )}
+
+          {/* --- CAMBIO 2: Nuevo Sidebar para Trabajador --- */}
+          {userRole === 'worker' && (
+            <>
+              <SidebarButton page="workerProfile" iconPath={ICONS.user} label="Mi Perfil / QR" />
+              <SidebarButton page="submitWorkLog" iconPath={ICONS.tasks} label="Registrar Labor" />
             </>
           )}
         </nav>
       </div>
 
-      {/* --- Pie de Página del Sidebar (MODIFICADO) --- */}
       <div className="sidebarFooter">
         <div className="footerLogoContainer">
-          {/* --- CAMBIO AQUÍ: Se usa la nueva URL del logo --- */}
           <img 
             src="https://res.cloudinary.com/do4vybtt4/image/upload/v1762369002/Lytiks-02_indfgk.svg" 
             alt="Lytiks Logo" 
-            className="footerLogo" 
+            className="footerLogo"
           />
         </div>
       </div>

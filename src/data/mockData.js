@@ -1,4 +1,5 @@
-// Contiene los datos simulados de la aplicación (Sección 2 del monolito)
+// En: src/data/mockData.js
+// --- ARCHIVO MODIFICADO ---
 
 export const MOCK_PRODUCERS = [
   { 
@@ -10,14 +11,14 @@ export const MOCK_PRODUCERS = [
         name: 'Finca Santa Rita', 
         hectares: 50, 
         lotes: ['Lote 01', 'Lote 02', 'Lote 03 (Producción)', 'Lote 04'],
-        location: { lat: -2.140, lon: -79.900 } // <-- UBICACIÓN AÑADIDA
+        location: { lat: -2.140, lon: -79.900 }
       },
       { 
         id: 'f2', 
         name: 'Hacienda El Sol', 
         hectares: 120, 
         lotes: ['Bloque A', 'Bloque B', 'Sector Nuevo'],
-        location: { lat: -2.200, lon: -79.850 } // <-- UBICACIÓN AÑADIDA
+        location: { lat: -2.200, lon: -79.850 }
       }
     ]
   },
@@ -30,17 +31,15 @@ export const MOCK_PRODUCERS = [
         name: 'El Gran Cacao', 
         hectares: 75, 
         lotes: ['Lote 1A', 'Lote 1B', 'Lote 2C'],
-        location: { lat: -2.050, lon: -79.750 } // <-- UBICACIÓN AÑADIDA
+        location: { lat: -2.050, lon: -79.750 }
       }
     ]
   },
 ];
 
-// Una lista plana de todas las fincas para formularios de visita
 export const MOCK_FINCAS_FLAT = MOCK_PRODUCERS.flatMap(p => 
   p.fincas.map(f => ({...f, producerId: p.id, owner: p.owner}))
 );
-
 
 export const MOCK_TECHNICIANS_PROFILES = [
   { id: 't1', name: 'Carlos Ruiz', zone: 'Norte', specialties: ['Manejo de Sigatoka Negra', 'Nutrición y Fertilidad de Suelos'] },
@@ -51,7 +50,7 @@ export const MOCK_TECHNICIANS_PROFILES = [
 export const MOCK_ALERTS = [
   { id: 'a1', producerId: 'p1', fincaId: 'f1', lote: 'Lote 02', farmName: 'Finca Santa Rita', date: '2024-05-01', parts: {'Hoja': true}, symptoms: ['Amarillamiento de hojas bajas'], photos: {}, location: { lat: -2.14, lon: -79.9 }, status: 'pending', techId: null, visitDate: null, priority: null, managerComment: null, possibleDisease: null, inspectionData: null },
   { id: 'a2', producerId: 'p1', fincaId: 'f2', lote: 'Bloque A', farmName: 'Hacienda El Sol', date: '2024-05-03', parts: {'Fruto': true}, symptoms: ['Frutos pequeños o deformados'], photos: {}, location: { lat: -2.2, lon: -79.8 }, status: 'pending', techId: null, visitDate: null, priority: null, managerComment: null, possibleDisease: null, inspectionData: null },
-  { id: 'a3', producerId: 'p1', fincaId: 'f1', lote: 'Lote 03 (Producción)', farmName: 'Finca Santa Rita', date: '2024-04-20', parts: {'Pseudotallo': true}, symptoms: ['Exudado viscoso al presionar corte'], photos: {}, location: { lat: -2.145, lon: -79.905 }, status: 'completed', techId: 't2', visitDate: '2024-04-25', priority: 'Alta', managerComment: 'Revisar urgente Moko', possibleDisease: ['Moko'], 
+  { id: 'a3', producerId: 'p1', fincaId: 'f1', lote: 'Lote 03 (Producción)', farmName: 'Finca Santa Rita', date: '2024-04-20', parts: {'Pseudotallo': true}, symptoms: ['Exudado viscoso al presionar corte'], photos: {"Pseudotallo":"data:image/png;base64,EVIDENCIA-MOCK-1.2"}, location: { lat: -2.145, lon: -79.905 }, status: 'completed', techId: 't2', visitDate: '2024-04-25', priority: 'Alta', managerComment: 'Revisar urgente Moko', possibleDisease: ['Moko'], 
     inspectionData: {
       audit: { 
         status: 'Completado',
@@ -98,7 +97,6 @@ export const MOCK_NOTIFICATIONS = [
 export const MOCK_INSPECTION_MODULES = [
   { id: '1', name: 'Ingreso', questions: [
     { id: '1.1', text: '¿Existe control y registro de ingreso de personas y vehículos?' },
-    // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
     { id: '1.2', text: '¿Se realiza desinfección de calzado, llantas y herramientas?' },
     { id: '1.3', text: '¿El personal usa ropa exclusiva para la finca o equipo limpio?' },
   ]},
@@ -148,3 +146,100 @@ export const MOCK_CERTIFICATION_HISTORY = [
     breakdown: { 'Ingreso': 80, 'Producción': 70, 'Infraestructura': 80, 'Empaque': 95, 'Gestión': 85 } 
   }
 ];
+
+export const MOCK_WORKERS = [
+  {
+    id: 'w1',
+    name: 'Carlos Alberto Solís',
+    age: 34,
+    experience: 5, 
+    labor: 'deshije', 
+    producerId: 'p1', 
+    idNumber: '0912345678',
+    qrCode: 'WORKER-w1-0912345678'
+  },
+  {
+    id: 'w2',
+    name: 'Maria Fernanda Ochoa',
+    age: 28,
+    experience: 2,
+    labor: 'enfunde',
+    producerId: 'p1',
+    idNumber: '0987654321',
+    qrCode: 'WORKER-w2-0987654321'
+  },
+  {
+    id: 'w3',
+    name: 'Luis Martinez',
+    age: 45,
+    experience: 15,
+    labor: 'control_malezas',
+    producerId: 'p2',
+    idNumber: '0911111111',
+    qrCode: 'WORKER-w3-0911111111'
+  },
+];
+
+// --- CAMBIO: 'MOCK_WORK_LOGS' es ahora la fuente de verdad ---
+export const MOCK_WORK_LOGS = [
+  {
+    id: 'wl1',
+    workerId: 'w1',
+    name: 'Carlos Alberto Solís',
+    fincaId: 'f1', // Finca Santa Rita
+    lote: 'Lote 01',
+    labor: 'deshije',
+    cintas: ['rojo'],
+    date: '2025-11-05',
+    checkIn: '2025-11-05T07:01:00', // <-- CAMPO AÑADIDO
+    checkOut: '2025-11-05T16:05:00', // <-- CAMPO AÑADIDO
+    status: 'completed', // <-- CAMPO AÑADIDO
+    description: 'Deshije completo en hileras 1-10. Se encontraron 2 plantas con posible Moko, se marcaron y reportaron.'
+  },
+  {
+    id: 'wl2',
+    workerId: 'w2',
+    name: 'Maria Fernanda Ochoa',
+    fincaId: 'f1', // Finca Santa Rita
+    lote: 'Lote 03 (Producción)',
+    labor: 'enfunde',
+    cintas: ['azul', 'verde'],
+    date: '2025-11-05',
+    checkIn: '2025-11-05T07:30:00',
+    checkOut: '2025-11-05T16:01:00',
+    status: 'completed',
+    description: 'Enfunde de 150 racimos. Se usó funda tratada color azul.'
+  },
+  {
+    id: 'wl3',
+    workerId: 'w1',
+    name: 'Carlos Alberto Solís',
+    fincaId: 'f1',
+    lote: 'Lote 02',
+    labor: 'deshije',
+    cintas: ['amarillo'],
+    date: '2025-11-06',
+    checkIn: '2025-11-06T07:05:00',
+    checkOut: '2025-11-06T16:00:00',
+    status: 'completed',
+    description: 'Desmache en hileras 1-5.'
+  },
+  // --- Este es el log que creará el Check-In ---
+  {
+    id: 'wl4',
+    workerId: 'w1',
+    name: 'Carlos Alberto Solís',
+    fincaId: null, // Aún no sabe
+    lote: null, // Aún no sabe
+    labor: null, // Aún no sabe
+    cintas: [], // Aún no sabe
+    date: '2025-11-07',
+    checkIn: '2025-11-07T07:00:00', // Creado por Portería
+    checkOut: null, // Abierto
+    status: 'pending', // Pendiente de llenar
+    description: ''
+  }
+];
+
+// --- CAMBIO: Este mock ya no es necesario, ha sido fusionado ---
+// export const MOCK_WORKER_CHECKIN_LOGS = [ ... ];

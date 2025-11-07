@@ -1,0 +1,43 @@
+/* En: src/views/WorkerCheckInLog/WorkerCheckInLog.css */
+/* --- ARCHIVO MODIFICADO --- */
+
+.worker-check-in-log-page p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: -15px;
+  margin-bottom: 25px;
+}
+
+.worker-check-in-log-page .text-muted {
+  color: #999;
+  font-style: italic;
+}
+
+.worker-check-in-log-page .worker-name-cell {
+  font-weight: 600;
+  color: #333;
+}
+
+.worker-check-in-log-page .hours-cell {
+  font-weight: 600;
+  color: #005a3a;
+}
+
+/* --- CAMBIO: Estilos para los tags de estado del log --- */
+.worker-check-in-log-page .log-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.worker-check-in-log-page .log-status-tag.pending {
+  background-color: #fffaf5;
+  color: #f0ad4e;
+}
+.worker-check-in-log-page .log-status-tag.completed {
+  background-color: #f0f9f5;
+  color: #5cb85c;
+}

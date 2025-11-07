@@ -1,0 +1,42 @@
+/* En: src/views/WorkerLogViewer/WorkerLogViewer.css */
+/* --- ARCHIVO MODIFICADO --- */
+
+.worker-log-viewer-page .log-location {
+  display: flex;
+  flex-direction: column;
+}
+
+.worker-log-viewer-page .finca-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.worker-log-viewer-page .lote-name {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.worker-log-viewer-page .log-description {
+  white-space: pre-wrap; /* Respeta los saltos de línea */
+  max-width: 500px; /* Evita que sea demasiado ancho */
+  line-height: 1.5;
+}
+
+.worker-log-viewer-page .text-muted {
+  color: #999;
+  font-style: italic;
+}
+
+/* --- CAMBIO: Estilos para las cintas en la tabla --- */
+.worker-log-viewer-page .cintas-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.worker-log-viewer-page .cinta-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}

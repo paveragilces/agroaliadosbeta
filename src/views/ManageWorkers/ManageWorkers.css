@@ -1,0 +1,92 @@
+/* En: src/views/ManageWorkers/ManageWorkers.css */
+/* --- NUEVO ARCHIVO --- */
+
+/* Usamos prefijo para evitar conflictos */
+.producer-worker-page .worker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.producer-worker-page .worker-header .h1 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.producer-worker-page .worker-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.producer-worker-page .worker-card {
+  background-color: #fff;
+  border: 1px solid #eef0f2;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.producer-worker-page .worker-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #005a3a;
+  margin: 0;
+}
+
+.producer-worker-page .worker-id {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 2px 0 15px 0;
+}
+
+.producer-worker-page .worker-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.producer-worker-page .worker-detail .detail-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+}
+.producer-worker-page .worker-detail .detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.producer-worker-page .worker-labor .detail-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.producer-worker-page .worker-labor .labor-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+/* --- Formulario en el Modal --- */
+.worker-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.worker-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+/* (Reutiliza .formGroup, .label, .select de App.css) */

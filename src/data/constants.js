@@ -1,5 +1,5 @@
 // En: src/data/constants.js
-// --- ARCHIVO COMPLETO Y FUSIONADO ---
+// --- ARCHIVO MODIFICADO ---
 
 export const ALERT_SYMPTOMS_DATA = {
   'Externo': ['Amarillamiento de hojas bajas', 'Marchitez o colapso de hojas', 'Muerte apical / pseudotallo blando', 'Hojas jóvenes torcidas o con bordes secos'],
@@ -33,9 +33,7 @@ export const VALUE_CHAIN_CATEGORIES = [
   "Otro"
 ];
 
-// --- CAMBIO: MOCK_TASK_TEMPLATES actualizado para usar videoId Y minWatchTime ---
 export const MOCK_TASK_TEMPLATES = {
-  // Módulo 1: Ingreso
   '1.1': { 
     title: 'Revisar Protocolo de Registro de Ingreso', 
     description: 'Capacitación sobre la importancia de mantener un registro detallado de todo el personal y vehículos.',
@@ -54,8 +52,6 @@ export const MOCK_TASK_TEMPLATES = {
     videoId: 'IRFEQzBmVj0',
     minWatchTime: 270 
   },
-  
-  // Módulo 2: Producción
   '2.1': { 
     title: 'Taller: Limpieza de Herramientas (Amulación)', 
     description: 'Protocolo de limpieza y desinfección de herramientas (machetes, tijeras) entre lotes.',
@@ -74,24 +70,22 @@ export const MOCK_TASK_TEMPLATES = {
     videoId: 'IRFEQzBmVj0',
     minWatchTime: 270
   },
-
-  // ... (Asignamos 60s por defecto a los que no pusimos) ...
   '3.1': { 
     title: 'Revisar Puntos de Lavado', 
     description: 'Inspeccionar y reabastecer todos los puntos de lavado de manos y herramientas.',
     videoId: '9RpTyXCq8Rs',
     minWatchTime: 70
   },
-  // ... (el resto de tus templates) ...
-  '3.2': { title: 'Reforzar Limpieza de Zonas Comunes', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
-  '3.3': { title: 'Verificar Fuente de Agua', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
-  '4.1': { title: 'Protocolo de Limpieza de Empacadora', description: '...', videoId: '9RpTyXCq8Rs', minWatchTime: 70 },
-  '4.2': { title: 'Revisar Almacenamiento de Materiales', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
-  '4.3': { title: 'Inspección de Vehículos de Transporte', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
-  '5.1': { title: 'Re-Capacitación en Bioseguridad (General)', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 270 },
-  '5.2': { title: 'Auditoría de Bitácoras y Registros', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
-  '5.3': { title: 'Inventario de Productos de Limpieza', description: '...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
+  '3.2': { title: 'Reforzar Limpieza de Zonas Comunes', description: 'Revisar bitácora...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
+  '3.3': { title: 'Verificar Fuente de Agua', description: 'Tomar muestra...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
+  '4.1': { title: 'Protocolo de Limpieza de Empacadora', description: 'Video sobre el procedimiento...', videoId: '9RpTyXCq8Rs', minWatchTime: 70 },
+  '4.2': { title: 'Revisar Almacenamiento de Materiales', description: 'Asegurar que los materiales...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
+  '4.3': { title: 'Inspección de Vehículos de Transporte', description: 'Checklist para la inspección...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
+  '5.1': { title: 'Re-Capacitación en Bioseguridad (General)', description: 'Video general de 5 minutos...', videoId: 'IRFEQzBmVj0', minWatchTime: 270 },
+  '5.2': { title: 'Auditoría de Bitácoras y Registros', description: 'Asegurarse de que todos los registros...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
+  '5.3': { title: 'Inventario de Productos de Limpieza', description: 'Verificar stock...', videoId: 'IRFEQzBmVj0', minWatchTime: 60 },
 };
+
 
 export const LYTIKS_LOGO_URL = 'https://i.imgur.com/y8lq2Y6.png';
 export const APP_VERSION = "1.2.0";
@@ -107,4 +101,35 @@ export const TECHNICIAN_SPECIALTIES = [
   'Manejo de Cultivos Orgánicos',
   'Auditoría de Bioseguridad',
   'Buenas Prácticas Agrícolas (BPA)'
+];
+
+export const LABORES_FINCA = [
+  { label: 'Cosecha (Pullero)', value: 'cosecha_pullero', risk: 'Alto' },
+  { label: 'Cosecha (Colero)', value: 'cosecha_colero', risk: 'Alto' },
+  { label: 'Deshije / Desmache', value: 'deshije', risk: 'Alto' },
+  { label: 'Deshoje / Cirugía', value: 'deshoje', risk: 'Alto' },
+  { label: 'Enfundado / Embolse', value: 'enfunde', risk: 'Medio' },
+  { label: 'Deschante / Desflore', value: 'deschante', risk: 'Medio' },
+  { label: 'Amarre / Apuntalado', value: 'amarre', risk: 'Medio' },
+  { label: 'Control de Malezas (Desbrosador)', value: 'control_malezas', risk: 'Bajo' },
+  { label: 'Fertilización', value: 'fertilizacion', risk: 'Bajo' },
+  { label: 'Riego', value: 'riego', risk: 'Bajo' },
+  { label: 'Operador de Cable Vía (Cabrero)', value: 'cable_via', risk: 'Bajo' },
+  { label: 'Empaque - Desmanador', value: 'empaque_desmane', risk: 'Crítico' },
+  { label: 'Empaque - Lavado/Selección', value: 'empaque_lavado', risk: 'Crítico' },
+];
+
+// --- ¡NUEVA CONSTANTE AÑADIDA! ---
+// Basado en el calendario de Dole y colores estándar
+export const CINTAS_COSECHA = [
+  { value: 'rojo', label: 'Rojo', color: '#E53935' },
+  { value: 'amarillo', label: 'Amarillo', color: '#FDD835' },
+  { value: 'azul', label: 'Azul', color: '#1E88E5' },
+  { value: 'verde', label: 'Verde', color: '#43A047' },
+  { value: 'blanco', label: 'Blanco', color: '#EEEEEE' },
+  { value: 'naranja', label: 'Naranja', color: '#FB8C00' },
+  { value: 'violeta', label: 'Violeta', color: '#8E24AA' },
+  { value: 'celeste', label: 'Celeste', color: '#03A9F4' },
+  { value: 'negro', label: 'Negro', color: '#424242' },
+  { value: 'gris', label: 'Gris', color: '#BDBDBD' },
 ];

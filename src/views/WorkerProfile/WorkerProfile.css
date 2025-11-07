@@ -1,0 +1,139 @@
+/* En: src/views/WorkerProfile/WorkerProfile.css */
+/* --- ARCHIVO COMPLETO Y REDISEÑADO --- */
+
+.worker-profile-page .profile-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 2px solid #a6e34b;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+.worker-profile-page .header-icon {
+  width: 48px;
+  height: 48px;
+  color: #005a3a;
+}
+.worker-profile-page .h1 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+.worker-profile-page .worker-id {
+  font-size: 1.1rem;
+  color: #777;
+  margin: 0;
+}
+
+.worker-profile-page .profile-grid {
+  display: grid;
+  /* --- CAMBIO: La información ahora es 40% y el QR 60% --- */
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .worker-profile-page .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.worker-profile-page .qr-card,
+.worker-profile-page .details-card {
+  background-color: #fff;
+  border: 1px solid #eef0f2;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.worker-profile-page .h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.worker-profile-page .qr-card p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* --- CAMBIO: Estilos para la credencial QR --- */
+.worker-profile-page .qr-code-badge {
+  max-width: 300px;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.worker-profile-page .qr-badge-header {
+  background-color: #005a3a;
+  color: white;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.worker-profile-page .qr-code-container {
+  padding: 20px;
+  background: #fff;
+}
+.worker-profile-page .qr-badge-footer {
+  background-color: #f7f9fa;
+  padding: 12px 15px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+.worker-profile-page .qr-name {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+.worker-profile-page .qr-id {
+  display: block;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* --- CAMBIO: Estilos para la tarjeta de detalles --- */
+.worker-profile-page .worker-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+.worker-profile-page .worker-detail .detail-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+}
+.worker-profile-page .worker-detail .detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+/* Estilos para la Labor (movida arriba) */
+.worker-profile-page .worker-labor-primary {
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.worker-profile-page .worker-labor-primary .detail-label {
+  font-size: 0.9rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.worker-profile-page .worker-labor-primary .labor-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #005a3a;
+  margin: 0 0 10px 0;
+}

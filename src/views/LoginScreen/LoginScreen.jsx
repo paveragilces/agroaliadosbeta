@@ -1,7 +1,10 @@
+// En: src/views/LoginScreen.jsx
+// --- ARCHIVO MODIFICADO ---
+
 import React, { useState } from 'react';
 import Icon from '../../components/ui/Icon';
 import { ICONS } from '../../config/icons';
-import './LoginScreen.css'; // Usamos el CSS normal
+import './LoginScreen.css'; 
 
 // Importamos todos los íconos que usaremos
 const { 
@@ -11,7 +14,7 @@ const {
   visitor, 
   checkIn, 
   dashboard, 
-  userPlus,  
+  userPlus,  // <-- CAMBIO 1: Importamos el icono para trabajador
   arrowLeft  
 } = ICONS; 
 
@@ -37,21 +40,25 @@ const LoginScreen = ({ onLogin }) => {
             <h1 className="loginTitle">Bienvenido</h1>
             <p className="loginSubtitle">Por favor, selecciona tu portal de ingreso.</p>
             
-            {/* --- NUEVA ESTRUCTURA DE TARJETAS --- */}
             <div className="loginCardGrid">
               <button className="loginSelectCard" onClick={() => setView('admin')}>
                 <Icon path={dashboard} size="36px" />
                 <span>Portal Administrativo</span>
               </button>
               <button className="loginSelectCard" onClick={() => setView('finca')}>
-                <Icon path={userPlus} size="36px" />
+                <Icon path={checkIn} size="36px" />
                 <span>Ingreso a Finca</span>
+              </button>
+              {/* --- CAMBIO 2: Nuevo botón para Trabajador --- */}
+              <button className="loginSelectCard" onClick={() => onLogin('worker')}>
+                <Icon path={userPlus} size="36px" />
+                <span>Portal de Trabajador</span>
               </button>
             </div>
           </div>
         )}
-
-        {/* --- VISTA 2: ADMIN (Con Lista) --- */}
+        
+        {/* --- VISTA 2: LOGIN ADMIN (Con Lista) --- */}
         {view === 'admin' && (
           <div className="loginViewPanel">
             <button className="loginBackButton" onClick={() => setView('main')}>
@@ -60,7 +67,6 @@ const LoginScreen = ({ onLogin }) => {
             <h1 className="loginTitle">Portal Administrativo</h1>
             <p className="loginSubtitle">Selecciona tu rol.</p>
             
-            {/* Mantenemos la lista original */}
             <div className="loginButtonList">
               <button className="loginSelectButton" onClick={() => onLogin('producer')}>
                 <Icon path={producer} />
@@ -87,7 +93,6 @@ const LoginScreen = ({ onLogin }) => {
             <h1 className="loginTitle">Ingreso a Finca</h1>
             <p className="loginSubtitle">Selecciona tu portal.</p>
             
-            {/* Mantenemos la lista original */}
             <div className="loginButtonList">
               <button className="loginSelectButton" onClick={() => onLogin('public', 'visitorForm')}>
                 <Icon path={visitor} />

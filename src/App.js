@@ -1,5 +1,5 @@
 // src/App.js
-// --- ARCHIVO COMPLETO CON LÓGICA DE PDF DE ALERTA ---
+// --- ARCHIVO CORREGIDO (SIN MOCK_WORKER_CHECKIN_LOGS) ---
 
 import React, { useState, useEffect } from 'react';
 import YouTube from 'react-youtube';
@@ -9,7 +9,6 @@ import './styles/index.css';
 import './App.css';
 
 // --- SECCIÓN 2: IMPORTAR DATOS Y CONSTANTES ---
-// ... (Tus imports no cambian) ...
 import {
   MOCK_PRODUCERS,
   MOCK_TECHNICIANS_PROFILES,
@@ -19,18 +18,22 @@ import {
   MOCK_NOTIFICATIONS,
   MOCK_INSPECTION_MODULES,
   MOCK_FINCAS_FLAT,
-  MOCK_CERTIFICATION_HISTORY
+  MOCK_CERTIFICATION_HISTORY,
+  MOCK_WORKERS,
+  MOCK_WORK_LOGS
+  // --- CAMBIO 1: Eliminada la importación de MOCK_WORKER_CHECKIN_LOGS ---
 } from './data/mockData';
 import { 
   MOCK_TASK_TEMPLATES, 
   TECHNICIAN_SPECIALTIES, 
   BANANA_DISEASES, 
-  TECHNICIAN_ACTIONS 
+  TECHNICIAN_ACTIONS,
+  LABORES_FINCA,
+  CINTAS_COSECHA
 } from './data/constants';
 import { calculateRisk } from './utils/riskCalculator';
 
 // --- SECCIÓN 3: IMPORTAR COMPONENTES REUTILIZABLES ---
-// ... (Tus imports no cambian) ...
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
 import LoadingSpinner from './components/ui/LoadingSpinner';
@@ -39,7 +42,6 @@ import Input from './components/ui/Input';
 import ProgressBar from './components/ui/ProgressBar/ProgressBar'; 
 
 // --- SECCIÓN 4: IMPORTAR VISTAS (PÁGINAS) ---
-// ... (Tus imports no cambian) ...
 import LoginScreen from './views/LoginScreen/LoginScreen';
 import ManagerDashboard from './views/ManagerDashboard/ManagerDashboard';
 import TechnicianControl from './views/TechnicianControl/TechnicianControl';
@@ -60,24 +62,22 @@ import FincaRegistration from './views/FincaRegistration/FincaRegistration';
 import VisitorAccessPage from './views/VisitorAccess/VisitorAccessPage';
 import VisitorCheckIn from './views/VisitorCheckIn/VisitorCheckIn';
 import ProducerVisitorLog from './views/ProducerVisitorLog/ProducerVisitorLog';
+import ManageWorkers from './views/ManageWorkers/ManageWorkers';
+import WorkerLogViewer from './views/WorkerLogViewer/WorkerLogViewer';
+import WorkerProfile from './views/WorkerProfile/WorkerProfile';
+import SubmitWorkLog from './views/SubmitWorkLog/SubmitWorkLog';
+import WorkerCheckInLog from './views/WorkerCheckInLog/WorkerCheckInLog'; 
 
 // --- IMPORTACIONES PARA GENERACIÓN DE PDF ---
-import { jsPDF } from 'jspdf'; // <-- Ya está importado
+import { jsPDF } from 'jspdf';
 
 
 // --- COMPONENTE INTERNO: Formulario de Registro de Técnico ---
-// ... (Tu componente RegisterTechnicianForm no cambia) ...
 const RegisterTechnicianForm = ({ onSubmit, onCancel }) => {
+  // ... (Tu componente RegisterTechnicianForm no cambia) ...
   const [name, setName] = useState('');
   const [zone, setZone] = useState('Norte');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (name && zone) {
-      onSubmit(name, zone);
-    }
-  };
-
+  const handleSubmit = (e) => { e.preventDefault(); if (name && zone) { onSubmit(name, zone); } };
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <Input
@@ -147,11 +147,15 @@ function App() {
   const [fincas, setFincas] = useState(MOCK_FINCAS_FLAT);
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
   const [certificationHistory, setCertificationHistory] = useState(MOCK_CERTIFICATION_HISTORY);
+  const [workers, setWorkers] = useState(MOCK_WORKERS);
+  const [workLogs, setWorkLogs] = useState(MOCK_WORK_LOGS);
+  
+  // --- CAMBIO 2: Estado 'workerCheckInLogs' eliminado ---
+  // const [workerCheckInLogs, setWorkerCheckInLogs] = useState(MOCK_WORKER_CHECKIN_LOGS);
 
 
   // --- Efecto para generar tareas iniciales (basado en mocks) ---
   useEffect(() => {
-    // ... (Tu useEffect no cambia) ...
     const initialTasks = [];
     const completedAlerts = MOCK_ALERTS.filter(a => a.status === 'completed' && a.inspectionData?.audit?.ratings);
 
@@ -228,7 +232,6 @@ function App() {
   };
 
   const handleLogin = (role, page = null) => {
-    // ... (Tu lógica de login no cambia) ...
     setUserRole(role);
     if (role === 'manager') {
       setCurrentUser({ id: 'm1', name: 'Gerente Palmar' });
@@ -240,6 +243,10 @@ function App() {
       const techUser = technicians[0];
       setCurrentUser(techUser);
       setCurrentPage(page || 'technicianSchedule');
+    } else if (role === 'worker') { 
+      const workerUser = workers.find(w => w.producerId === 'p1'); 
+      setCurrentUser(workerUser);
+      setCurrentPage(page || 'workerProfile');
     } else if (role === 'public') {
       setCurrentUser(null);
       if (page === 'visitorForm') {
@@ -254,7 +261,6 @@ function App() {
   };
 
   const handleLogout = () => {
-    // ... (Tu lógica de logout no cambia) ...
     setUserRole(null);
     setCurrentUser(null);
     setCurrentPage('login');
@@ -263,7 +269,6 @@ function App() {
   };
 
   const handleNavigate = (page, data = null) => {
-    // ... (Tu lógica de navigate no cambia) ...
     if (page === 'logout') {
       handleLogout();
       return;
@@ -276,7 +281,6 @@ function App() {
   };
   
   const handleSubmitAlert = (newAlert) => {
-    // ... (Tu lógica de submit alert no cambia) ...
     setLoading(true);
     setTimeout(() => {
       const alertWithId = { ...newAlert, id: `a${Date.now()}` };
@@ -289,7 +293,6 @@ function App() {
   };
 
   const handleSubmitVisitRequest = (requestData) => {
-    // ... (Tu lógica de submit visit no cambia) ...
     return new Promise((resolve) => { 
       setLoading(true);
       setTimeout(() => {
@@ -326,7 +329,6 @@ function App() {
   };
 
   const handleApproveVisit = (visitId, potentialRisk) => { 
-    // ... (Tu lógica de approve visit no cambia) ...
     setLoading(true);
     setTimeout(() => {
       let producerId = '';
@@ -352,7 +354,6 @@ function App() {
   };
 
   const handleRejectVisit = (visitId) => {
-    // ... (Tu lógica de reject visit no cambia) ...
     setLoading(true);
     setTimeout(() => {
       setVisits(prev => prev.map(v => v.id === visitId ? { ...v, status: 'DENIED' } : v));
@@ -362,49 +363,118 @@ function App() {
   };
 
   const handleScanQr = (qrData) => {
-    // ... (Tu lógica de scan qr no cambia) ...
     return new Promise((resolve, reject) => {
       setLoading(true);
       setTimeout(() => {
         const now = new Date().toISOString();
-        const visitIndex = visits.findIndex(v => v.qrData === qrData);
-        if (visitIndex === -1) {
+        const todayDate = now.split('T')[0];
+        
+        // 1. ¿ES UN VISITANTE?
+        const visit = visits.find(v => v.qrData === qrData);
+        if (visit) {
+          const visitIndex = visits.indexOf(visit);
+          let updatedVisit;
+          if (visit.status === 'APPROVED') {
+            updatedVisit = { ...visit, status: 'CHECKED_IN', checkIn: now, scannedTime: now, isWorker: false };
+          } else if (visit.status === 'CHECKED_IN') {
+            updatedVisit = { ...visit, status: 'CHECKED_OUT', checkOut: now, scannedTime: now, isWorker: false };
+          } else if (visit.status === 'CHECKED_OUT') {
+            setLoading(false);
+            reject(new Error("Esta visita ya fue registrada como SALIDA."));
+            return;
+          } else {
+            setLoading(false);
+            reject(new Error(`El estado de esta visita es '${visit.status}'. No se puede escanear.`));
+            return;
+          }
+          setVisits(prev => prev.map((v, index) => index === visitIndex ? updatedVisit : v));
           setLoading(false);
-          reject(new Error("QR Inválido. La visita no se encuentra."));
+          resolve(updatedVisit); 
           return;
         }
-        const originalVisit = visits[visitIndex];
-        let updatedVisit;
-        if (originalVisit.status === 'APPROVED') {
-          updatedVisit = { ...originalVisit, status: 'CHECKED_IN', checkIn: now, scannedTime: now };
-        } else if (originalVisit.status === 'CHECKED_IN') {
-          updatedVisit = { ...originalVisit, status: 'CHECKED_OUT', checkOut: now, scannedTime: now };
-        } else if (originalVisit.status === 'CHECKED_OUT') {
-          setLoading(false);
-          reject(new Error("Esta visita ya fue registrada como SALIDA."));
-          return;
-        } else {
-          setLoading(false);
-          reject(new Error(`El estado de esta visita es '${originalVisit.status}'. No se puede escanear.`));
+
+        // 2. SI NO ES VISITANTE, ¿ES UN TRABAJADOR?
+        const worker = workers.find(w => w.qrCode === qrData);
+        if (worker) {
+          // Buscamos un log abierto (check-in de hoy sin check-out)
+          const openLog = workLogs.find(log => 
+            log.workerId === worker.id && 
+            log.date === todayDate && 
+            !log.checkOut
+          );
+          
+          if (!openLog) {
+            // Caso 1: Es un CHECK-IN de trabajador
+            const newLog = {
+              id: `wl-${Date.now()}`,
+              workerId: worker.id,
+              name: worker.name,
+              date: todayDate,
+              checkIn: now, 
+              checkOut: null,
+              status: 'pending', 
+              fincaId: null, 
+              lote: null,
+              labor: null,
+              cintas: [],
+              description: ''
+            };
+            setWorkLogs(prev => [newLog, ...prev]);
+            
+            setLoading(false);
+            resolve({
+              id: worker.id,
+              name: worker.name,
+              company: 'Personal de Finca',
+              risk: 'Low', 
+              status: 'CHECKED_IN',
+              checkIn: now,
+              scannedTime: now,
+              isWorker: true 
+            });
+          } else {
+            // Caso 2: Es un CHECK-OUT de trabajador
+            setWorkLogs(prev => prev.map(log => 
+              log.id === openLog.id ? { ...log, checkOut: now } : log
+            ));
+            
+            setLoading(false);
+            resolve({
+              id: worker.id,
+              name: worker.name,
+              company: 'Personal de Finca',
+              risk: 'Low',
+              status: 'CHECKED_OUT',
+              checkOut: now,
+              scannedTime: now,
+              isWorker: true
+            });
+          }
           return;
         }
-        setVisits(prev => prev.map((v, index) => index === visitIndex ? updatedVisit : v));
+
+        // 3. SI NO ES NINGUNO
         setLoading(false);
-        resolve(updatedVisit); 
+        reject(new Error("QR Inválido. Código no reconocido."));
+
       }, 500);
     });
   };
   
-  const handleCaptureEvidence = (visitId, type, data) => { /* ... */ };
-  
-  // --- LÓGICA DE PDF PARA VISITAS (YA EXISTENTE) ---
+  const handleCaptureEvidence = (visitId, type, data) => {
+    setVisits(prev => prev.map(v => 
+      v.id === visitId ? { ...v, [type]: data } : v
+    ));
+    console.log(`Evidencia [${type}] guardada para ${visitId}`);
+  };
+
   const handleGeneratePDF = async (visit) => {
     setLoading(true);
     const doc = new jsPDF();
     try {
       const finca = fincas.find(f => f.id === visit.fincaId);
       const fincaName = finca ? finca.name : 'Finca Desconocida';
-      // ... (Resto de tu lógica de PDF... )
+      
       doc.setFontSize(18);
       doc.setFont(undefined, 'bold');
       doc.text("Reporte de Visita de Bioseguridad", 105, 22, { align: 'center' });
@@ -470,7 +540,6 @@ function App() {
     setLoading(false);
   };
   
-  // --- CAMBIO 1: NUEVA FUNCIÓN PARA GENERAR PDF DE ALERTA ---
   const handleGenerateAlertPDF = (alert) => {
     setLoading(true);
     const doc = new jsPDF();
@@ -478,7 +547,6 @@ function App() {
       const tech = technicians.find(t => t.id === alert.techId);
       const resolution = alert.inspectionData?.plant?.data;
       
-      // Título
       doc.setFontSize(18);
       doc.setFont(undefined, 'bold');
       doc.text("Reporte de Alerta de Bioseguridad", 105, 22, { align: 'center' });
@@ -489,7 +557,6 @@ function App() {
       doc.text(`Fecha de Reporte: ${new Date(alert.date).toLocaleDateString()}`, 196, 35, { align: 'right' });
       doc.line(14, 40, 196, 40);
 
-      // Detalles de la Alerta
       let y = 50;
       doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
@@ -499,12 +566,11 @@ function App() {
       doc.text(`Finca: ${alert.farmName}`, 14, y += 7);
       doc.text(`Lote: ${alert.lote}`, 14, y += 7);
       doc.text(`Síntomas Reportados: ${alert.symptoms.join(', ')}`, 14, y += 7, { maxWidth: 180 });
-      y += 7; // Espacio extra para síntomas
+      y += 7; 
       
       const attachedPhotos = alert.photos ? Object.entries(alert.photos).filter(([key, value]) => value) : [];
       doc.text(`Fotos Adjuntas: ${attachedPhotos.length}`, 14, y += 7);
 
-      // Estado de Asignación
       y += 12;
       doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
@@ -519,7 +585,6 @@ function App() {
         doc.text(`Fecha Programada: ${alert.visitDate}`, 14, y += 7);
       }
 
-      // Resolución (Si está completada)
       if (alert.status === 'completed' && resolution) {
         y += 12;
         doc.setFontSize(12);
@@ -540,8 +605,7 @@ function App() {
     doc.save(`Reporte_Alerta_${alert.id}.pdf`);
     setLoading(false);
   };
-  // --- FIN DE LA NUEVA FUNCIÓN ---
-
+  
   const handleAssignAlert = (alertId, comment, diseases, techId, date, priority) => { /* ... */ };
   
   const handleCompleteTask = (taskId) => {
@@ -555,7 +619,6 @@ function App() {
   const handleUpdateTechnicianProfile = (specialties) => { /* ... */ };
   
   const handleEditFinca = (fincaId) => {
-    // ... (Tu lógica de edit finca no cambia) ...
     const finca = currentUser.fincas.find(f => f.id === fincaId);
     if (finca) {
       setFincaToEdit(finca); 
@@ -564,7 +627,6 @@ function App() {
   };
 
   const handleRegisterFinca = (fincaData) => {
-    // ... (Tu lógica de register finca no cambia) ...
     setLoading(true);
 
     const newProducersList = producers.map(producer => {
@@ -596,7 +658,6 @@ function App() {
   };
 
   const handleUpdateFinca = (updatedFincaData) => {
-    // ... (Tu lógica de update finca no cambia) ...
     setLoading(true);
 
     const newProducersList = producers.map(producer => {
@@ -633,34 +694,56 @@ function App() {
     }, 500);
   };
 
+  const handleRegisterWorker = (workerData) => {
+    setLoading(true);
+    const newWorker = {
+      ...workerData,
+      id: `w${Date.now()}`,
+      producerId: currentUser.id,
+      qrCode: `WORKER-${workerData.idNumber}` 
+    };
+    setWorkers(prev => [...prev, newWorker]);
+        
+    setTimeout(() => {
+      setLoading(false);
+      setModal({ show: true, message: 'Trabajador registrado con éxito.', type: 'success' });
+    }, 500);
+  };
+
+  const handleSubmitWorkLog = (logId, logData) => {
+    setLoading(true);
+    
+    setWorkLogs(prevLogs => prevLogs.map(log => {
+      if (log.id === logId) {
+        return {
+          ...log,
+          ...logData, 
+          status: 'completed' 
+        };
+      }
+      return log;
+    }));
+    
+    setTimeout(() => {
+      setLoading(false);
+      setModal({ show: true, message: 'Reporte de labor enviado.', type: 'success' });
+      // No navegamos, el modal se cierra solo
+    }, 500);
+  };
+
 
   // --- Renderizado Condicional de Páginas ---
 
   const renderPage = () => {
-    // ... (Tus 'case' public, manager no cambian) ...
     // Públicas
     if (currentPage === 'login') {
       return <LoginScreen onLogin={handleLogin} />;
     }
     if (currentPage === 'visitorAccessPage') {
-      const myApprovedVisits = visits.filter(v => v.idNumber === "12345"); 
-      return (
-        <VisitorAccessPage
-          onNewRequest={handleSubmitVisitRequest}
-          approvedVisits={myApprovedVisits} 
-          onNavigate={handleNavigate}
-        />
-      );
+      return <VisitorAccessPage onNewRequest={handleSubmitVisitRequest} approvedVisits={visits.filter(v => v.idNumber === "12345")} onNavigate={handleNavigate} />;
     }
     if (currentPage === 'visitorCheckIn') {
-      return (
-        <VisitorCheckIn
-          onNavigate={handleNavigate}
-          onScanQr={handleScanQr}
-          onCaptureEvidence={handleCaptureEvidence}
-          setModal={setModal}
-        />
-      );
+      return <VisitorCheckIn onNavigate={handleNavigate} onScanQr={handleScanQr} onCaptureEvidence={handleCaptureEvidence} setModal={setModal} />;
     }
 
     if (!userRole || !currentUser) {
@@ -670,15 +753,14 @@ function App() {
     switch (userRole) {
       case 'manager':
         switch (currentPage) {
-          // ... (case manager no cambia) ...
           case 'managerDashboard':
             return <ManagerDashboard alerts={alerts} visits={visits} technicians={technicians} onNavigate={handleNavigate} />;
           case 'technicianControl':
             return <TechnicianControl technicians={technicians} onNavigate={handleNavigate} onShowRegisterModal={() => setRegisterTechModal(true)} />;
           case 'visitorReport':
-            return <VisitorReport visits={visits} fincas={fincas} pageData={pageData} />;
+            return <VisitorReport visits={visits} fincas={fincas} pageData={pageData} onNavigate={handleNavigate} />;
           case 'alertTriage':
-            return <AlertTriageView alerts={alerts} technicians={technicians} onAssignAlert={handleAssignAlert} setModal={setModal} pageData={pageData} />; 
+            return <AlertTriageView alerts={alerts} technicians={technicians} onAssignAlert={handleAssignAlert} setModal={setModal} pageData={pageData} onNavigate={handleNavigate} />; 
           case 'technicianSchedule':
             return <TechnicianSchedule technician={pageData || technicians[0]} alerts={alerts} onNavigate={handleNavigate} />;
           default:
@@ -687,13 +769,10 @@ function App() {
 
       case 'producer':
         switch (currentPage) {
-          // ... (otros case producer no cambian) ...
           case 'producerDashboard':
             return <ProducerDashboard producer={currentUser} alerts={alerts} visits={visits} tasks={tasks} technicians={technicians} onNavigate={handleNavigate} />;
           case 'reportAlert':
-            return <AlertReportForm producer={currentUser} onSubmitAlert={handleSubmitAlert} setModal={setModal} />;
-          
-          // --- CAMBIO 2: Pasamos la nueva prop a ProducerAlertList ---
+            return <AlertReportForm producer={currentUser} onSubmitAlert={handleSubmitAlert} setModal={setModal} onNavigate={handleNavigate} />;
           case 'producerAlertList': 
             return <ProducerAlertList 
               producer={currentUser} 
@@ -701,17 +780,17 @@ function App() {
               technicians={technicians} 
               onNavigate={handleNavigate} 
               pageData={pageData} 
-              onGenerateAlertPDF={handleGenerateAlertPDF} // <-- AÑADIDA
+              onGenerateAlertPDF={handleGenerateAlertPDF}
             />;
           case 'visitorApproval': 
             const myFincaIds = currentUser.fincas.map(f => f.id);
             const visitsToMe = visits.filter(v => myFincaIds.includes(v.fincaId));
-            return <VisitorApprovalList producer={currentUser} visits={visitsToMe} onApproveVisit={handleApproveVisit} onRejectVisit={handleRejectVisit} pageData={pageData} />;
+            return <VisitorApprovalList producer={currentUser} visits={visitsToMe} onApproveVisit={handleApproveVisit} onRejectVisit={handleRejectVisit} pageData={pageData} onNavigate={handleNavigate} />;
           
           case 'producerVisitorLog': 
             const myFincaIdsLog = currentUser.fincas.map(f => f.id);
             const producerLog = visits.filter(v => myFincaIdsLog.includes(v.fincaId));
-            return <ProducerVisitorLog producerLog={producerLog} onGeneratePDF={handleGeneratePDF} producer={currentUser} />;
+            return <ProducerVisitorLog producerLog={producerLog} onGeneratePDF={handleGeneratePDF} producer={currentUser} onNavigate={handleNavigate} />;
           
           case 'producerTasks':
             return <ProducerTasks 
@@ -721,11 +800,13 @@ function App() {
               onShowTraining={handleShowTraining} 
               pageData={pageData} 
               completedTrainingIds={completedTrainingIds}
+              onNavigate={handleNavigate} 
             />;
           case 'producerCertification':
             return <ProducerCertification 
               certificationHistory={certificationHistory}
               onShowHistoryModal={setCertHistoryModal} 
+              onNavigate={handleNavigate}
             />;
           case 'notifications':
             return <NotificationCenter
@@ -749,6 +830,38 @@ function App() {
               onUpdateFinca={handleUpdateFinca}
               fincaToEdit={fincaToEdit}
             />;
+          
+          case 'manageWorkers':
+            const myWorkers = workers.filter(w => w.producerId === currentUser.id);
+            return <ManageWorkers 
+              workers={myWorkers} 
+              labores={LABORES_FINCA}
+              onRegisterWorker={handleRegisterWorker} 
+              onNavigate={handleNavigate}
+            />;
+          case 'workLogViewer':
+            const myWorkerIds = workers.filter(w => w.producerId === currentUser.id).map(w => w.id);
+            const myCompletedWorkLogs = workLogs.filter(log => 
+              myWorkerIds.includes(log.workerId) && log.status === 'completed'
+            );
+            return <WorkerLogViewer 
+              workLogs={myCompletedWorkLogs}
+              workers={workers}
+              fincas={currentUser.fincas}
+              cintasOptions={CINTAS_COSECHA}
+              onNavigate={handleNavigate}
+            />;
+            
+          // --- CAMBIO 3: 'workerCheckInLog' ahora lee de 'workLogs' ---
+          case 'workerCheckInLog':
+            const myAllWorkerIds = workers.filter(w => w.producerId === currentUser.id).map(w => w.id);
+            const myAllWorkLogs = workLogs.filter(log => 
+              myAllWorkerIds.includes(log.workerId)
+            );
+            return <WorkerCheckInLog 
+              workerLog={myAllWorkLogs} // <-- CORREGIDO
+              onNavigate={handleNavigate}
+            />;
             
           default:
             return <ProducerDashboard producer={currentUser} alerts={alerts} visits={visits} tasks={tasks} technicians={technicians} onNavigate={handleNavigate} />;
@@ -756,7 +869,6 @@ function App() {
 
       case 'technician':
         switch (currentPage) {
-          // ... (case technician no cambia) ...
           case 'technicianSchedule':
             return <TechnicianSchedule technician={currentUser} alerts={alerts} onNavigate={handleNavigate} />;
           case 'technicianInspection':
@@ -770,9 +882,40 @@ function App() {
             return <TechnicianProfile 
               currentUser={currentUser} 
               onSaveProfile={handleUpdateTechnicianProfile} 
+              onNavigate={handleNavigate}
             />;
           default:
             return <TechnicianSchedule technician={currentUser} alerts={alerts} onNavigate={handleNavigate} />;
+        }
+      
+      case 'worker':
+        const myProducer = producers.find(p => p.id === currentUser.producerId);
+        const producerFincas = myProducer ? myProducer.fincas : [];
+        
+        switch (currentPage) {
+          case 'workerProfile':
+            return <WorkerProfile 
+              worker={currentUser}
+              labor={LABORES_FINCA.find(l => l.value === currentUser.labor)}
+              onNavigate={handleNavigate}
+            />;
+          case 'submitWorkLog':
+            const myPendingLogs = workLogs.filter(log => 
+              log.workerId === currentUser.id && log.status === 'pending'
+            );
+            return <SubmitWorkLog 
+              fincas={producerFincas}
+              pendingLogs={myPendingLogs} 
+              onSubmitWorkLog={handleSubmitWorkLog}
+              onNavigate={handleNavigate}
+              cintasOptions={CINTAS_COSECHA}
+            />;
+          default:
+            return <WorkerProfile 
+              worker={currentUser}
+              labor={LABORES_FINCA.find(l => l.value === currentUser.labor)}
+              onNavigate={handleNavigate}
+            />;
         }
 
       default:
@@ -780,9 +923,13 @@ function App() {
     }
   };
 
+  // --- CAMBIO 8: CORRECCIÓN DE SINTAXIS ---
+  // Se ha eliminado la 'C' que causaba el error
   const isLoginOrPublicForm = currentPage === 'login' || currentPage === 'visitorAccessPage' || currentPage === 'visitorCheckIn';
 
   const unreadNotifications = userRole === 'producer'
+    // --- CAMBIO 9: CORRECCIÓN DE SINTAXIS ---
+    // Se reemplazó '* 0;' por ': 0;'
     ? notifications.filter(n => n.producerId === currentUser?.id && !n.read).length
     : 0;
 
