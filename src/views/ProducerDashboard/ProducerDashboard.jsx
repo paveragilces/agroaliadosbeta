@@ -1,182 +1,313 @@
-// En: src/views/ProducerDashboard.jsx
-// --- ARCHIVO COMPLETO CON MEJORAS DE UI/UX Y ARREGLO DE BUG ---
+// Dashboard del productor con rediseño de UI/UX y navegación corregida
 
-import React, { useState } from 'react';
-import { ICONS } from '../../config/icons'; 
-import Icon from '../../components/ui/Icon'; // <-- CAMBIO 1: Importamos Icon
+import React, { useMemo, useState } from 'react';
+import {
+  AlertTriangle,
+  CalendarClock,
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  FilePlus,
+  History,
+  Info,
+  ListChecks,
+  MapPin,
+  Medal,
+  User,
+  UserCog
+} from 'lucide-react';
 import './ProducerDashboard.css';
 
-/**
- * Dashboard del Productor
- * ACTUALIZADO: Con iconos en KPIs y acordeón para resultados.
- */
 const ProducerDashboard = ({ producer, alerts, visits, tasks, technicians, onNavigate }) => {
-  // --- CAMBIO 2: Añadimos estado para el acordeón ---
-  const [resultsVisible, setResultsVisible] = useState(false);
+  const [selectedFincaFilter, setSelectedFincaFilter] = useState('all');
+  const [resultsVisible, setResultsVisible] = useState(true);
 
-  const [selectedFincaFilter, setSelectedFincaFilter] = useState('all'); 
+  const fincaOptions = useMemo(
+    () => [{ id: 'all', name: 'Todas mis Fincas' }, ...producer.fincas],
+    [producer.fincas]
+  );
 
-  // 1. Filtrar datos principales por finca seleccionada
-  const myAlerts = alerts.filter(a => a.producerId === producer.id);
-  const myVisits = visits.filter(v => v.producerId === producer.id);
-  const myTasks = tasks.filter(t => t.producerId === producer.id);
+  const { filteredAlerts, filteredVisits, filteredTasks } = useMemo(() => {
+    const myAlerts = alerts.filter(alert => alert.producerId === producer.id);
+    const myVisits = visits.filter(visit => visit.producerId === producer.id);
+    const myTasks = tasks.filter(task => task.producerId === producer.id);
 
-  const filteredAlerts = myAlerts.filter(a => selectedFincaFilter === 'all' || a.fincaId === selectedFincaFilter);
-  const filteredVisits = myVisits.filter(v => selectedFincaFilter === 'all' || v.fincaId === selectedFincaFilter);
-  
-  const filteredTasks = myTasks.filter(t => {
-    if (selectedFincaFilter === 'all') return true;
-    const relatedAlert = myAlerts.find(a => a.id === t.alertId);
-    return relatedAlert && relatedAlert.fincaId === selectedFincaFilter;
-  });
+    const alertsByFinca = myAlerts.filter(alert =>
+      selectedFincaFilter === 'all' || alert.fincaId === selectedFincaFilter
+    );
 
+    const visitsByFinca = myVisits.filter(visit =>
+      selectedFincaFilter === 'all' || visit.fincaId === selectedFincaFilter
+    );
 
-  // 2. Calcular KPIs basados en los datos filtrados
-  const pendingAlerts = filteredAlerts.filter(a => a.status === 'pending').length;
-  const assignedAlerts = filteredAlerts.filter(a => a.status === 'assigned');
-  const completedAlerts = filteredAlerts.filter(a => a.status === 'completed' && a.inspectionData?.plant);
-  const pendingVisits = filteredVisits.filter(v => v.status === 'PENDING').length;
-  const pendingTasks = filteredTasks.filter(t => t.status === 'pending').length;
+    const tasksByFinca = myTasks.filter(task => {
+      if (selectedFincaFilter === 'all') return true;
+      const relatedAlert = myAlerts.find(alert => alert.id === task.alertId);
+      return relatedAlert?.fincaId === selectedFincaFilter;
+    });
 
+    return {
+      filteredAlerts: alertsByFinca,
+      filteredVisits: visitsByFinca,
+      filteredTasks: tasksByFinca
+    };
+  }, [alerts, visits, tasks, producer.id, selectedFincaFilter]);
 
-  const getCountdown = (date) => {
+  const pendingAlerts = useMemo(
+    () => filteredAlerts.filter(alert => alert.status === 'pending'),
+    [filteredAlerts]
+  );
+  const assignedAlerts = useMemo(
+    () =>
+      filteredAlerts
+        .filter(alert => alert.status === 'assigned')
+        .sort((a, b) => new Date(a.visitDate) - new Date(b.visitDate)),
+    [filteredAlerts]
+  );
+  const completedAlerts = useMemo(
+    () =>
+      filteredAlerts.filter(
+        alert => alert.status === 'completed' && alert.inspectionData?.plant
+      ),
+    [filteredAlerts]
+  );
+  const pendingVisits = useMemo(
+    () => filteredVisits.filter(visit => visit.status === 'PENDING'),
+    [filteredVisits]
+  );
+  const pendingTasks = useMemo(
+    () => filteredTasks.filter(task => task.status === 'pending'),
+    [filteredTasks]
+  );
+
+  const getCountdown = date => {
     if (!date) return { text: 'Sin fecha', className: 'urgency-low' };
-    
+
     const today = new Date(new Date().toISOString().split('T')[0]);
     const visitDate = new Date(new Date(date).toISOString().split('T')[0]);
     const diffTime = visitDate - today;
     const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (days < 0) return { text: 'Visita Atrasada', className: 'urgency-high' };
-    if (days === 0) return { text: 'Visita Hoy', className: 'urgency-high' };
-    if (days === 1) return { text: 'Visita Mañana', className: 'urgency-medium' };
+    if (days < 0) return { text: 'Visita atrasada', className: 'urgency-high' };
+    if (days === 0) return { text: 'Visita hoy', className: 'urgency-high' };
+    if (days === 1) return { text: 'Visita mañana', className: 'urgency-medium' };
     return { text: `Visita en ${days} días`, className: 'urgency-low' };
   };
 
   return (
-    // --- CAMBIO 3: Clase única para arreglar el bug de CSS ---
-    <div className="container producer-dashboard-page"> 
-      <h1 className="h1">Dashboard: {producer.owner}</h1>
-      
-      {/* --- Filtro de Finca (Sin cambios) --- */}
-      <div className="fincaFilterContainer">
-        <label className="label">Filtrar por Finca</label>
-        <div className="fincaFilterGroup">
+    <div className="producer-dashboard-page container">
+      <header className="dashboard-header">
+        <div className="header-text">
+          <span className="welcome">Bienvenido de vuelta</span>
+          <h1 className="h1">Dashboard del Productor</h1>
+          <div className="header-meta">
+            <span><User size={18} /> {producer.owner}</span>
+            <span><MapPin size={18} /> {producer.fincas.length} fincas activas</span>
+            <span><AlertTriangle size={18} /> {pendingAlerts.length} alertas sin registrar</span>
+          </div>
+        </div>
+        <div className="quick-actions">
           <button
-            onClick={() => setSelectedFincaFilter('all')}
-            className={`fincaFilterButton ${selectedFincaFilter === 'all' ? 'active' : ''}`}
+            type="button"
+            className="quick-action"
+            onClick={() => onNavigate('reportAlert')}
           >
-            Todas mis Fincas
+            <FilePlus size={18} /> Registrar alerta
           </button>
-          {producer.fincas.map(finca => (
+          <button
+            type="button"
+            className="quick-action secondary"
+            onClick={() => onNavigate('producerAlertList')}
+          >
+            <History size={18} /> Ver historial
+          </button>
+        </div>
+      </header>
+
+      <section className="filters">
+        <label htmlFor="fincaFilter" className="label">Filtrar por finca</label>
+        <div className="filter-pills">
+          {fincaOptions.map(finca => (
             <button
               key={finca.id}
+              id={finca.id === 'all' ? 'fincaFilter' : undefined}
+              type="button"
+              className={`filter-pill ${selectedFincaFilter === finca.id ? 'active' : ''}`}
               onClick={() => setSelectedFincaFilter(finca.id)}
-              className={`fincaFilterButton ${selectedFincaFilter === finca.id ? 'active' : ''}`}
             >
               {finca.name}
             </button>
           ))}
         </div>
-      </div>
-      
-      {/* --- GRID DE TARJETAS (Con iconos) --- */}
-      <div className="dashboardGrid">
-        <div 
-          className="card card-interactive" 
-          style={{ backgroundColor: pendingAlerts > 0 ? '#fff8f8' : '#fff', borderColor: pendingAlerts > 0 ? '#d9534f' : '#f0f0f0' }} 
-          onClick={() => onNavigate('producerAlertList', { filter: 'pending' })} 
+      </section>
+
+      <section className="kpi-grid">
+        <article
+          className={`kpi-card ${pendingAlerts.length ? 'is-warning' : ''}`}
+          onClick={() => onNavigate('reportAlert')}
         >
-          <h2 className="cardTitle"><Icon path={ICONS.alert} /> Alertas Pendientes</h2>
-          <p className="cardNumericValue" style={{ color: pendingAlerts > 0 ? '#d9534f' : '#5cb85c' }}>{pendingAlerts}</p>
-        </div>
-        <div 
-          className="card card-interactive" 
-          style={{ backgroundColor: pendingTasks > 0 ? '#fffaf5' : '#fff', borderColor: pendingTasks > 0 ? '#f0ad4e' : '#f0f0f0' }} 
+          <div className="kpi-header">
+            <AlertTriangle size={20} />
+            <span>Alertas pendientes de registro</span>
+          </div>
+          <p className="kpi-value">{pendingAlerts.length}</p>
+          <p className="kpi-description">
+            Registra nuevas alertas para iniciar el seguimiento con el equipo técnico.
+          </p>
+        </article>
+        <article
+          className={`kpi-card ${pendingTasks.length ? 'is-caution' : ''}`}
           onClick={() => onNavigate('producerTasks', { filter: 'pending' })}
         >
-          <h2 className="cardTitle"><Icon path={ICONS.tasks} /> Tareas Pendientes</h2>
-          <p className="cardNumericValue" style={{ color: pendingTasks > 0 ? '#f0ad4e' : '#5cb85c' }}>{pendingTasks}</p>
-        </div>
-        <div 
-          className="card card-interactive" 
-          style={{ backgroundColor: pendingVisits > 0 ? '#fffaf5' : '#fff', borderColor: pendingVisits > 0 ? '#f0ad4e' : '#f0f0f0' }} 
+          <div className="kpi-header">
+            <ListChecks size={20} />
+            <span>Tareas pendientes</span>
+          </div>
+          <p className="kpi-value">{pendingTasks.length}</p>
+          <p className="kpi-description">
+            Revisa las acciones solicitadas para tus fincas y marca las completadas.
+          </p>
+        </article>
+        <article
+          className={`kpi-card ${pendingVisits.length ? 'is-caution' : ''}`}
           onClick={() => onNavigate('visitorApproval', { filter: 'PENDING' })}
         >
-          <h2 className="cardTitle"><Icon path={ICONS.visit} /> Visitas por Aprobar</h2>
-          <p className="cardNumericValue" style={{ color: pendingVisits > 0 ? '#f0ad4e' : '#5cb85c' }}>{pendingVisits}</p>
-        </div>
-        <div className="card card-interactive" onClick={() => onNavigate('producerCertification')}>
-          <h2 className="cardTitle"><Icon path={ICONS.certification} /> Mi Certificación</h2>
-          <p className="cardNumericValue">92%</p> {/* Mockeado */}
-        </div>
-      </div>
+          <div className="kpi-header">
+            <CalendarClock size={20} />
+            <span>Visitas por aprobar</span>
+          </div>
+          <p className="kpi-value">{pendingVisits.length}</p>
+          <p className="kpi-description">
+            Asegura el acceso del personal externo con anticipación.
+          </p>
+        </article>
+        <article className="kpi-card" onClick={() => onNavigate('producerCertification')}>
+          <div className="kpi-header">
+            <Medal size={20} />
+            <span>Mi certificación</span>
+          </div>
+          <p className="kpi-value">92%</p>
+          <p className="kpi-description">
+            Consulta los requisitos cumplidos y próximos hitos.
+          </p>
+        </article>
+      </section>
 
-      {/* --- SECCIÓN PRÓXIMAS VISITAS (Sin cambios) --- */}
-      {assignedAlerts.length > 0 && (
-        <div style={{ marginTop: '30px' }}>
-          <h2 className="h2">Próximas Visitas Técnicas</h2>
-          {assignedAlerts.map(alert => {
-            const countdown = getCountdown(alert.visitDate);
-            return (
-              <div 
-                key={alert.id} 
-                className={`listItem ${countdown.className}`}
-                style={{ borderLeft: `5px solid ${alert.priority === 'Alta' ? '#d9534f' : (alert.priority === 'Media' ? '#f0ad4e' : '#5bc0de')}` }}
-              >
-                <div className="listItemContent">
-                  <span className="listItemTitle">Alerta #{alert.id} - {alert.farmName} (Lote: {alert.lote})</span>
-                  <p>Evaluación Previa: {alert.managerComment || 'Pendiente de comentario'}</p>
-                  <p>Técnico: <strong>{technicians.find(t => t.id === alert.techId)?.name || 'Asignado'}</strong></p>
-                </div>
-                <div className="listItemActions">
-                  <span className={`countdownTimer ${countdown.className}`}>{countdown.text}</span>
-                  <span className="countdownDate">{alert.visitDate}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <section className="content-grid">
+        <div className="panel">
+          <div className="panel-header">
+            <h2 className="h2">Próximas visitas técnicas</h2>
+            <button
+              type="button"
+              className="panel-link"
+              onClick={() => onNavigate('producerAlertList', { filter: 'assigned', section: 'registry' })}
+            >
+              Ver agenda completa
+              <ChevronRight size={18} />
+            </button>
+          </div>
+          {assignedAlerts.length === 0 ? (
+            <div className="empty-state">
+              <Info size={24} />
+              <p>No hay visitas técnicas programadas para esta finca.</p>
+            </div>
+          ) : (
+            <ul className="visit-list">
+              {assignedAlerts.map(alert => {
+                const countdown = getCountdown(alert.visitDate);
+                const technicianName = technicians.find(t => t.id === alert.techId)?.name || 'Asignado';
 
-      {/* --- CAMBIO 4: SECCIÓN RESULTADOS AHORA ES UN ACORDEÓN --- */}
-      {completedAlerts.length > 0 && (
-        <div style={{ marginTop: '30px' }}>
-          <div 
-            className="completedTasksHeader" 
+                return (
+                  <li key={alert.id} className={`visit-item ${countdown.className}`}>
+                    <div className="visit-main">
+                      <h3>Alerta #{alert.id} · {alert.farmName}</h3>
+                      <p className="visit-meta">
+                        <CalendarDays size={18} /> {alert.visitDate || 'Por definir'}
+                      </p>
+                      <p className="visit-meta">
+                        <UserCog size={18} /> {technicianName}
+                      </p>
+                      <p className="visit-comment">
+                        {alert.managerComment || 'Pendiente de comentario del gerente.'}
+                      </p>
+                    </div>
+                    <div className="visit-status">
+                      <span className={`status-pill ${alert.priority?.toLowerCase() || 'media'}`}>
+                        Prioridad {alert.priority || 'Media'}
+                      </span>
+                      <span className={`countdown ${countdown.className}`}>{countdown.text}</span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        <div className="panel">
+          <button
+            type="button"
+            className="panel-toggle"
             onClick={() => setResultsVisible(!resultsVisible)}
             aria-expanded={resultsVisible}
           >
-            <h2 className="h2">
-              Resultados de Inspección ({completedAlerts.length})
-            </h2>
-            <Icon 
-              path={ICONS.chevronDown} 
-              className={`toggleIcon ${resultsVisible ? 'expanded' : ''}`}
+            <h2 className="h2">Resultados de inspección ({completedAlerts.length})</h2>
+            <ChevronDown
+              className={`toggle-icon ${resultsVisible ? 'expanded' : ''}`}
+              size={20}
             />
-          </div>
+          </button>
+          <div className={`results-wrapper ${resultsVisible ? 'expanded' : ''}`}>
+            {completedAlerts.length === 0 ? (
+              <div className="empty-state">
+                <Info size={24} />
+                <p>Aún no hay resultados de inspección disponibles para esta finca.</p>
+              </div>
+            ) : (
+              completedAlerts.map(alert => {
+                const plantData = alert.inspectionData?.plant?.data;
+                if (!plantData) return null;
 
-          <div className={`completedTasksContainer ${resultsVisible ? 'expanded' : ''}`}>
-            {completedAlerts.map(alert => {
-              const inspData = alert.inspectionData.plant.data;
-              return (
-                <div key={alert.id} className="listItem resultItem">
-                  <div className="resultHeader">
-                    <span className="listItemTitle">Resultados Alerta #{alert.id} ({alert.farmName})</span>
-                    <span className="tag tag-completed">Completada</span>
-                  </div>
-                  <p><strong>Técnico:</strong> {technicians.find(t => t.id === alert.techId)?.name}</p>
-                  <p><strong>Diagnóstico Final:</strong> <span className="diagnosis">{inspData.diagnosis.join(', ')}</span></p>
-                  <p><strong>Acciones Tomadas:</strong> <span className="actions">{inspData.actions.join(', ')}</span></p>
-                  <p><strong>Incidencia / Severidad:</strong> {inspData.incidence}% / {inspData.severity}%</p>
-                  <p><strong>Recomendaciones:</strong> <span className="recommendation">{inspData.recommendations}</span></p>
-                </div>
-              );
-            })}
+                const technicianName = technicians.find(t => t.id === alert.techId)?.name || 'Equipo técnico';
+
+                return (
+                  <article key={alert.id} className="result-card">
+                    <header className="result-header">
+                      <h3>Alerta #{alert.id} · {alert.farmName}</h3>
+                      <span className="status-pill success">Completada</span>
+                    </header>
+                    <div className="result-grid">
+                      <div>
+                        <span className="result-label">Técnico asignado</span>
+                        <p>{technicianName}</p>
+                      </div>
+                      <div>
+                        <span className="result-label">Diagnóstico final</span>
+                        <p className="highlight">{plantData.diagnosis.join(', ')}</p>
+                      </div>
+                      <div>
+                        <span className="result-label">Acciones ejecutadas</span>
+                        <p>{plantData.actions.join(', ')}</p>
+                      </div>
+                      <div className="result-metrics">
+                        <span className="result-label">Incidencia</span>
+                        <strong>{plantData.incidence}%</strong>
+                        <span className="result-label">Severidad</span>
+                        <strong>{plantData.severity}%</strong>
+                      </div>
+                    </div>
+                    <div className="result-footer">
+                      <span className="result-label">Recomendaciones</span>
+                      <p>{plantData.recommendations}</p>
+                    </div>
+                  </article>
+                );
+              })
+            )}
           </div>
         </div>
-      )}
-    </div> 
+      </section>
+    </div>
   );
 };
 

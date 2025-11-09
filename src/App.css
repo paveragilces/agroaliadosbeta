@@ -37,9 +37,9 @@ body, html, #root {
  */
 .mainContentWithSidebar {
   /* 1. Offset para el Sidebar fijo */
-  margin-left: 260px; 
+  margin-left: var(--sidebar-width, 260px); 
   /* 2. Offset para el Header fijo */
-  padding-top: 70px;  
+  padding-top: var(--header-height, 68px);  
   
   /* 3. Padding interno para el área de contenido */
   padding-left: 30px;

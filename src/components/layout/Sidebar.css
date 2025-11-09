@@ -1,15 +1,5 @@
-/* En: src/components/layout/Sidebar.css */
-/* --- ARCHIVO MODIFICADO (Nuevo Diseño) --- */
-
 :root {
-  --sidebar-width: 260px;
-  --color-primary: #008a5a;
-  --color-primary-dark: #005a3a;
-  --color-primary-light: #f0fff4; /* Verde muy claro para fondo activo */
-  --color-text-primary: #1A202C;
-  --color-text-secondary: #718096;
-  --color-background-hover: #f7f9fa;
-  --color-border: #eef0f2;
+  --sidebar-width: 248px;
 }
 
 .sidebar {
@@ -18,127 +8,192 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #ffffff;
-  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px 0;
-  z-index: 100;
-  box-sizing: border-box; /* Añadido para consistencia */
+  background: linear-gradient(180deg, #0f6b46 0%, #0c4333 52%, #0a2530 100%);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 26px 20px;
+  border-right: 1px solid rgba(8, 22, 16, 0.45);
+  /* --- CAMBIO AQUÍ --- */
+  /* box-shadow: 10px 0 28px rgba(6, 18, 14, 0.4); */ /* <-- Sombra eliminada */
+  /* --- FIN DEL CAMBIO --- */
+  z-index: 110;
 }
 
-.sidebarLogo {
-  font-size: 2rem;
-  font-weight: 800;
-  padding: 0 25px;
-  margin-bottom: 25px;
-  color: var(--color-text-primary);
-  box-sizing: border-box; /* Añadido para consistencia */
+.sidebarInner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* Permite que el contenido interno se desplace si es necesario */
+  min-height: 0;
 }
 
-.sidebarLogoSub {
-  font-weight: 300;
-  color: var(--color-primary);
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Evita que el header se encoja */
+  flex-shrink: 0;
+}
+
+.sidebarBrandIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #e7fff5;
+}
+
+.sidebarBrandTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
 }
 
 .sidebarNav {
   display: flex;
   flex-direction: column;
-  padding: 0 15px; /* Espacio lateral para los botones */
-  overflow-y: auto; /* Permite scroll si hay muchos items */
-  flex-grow: 1; /* Hace que la navegación ocupe el espacio */
+  gap: 22px;
+  padding-right: 4px;
+  /* Habilita el scroll vertical */
+  overflow-y: auto;
+  /* Ocupa el espacio restante */
+  flex: 1;
+  /* Estilos modernos para el scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--sidebar-accent, #1f9d66) transparent;
 }
 
-/* --- Título de Grupo (NUEVO) --- */
-.sidebarGroupTitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+.sidebarNav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebarNav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebarNav::-webkit-scrollbar-thumb {
+  background-color: var(--sidebar-accent, #1f9d66);
+  border-radius: 999px;
+  border: 2px solid transparent;
+}
+
+.sidebarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarSectionTitle {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0 10px; /* Alineado con el padding de los botones */
-  margin: 20px 0 8px 0;
-  box-sizing: border-box; /* Añadido para consistencia */
-}
-/* El primer grupo no necesita margen superior */
-.sidebarNav > .sidebarGroupTitle:first-child {
-  margin-top: 0;
+  letter-spacing: 0.28em;
+  color: rgba(223, 238, 231, 0.58);
+  padding-left: 4px;
 }
 
-/* --- Botón de Navegación (MODIFICADO) --- */
+.sidebarSectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .sidebarButton {
   display: flex;
   align-items: center;
-  gap: 14px; /* Un poco más de espacio */
-  padding: 11px 15px; /* Ligeramente más alto */
-  border-radius: 8px;
-  border: none;
-  background-color: transparent;
-  width: 100%;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  font-weight: 600;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  box-sizing: border-box; /* Añadido para consistencia */
+  /* Transición más rápida para mejor respuesta */
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+  outline: none;
 }
 
-.sidebarButton span {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  transition: color 0.2s ease;
-  line-height: 1.2; /* Asegura alineación vertical */
+.sidebarButtonIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  /* Evita que el ícono cambie de tamaño */
+  flex-shrink: 0;
 }
 
-/* Icono */
-.sidebarButton svg {
-  width: 20px; /* Tamaño de icono consistente */
-  height: 20px; /* Tamaño de icono consistente */
-  flex-shrink: 0; /* Evita que el icono se encoja */
+.sidebarButtonLabel {
+  flex: 1;
 }
 
-
-/* --- Estado Hover (MODIFICADO) --- */
 .sidebarButton:hover {
-  background-color: var(--color-background-hover);
-}
-.sidebarButton:hover span {
-  color: var(--color-text-primary);
-}
-/* El color del icono en hover es manejado por la prop 'color' */
-.sidebarButton:hover svg {
-  color: var(--color-text-primary) !important;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
-/* --- Estado Seleccionado (MODIFICADO) --- */
+.sidebarButton:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  /* Outline de accesibilidad claro */
+  box-shadow: 0 0 0 2px var(--sidebar-accent, #1f9d66) inset;
+}
+
+.sidebarButton:active {
+  /* Efecto de "presionar" */
+  transform: scale(0.98);
+}
+
 .sidebarButton.selected {
-  background-color: var(--color-primary-light);
+  border-color: var(--sidebar-accent, #1f9d66);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
 }
 
-.sidebarButton.selected span {
-  color: var(--color-primary-dark);
-  font-weight: 600;
-}
-/* (El color del SVG se maneja por props en el .jsx) */
-
-
-/* --- Divisor (Oculto) --- */
-.sidebarDivider {
-  display: none; 
-}
-
-/* --- Footer (Sin Cambios) --- */
 .sidebarFooter {
-  padding: 20px 25px 0;
-  border-top: 1px solid var(--color-border);
-  flex-shrink: 0; /* Evita que el footer se encoja */
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  /* Evita que se encoja */
+  flex-shrink: 0;
+}
+
+.sidebarFooterInner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(214, 231, 225, 0.6);
 }
 
 .footerLogoContainer {
-  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.85;
 }
 
 .footerLogo {
-  width: 100px;
+  width: 110px;
   height: auto;
+  filter: brightness(1.1);
+}
+
+@media (max-width: 1080px) {
+  .sidebar {
+    /* En lugar de 'none', 'translateX(-100%)' permite animar un menú hamburguesa en el futuro */
+    transform: translateX(-100%);
+    display: none; /* Mantenemos 'none' por ahora para replicar tu lógica original */
+  }
 }

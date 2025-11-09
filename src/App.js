@@ -1181,6 +1181,7 @@ function App() {
           userRole={userRole}
           currentPage={currentPage}
           onNavigate={handleNavigate}
+          currentUser={currentUser}
         />
       )}
       
