@@ -1,99 +1,462 @@
-/* En: src/views/ProducerTasks.css */
-/* --- ARCHIVO COMPLETO CON MEJORAS DE UI --- */
-
-.container {
-  background-color: #ffffff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+.producerTasksPage {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  color: #0f172a;
 }
 
-.h1 {
-  font-size: 28px;
-  color: #005a3a;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #a6e34b;
-  padding-bottom: 10px;
+.producerTasksPage__hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  padding: 36px;
+  background: linear-gradient(135deg, #0f5132, #1b7a51);
+  color: #f8fafc;
+  box-shadow: 0 28px 60px rgba(15, 82, 52, 0.25);
 }
 
-.h2 {
-  font-size: 22px;
-  color: #222;
-  margin-bottom: 15px;
+.producerTasksPage__heroPattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 0, transparent 55%),
+    radial-gradient(circle at 80% 0, rgba(255, 255, 255, 0.18) 0, transparent 45%),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.15) 0%, transparent 55%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.producerTasksPage__heroContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.producerTasksPage__heroHeader {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.producerTasksPage__backButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(15, 23, 42, 0.12);
+  color: #e2f5e9;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.producerTasksPage__backButton:hover {
+  background: rgba(15, 23, 42, 0.25);
+  transform: translateY(-1px);
+}
+
+.producerTasksPage__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.24);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.producerTasksPage__hero h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  line-height: 1.2;
+}
+
+.producerTasksPage__hero p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(248, 250, 252, 0.82);
+}
+
+.producerTasksPage__heroCallout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.producerTasksPage__heroCalloutLabel {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.65);
+  margin-bottom: 4px;
+}
+
+.producerTasksPage__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.producerTasksPage__statCard {
+  flex: 1 1 180px;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.producerTasksPage__statValue {
+  display: block;
+  font-size: 1.8rem;
   font-weight: 600;
+  color: #ffffff;
 }
 
-.listItem {
+.producerTasksPage__statLabel {
+  display: block;
+  font-size: 0.9rem;
+  color: rgba(226, 245, 233, 0.85);
+}
+
+.producerTasksPage__board {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.producerTasksPage__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.producerTasksPage__tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.producerTasksPage__tab {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.producerTasksPage__tab.is-active {
+  background: linear-gradient(135deg, #1b7a51, #0f5132);
+  color: #ffffff;
+  box-shadow: 0 10px 18px rgba(27, 122, 81, 0.25);
+}
+
+.producerTasksPage__tab:not(.is-active):hover {
+  background: #e2e8f0;
+}
+
+.producerTasksPage__search {
+  position: relative;
+  display: inline-flex;
+  width: min(320px, 100%);
+}
+
+.producerTasksPage__search input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  font-size: 0.95rem;
+  color: #0f172a;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.producerTasksPage__search input:focus {
+  outline: none;
+  border-color: #1b7a51;
+  box-shadow: 0 0 0 4px rgba(27, 122, 81, 0.18);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.producerTasksPage__list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.taskCard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.taskCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 32px 50px rgba(15, 23, 42, 0.08);
+}
+
+.taskCard--completed {
+  background: #f8fafc;
+  border-color: rgba(27, 122, 81, 0.12);
+  opacity: 0.92;
+}
+
+.taskCard__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  border: 1px solid #f0f0f0;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-}
-.listItem.completed {
-  opacity: 0.7;
-  background-color: #f9f9f9;
+  gap: 12px;
 }
 
-.listItemContent {
-  flex: 1;
-  display: flex;
-  gap: 15px;
-  
-  /* --- CAMBIO 1: Estilos movidos desde JSX --- */
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-}
-.listItemContent p {
-  margin: 0;
-}
-
-.listItemActions {
-  display: flex;
+.taskCard__module {
+  display: inline-flex;
+  align-items: center;
   gap: 10px;
-  flex-shrink: 0;
-  align-items: center; /* Centra los botones verticalmente */
-}
-
-.taskTitle {
-  font-weight: bold;
-  font-size: 18px;
-  color: #005a3a;
-}
-.taskTitle.completed {
-  color: #555;
-  text-decoration: line-through;
-}
-
-/* --- CAMBIO 2: Mejoras de jerarquía de texto --- */
-.taskDescription {
-  color: #333;
-  font-size: 1rem;
-}
-.taskOrigin {
+  padding: 8px 14px;
+  border-radius: 999px;
   font-size: 0.85rem;
-  color: #777;
-  font-style: italic;
+  font-weight: 600;
 }
 
-.taskCompletedIcon {
-  display: flex;
+.taskCard__moduleId {
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.taskCard__status {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #28a745;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
   font-weight: 600;
-  font-size: 1.1rem;
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
-/* --- CAMBIO 3: Estilo para el botón deshabilitado --- */
-.listItemActions .button[disabled] {
-  background-color: #ccc;
+.taskCard__status.is-completed {
+  background: rgba(27, 122, 81, 0.12);
+  color: #1b7a51;
+}
+
+.taskCard__status.is-pending {
+  background: rgba(234, 179, 8, 0.14);
+  color: #b45309;
+}
+
+.taskCard__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.taskCard__title {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #0f172a;
+}
+
+.taskCard__description {
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: #334155;
+}
+
+.taskCard__description--secondary {
+  color: #475569;
+}
+
+.taskCard__origin {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.taskCard__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.taskCard__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.taskCard__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.taskCard__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.taskCard__actions .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 10px 18px;
+}
+
+.taskCard__actions .button.button-secondary {
+  background: #0f172a;
+  color: #f8fafc;
+  border: none;
+}
+
+.taskCard__actions .button.button-secondary:hover {
+  background: #1b293e;
+}
+
+.taskCard__actions .button.button-success {
+  background: #1b7a51;
+  border: none;
+}
+
+.taskCard__actions .button.button-success[disabled] {
+  background: #cbd5f5;
+  color: #64748b;
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 1;
+}
+
+.taskCard__completed {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1b7a51;
+}
+
+@media (max-width: 960px) {
+  .producerTasksPage__hero {
+    padding: 30px;
+  }
+
+  .producerTasksPage__stats {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .producerTasksPage__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .producerTasksPage__tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .producerTasksPage__tab {
+    flex: 1;
+    text-align: center;
+  }
+
+  .taskCard {
+    padding: 20px;
+  }
+
+  .taskCard__footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .taskCard__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .producerTasksPage__hero {
+    padding: 24px;
+  }
+
+  .producerTasksPage__hero h1 {
+    font-size: 2rem;
+  }
+
+  .producerTasksPage__statCard {
+    padding: 14px;
+  }
+
+  .producerTasksPage__tabs {
+    gap: 8px;
+  }
+
+  .producerTasksPage__tab {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .taskCard__title {
+    font-size: 1.15rem;
+  }
 }
