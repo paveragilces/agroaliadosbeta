@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Modal.css';
 
 /**
@@ -22,27 +22,37 @@ const Modal = ({ title, children, message, type = 'info', onClose, size }) => {
     modalTitle
     ${title ? 'info' : type}
   `;
-  
+
   const modalBodyClasses = `
     modalBody
     ${size === 'large' ? 'left' : ''}
   `;
 
+  useEffect(() => {
+    document.body.classList.add('modal-open');
+    return () => document.body.classList.remove('modal-open');
+  }, []);
+
   return (
     <div className="modalBackdrop" onClick={onClose}>
       <div className={modalContentClasses} onClick={(e) => e.stopPropagation()}>
-        <h2 className={modalTitleClasses}>
-          {modalTitle}
-        </h2>
+        <header className="modalHeader">
+          <h2 className={modalTitleClasses}>
+            {modalTitle}
+          </h2>
+          <button className="modalClose" onClick={onClose} aria-label="Cerrar">
+            ×
+          </button>
+        </header>
         <div className={modalBodyClasses}>
           {message && <p>{message}</p>}
           {children}
         </div>
-        <div className="modalActions">
+        <footer className="modalFooter">
           <button className="modalButton" onClick={onClose}>
             Cerrar
           </button>
-        </div>
+        </footer>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import EmptyState from '../../components/ui/EmptyState';
 import Icon from '../../components/ui/Icon';
+import FilterPanel from '../../components/ui/FilterPanel/FilterPanel';
 import { ICONS } from '../../config/icons';
 import { calculateRisk } from '../../utils/riskCalculator';
 import Table from '../../components/ui/Table/Table';
@@ -123,6 +124,29 @@ const VisitorApprovalList = ({
     });
     return Array.from(options);
   }, [visitsForProducer]);
+
+  const filterPillGroups = useMemo(() => [
+    {
+      id: 'status-tabs',
+      label: 'Estado',
+      items: STATUS_TABS.map((tab) => ({
+        id: tab.id,
+        label: tab.label,
+        active: statusTab === tab.id,
+        onClick: () => setStatusTab(tab.id),
+      })),
+    },
+    {
+      id: 'value-chain',
+      label: 'Cadena de valor',
+      items: valueChainOptions.map((option) => ({
+        id: option,
+        label: option,
+        active: valueChainFilter === option,
+        onClick: () => setValueChainFilter(option),
+      })),
+    },
+  ], [statusTab, valueChainFilter, valueChainOptions]);
 
   const upcomingVisit = useMemo(() => {
     const ordered = [...categorizedVisits.pending].sort((a, b) => {
@@ -302,22 +326,28 @@ const VisitorApprovalList = ({
     {
       icon: ICONS.checkboxEmpty,
       label: 'Pendientes por aprobar',
-      value: categorizedVisits.pending.length,
-      detail: categorizedVisits.pending.length === 1
-        ? '1 solicitud necesita tu decisión.'
-        : `${categorizedVisits.pending.length} solicitudes necesitan tu decisión.`,
+      primary: String(categorizedVisits.pending.length),
+      secondary:
+        categorizedVisits.pending.length === 1
+          ? '1 solicitud necesita tu decisión.'
+          : `${categorizedVisits.pending.length} solicitudes necesitan tu decisión.`,
     },
     {
       icon: ICONS.calendar,
       label: 'Próxima ventana',
-      value: upcomingVisit ? formatWindow(upcomingVisit.entryTime, upcomingVisit.exitTime) : 'Sin agenda',
-      detail: upcomingVisit ? (producer.fincas.find((fincaItem) => fincaItem.id === upcomingVisit.fincaId)?.name || 'Finca por confirmar') : 'Aprueba una visita para agendarla.',
+      primary: upcomingVisit
+        ? formatWindow(upcomingVisit.entryTime, upcomingVisit.exitTime)
+        : 'Sin agenda',
+      secondary: upcomingVisit
+        ? producer.fincas.find((fincaItem) => fincaItem.id === upcomingVisit.fincaId)?.name ||
+          'Finca por confirmar'
+        : 'Aprueba una visita para agendarla.',
     },
     {
       icon: ICONS.priority,
       label: 'Riesgo promedio',
-      value: averageRisk.label,
-      detail: averageRisk.detail,
+      primary: averageRisk.label,
+      secondary: averageRisk.detail,
     },
   ];
 
@@ -332,6 +362,20 @@ const VisitorApprovalList = ({
           <p className="visitor-approval__subtitle">
             Coordina quién puede ingresar a tus fincas y mantén el flujo seguro. {producer.owner && `Propietario: ${producer.owner}.`}
           </p>
+          <div className="visitor-approval__hero-metrics">
+            {heroMetrics.map((metric) => (
+              <article key={metric.label} className="visitor-approval__metric">
+                <div className="visitor-approval__metric-header">
+                  <div className="visitor-approval__metric-icon">
+                    <Icon path={metric.icon} size={22} />
+                  </div>
+                  <span className="visitor-approval__metric-label">{metric.label}</span>
+                </div>
+                <strong className="visitor-approval__metric-value">{metric.primary}</strong>
+                <p className="visitor-approval__metric-detail">{metric.secondary}</p>
+              </article>
+            ))}
+          </div>
           <div className="visitor-approval__hero-actions">
             <button
               type="button"
@@ -351,64 +395,24 @@ const VisitorApprovalList = ({
             </button>
           </div>
         </div>
-        <div className="visitor-approval__hero-metrics">
-          {heroMetrics.map((metric) => (
-            <article key={metric.label} className="visitor-approval__metric">
-              <div className="visitor-approval__metric-icon">
-                <Icon path={metric.icon} size={20} />
-              </div>
-              <div className="visitor-approval__metric-body">
-                <span className="visitor-approval__metric-label">{metric.label}</span>
-                <strong className="visitor-approval__metric-value">{metric.value}</strong>
-                <p className="visitor-approval__metric-detail">{metric.detail}</p>
-              </div>
-            </article>
-          ))}
-        </div>
       </section>
 
-      <div className="visitor-approval__layout">
-        <section className="visitor-approval__table-card">
+      <section className="visitor-approval__table-card">
           <header className="visitor-approval__table-header">
-            <div className="visitor-approval__tabs" role="tablist" aria-label="Filtrar visitas por estado">
-              {STATUS_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={statusTab === tab.id}
-                  className={`visitor-approval__tab ${statusTab === tab.id ? 'is-active' : ''}`}
-                  onClick={() => setStatusTab(tab.id)}
-                >
-                  <span className="visitor-approval__tab-label">{tab.label}</span>
-                  <span className="visitor-approval__tab-detail">{tab.description}</span>
-                </button>
-              ))}
-            </div>
-            <div className="visitor-approval__filters">
-              <div className="visitor-approval__search">
-                <Icon path={ICONS.filter} size={18} />
-                <input
-                  type="search"
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Buscar por visitante, empresa o cédula"
-                />
-              </div>
-              <div className="visitor-approval__chips" role="list">
-                {valueChainOptions.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    role="listitem"
-                    className={`visitor-approval__chip-filter ${valueChainFilter === option ? 'is-active' : ''}`}
-                    onClick={() => setValueChainFilter(option)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <FilterPanel
+          className="visitor-approval__filterPanel"
+          pillGroups={filterPillGroups}
+        />
+        <label className="visitor-approval__search">
+          <span className="sr-only">Buscar visitas</span>
+          <Icon path={ICONS.filter} size={18} aria-hidden="true" />
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Buscar por visitante, empresa o cédula"
+          />
+        </label>
           </header>
 
           {displayVisits.length === 0 ? (
@@ -425,35 +429,31 @@ const VisitorApprovalList = ({
               emptyMessage=""
             />
           )}
-        </section>
+      </section>
 
-        <aside className="visitor-approval__aside">
-          <h2 className="visitor-approval__aside-title">Consejos para decidir rápido</h2>
-          <ul className="visitor-approval__aside-list">
-            <li>
-              <Icon path={ICONS.time} size={18} />
-              <div>
-                <strong>Confirma 24h antes</strong>
-                <p>Contacta al visitante si la visita es crítica para ajustar horarios y responsables.</p>
-              </div>
-            </li>
-            <li>
-              <Icon path={ICONS.checkCircle} size={18} />
-              <div>
-                <strong>Registra evidencias</strong>
-                <p>Solicita documentos o protocolos si el riesgo sale alto antes de aprobar.</p>
-              </div>
-            </li>
-            <li>
-              <Icon path={ICONS.info} size={18} />
-              <div>
-                <strong>Usa el historial</strong>
-                <p>Revisa el registro completo para conocer visitas anteriores y decisiones tomadas.</p>
-              </div>
-            </li>
-          </ul>
-        </aside>
-      </div>
+      <section className="visitor-approval__guides">
+        <article className="visitor-approval__guide-card">
+          <Icon path={ICONS.time} size={18} />
+          <div>
+            <strong>Confirma 24h antes</strong>
+            <p>Contacta al visitante si la visita es crítica para ajustar horarios y responsables.</p>
+          </div>
+        </article>
+        <article className="visitor-approval__guide-card">
+          <Icon path={ICONS.checkCircle} size={18} />
+          <div>
+            <strong>Registra evidencias</strong>
+            <p>Solicita documentos o protocolos si el riesgo sale alto antes de aprobar.</p>
+          </div>
+        </article>
+        <article className="visitor-approval__guide-card">
+          <Icon path={ICONS.info} size={18} />
+          <div>
+            <strong>Usa el historial</strong>
+            <p>Revisa el registro completo para conocer visitas anteriores y decisiones tomadas.</p>
+          </div>
+        </article>
+      </section>
     </div>
   );
 };

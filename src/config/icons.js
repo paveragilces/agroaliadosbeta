@@ -52,6 +52,15 @@ export const ICONS = {
   checkboxEmpty: 'M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z',
   
   // Icono para estado "Completado"
-  checkboxChecked: 'M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'
+  checkboxChecked: 'M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
+
+  // Icono para representar polígonos/contornos
+  shape: 'M12 2l9 5v10l-9 5-9-5V7l9-5zm0 2.18L5 7.09v9.82l7 3.91 7-3.91V7.09l-7-3.91zm-1 5.32h2v6h-2v-6zm0 8h2v2h-2v-2z',
+
+  // Iconos para el laboratorio climático
+  thermometer: 'M15 13V6c0-2.21-1.79-4-4-4S7 3.79 7 6v7c-1.24.84-2 2.24-2 3.75C5 18.99 7.01 21 9.5 21s4.5-2.01 4.5-4.5c0-1.51-.76-2.91-2-3.75zM9 6c0-1.1.9-2 2-2s2 .9 2 2v7h-4V6zm.5 13C8.12 19 7 17.88 7 16.5c0-1.06.62-1.97 1.5-2.36V15h4v-.86c.88.39 1.5 1.3 1.5 2.36 0 1.38-1.12 2.5-2.5 2.5z',
+  rain: 'M19 17a4 4 0 0 0-2-7.5h-.26A5 5 0 0 0 7 9.5 4 4 0 0 0 5 17h14zm-8 3H9v-3h2zm4 0h-2v-4h2zm-8 0H5v-2h2z',
+  chart: 'M5 9h2v10H5zm6-4h2v14h-2zm6 7h2v7h-2z',
+  table: 'M3 5v14h18V5H3zm4 12H5v-4h2v4zm0-6H5V7h2v4zm6 6h-4v-4h4v4zm0-6h-4V7h4v4zm6 6h-4v-4h4v4zm0-6h-4V7h4v4z'
   
 };

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Icon from '../../components/ui/Icon';
 import InspectionStepper from '../../components/ui/InspectionStepper';
 import { ICONS } from '../../config/icons';
+import { CalendarDays, MapPin, AlertTriangle, ClipboardCheck } from 'lucide-react';
 import TechnicianModuleAudit from './TechnicianModuleAudit';
 import TechnicianModuleDrone from './TechnicianModuleDrone';
 import TechnicianModulePlant from './TechnicianModulePlant';
@@ -48,76 +49,155 @@ const TechnicianInspectionCenter = ({ alert, onNavigate, onSaveInspection, setMo
 
   // Vista 1: Centro de Inspección (Dashboard)
   if (!currentModule) {
-    const getStatusTag = (status) => (
-      status === 'Completado'
-        ? <span className="tag tag-completed">Completado</span>
-        : <span className="tag tag-pending">Pendiente</span>
-    );
+    const moduleCards = [
+      {
+        key: 'audit',
+        title: 'Auditoría de Bioseguridad',
+        description: 'Checklist de ingreso, registros y limpieza.',
+        optional: false,
+        icon: ICONS.audit
+      },
+      {
+        key: 'drone',
+        title: 'Reporte de vuelo drone',
+        description: 'Cobertura aérea opcional para validar lotes.',
+        optional: true,
+        icon: ICONS.drone
+      },
+      {
+        key: 'plant',
+        title: 'Inspección de planta (diagnóstico)',
+        description: 'Incidencia, severidad y acciones correctivas.',
+        optional: false,
+        icon: ICONS.plant
+      }
+    ];
+
+    const completedRequired = ['audit', 'plant'].filter(
+      key => inspectionData[key]?.status === 'Completado'
+    ).length;
+    const progress = Math.round((completedRequired / 2) * 100);
+
+    const metaInfo = [
+      {
+        label: 'Fecha de visita',
+        value: alert.visitDate
+          ? new Date(alert.visitDate).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'short'
+            })
+          : 'Sin asignar',
+        icon: CalendarDays
+      },
+      {
+        label: 'Lote',
+        value: alert.lote || 'No especificado',
+        icon: MapPin
+      },
+      {
+        label: 'Prioridad',
+        value: alert.priority || 'Sin definir',
+        icon: AlertTriangle
+      },
+      {
+        label: 'Alertas cerradas',
+        value: `${completedRequired}/2 módulos obligatorios`,
+        icon: ClipboardCheck
+      }
+    ];
 
     return (
-      <div className="container">
-        <button
-          className="button button-secondary"
-          style={{ marginBottom: '20px' }}
-          onClick={() => onNavigate('technicianSchedule')}
-        >
-          <Icon path={ICONS.back} /> Volver a la Agenda
-        </button>
+      <div className="inspectionCenter">
+        <div className="inspectionCenter__hero">
+          <button className="ghostButton" onClick={() => onNavigate('technicianSchedule')}>
+            <Icon path={ICONS.back} /> Volver a la agenda
+          </button>
+          <div>
+            <span>Inspección activa</span>
+            <h1>{alert.farmName}</h1>
+            <p>
+              Alerta #{alert.id} · productor {alert.producerName || 'sin registro'}
+            </p>
+          </div>
+          <div className="inspectionCenter__progress">
+            <span>{progress}% completado</span>
+            <div className="progressBar">
+              <div style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+        </div>
 
         <InspectionStepper currentModule={null} modules={inspectionData} />
 
-        <h1 className="h1">Inspección: {alert.farmName}</h1>
-        <h2 className="h2">Alerta #{alert.id} ({alert.visitDate})</h2>
+        <section className="inspectionCenter__meta">
+          {metaInfo.map(item => {
+            const IconMeta = item.icon;
+            return (
+              <article key={item.label}>
+                <div className="inspectionCenter__metaIcon">
+                  <IconMeta size={16} />
+                </div>
+                <div>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </div>
+              </article>
+            );
+          })}
+        </section>
 
-        {/* Tarea 1: Auditoría */}
-        <div className="listItem moduleItem">
-          <div className="listItemContent">
-            <Icon path={ICONS.audit} size={24} color="#005a3a" />
-            <span className="moduleTitle">1. Auditoría de Bioseguridad</span>
+        <section className="inspectionCenter__modules">
+          <header>
+            <div>
+              <h2>Checklist de módulos</h2>
+              <p>Completa los módulos obligatorios antes de cerrar la inspección.</p>
+            </div>
+            <span className="inspectionCenter__chip">
+              {moduleCards.filter(card => inspectionData[card.key]?.status === 'Completado').length}/
+              {moduleCards.length}
+              &nbsp;finalizados
+            </span>
+          </header>
+          <div className="moduleGrid">
+            {moduleCards.map((card, index) => {
+              const status = inspectionData[card.key]?.status || 'Pendiente';
+              return (
+                <article key={card.key} className={`moduleCard moduleCard--${status.toLowerCase()}`}>
+                  <div className="moduleCard__icon">
+                    <Icon path={card.icon} size={22} color="#0f6b46" />
+                  </div>
+                  <div className="moduleCard__body">
+                    <div className="moduleCard__title">
+                      <span>0{index + 1}</span>
+                      <h3>{card.title}</h3>
+                      {card.optional && <small>Opcional</small>}
+                    </div>
+                    <p>{card.description}</p>
+                    <div className="moduleCard__footer">
+                      <span className={`statusBadge statusBadge--${status.toLowerCase()}`}>
+                        {status === 'Completado' ? 'Completado' : 'Pendiente'}
+                      </span>
+                      <button type="button" onClick={() => setCurrentModule(card.key)}>
+                        {status === 'Completado' ? 'Editar' : 'Iniciar'}
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-          <div className="listItemActions">
-            {getStatusTag(inspectionData.audit.status)}
-            <button className="button btn-primary" onClick={() => setCurrentModule('audit')}>
-              {inspectionData.audit.status === 'Completado' ? 'Editar' : 'Iniciar'}
-            </button>
-          </div>
-        </div>
+        </section>
 
-        {/* Tarea 2: Vuelo Drone */}
-        <div className="listItem moduleItem">
-          <div className="listItemContent">
-            <Icon path={ICONS.drone} size={24} color="#005a3a" />
-            <span className="moduleTitle">2. Reporte de Vuelo Drone (Opcional)</span>
-          </div>
-          <div className="listItemActions">
-            {getStatusTag(inspectionData.drone.status)}
-            <button className="button btn-primary" onClick={() => setCurrentModule('drone')}>
-              {inspectionData.drone.status === 'Completado' ? 'Editar' : 'Iniciar'}
-            </button>
-          </div>
-        </div>
+        {alert.managerComment && (
+          <section className="inspectionCenter__notes">
+            <h4>Comentario del gerente</h4>
+            <p>{alert.managerComment}</p>
+          </section>
+        )}
 
-        {/* Tarea 3: Inspección Planta */}
-        <div className="listItem moduleItem">
-          <div className="listItemContent">
-            <Icon path={ICONS.plant} size={24} color="#005a3a" />
-            <span className="moduleTitle">3. Inspección de Planta (Diagnóstico)</span>
-          </div>
-          <div className="listItemActions">
-            {getStatusTag(inspectionData.plant.status)}
-            <button className="button btn-primary" onClick={() => setCurrentModule('plant')}>
-              {inspectionData.plant.status === 'Completado' ? 'Editar' : 'Iniciar'}
-            </button>
-          </div>
-        </div>
-
-        {/* Botón de Finalizar */}
-        <div className="finalizeContainer">
-          <button
-            className="button button-success finalizeButton"
-            onClick={handleFinalizeInspection}
-          >
-            Finalizar y Enviar Inspección
+        <div className="inspectionCenter__actions">
+          <button className="button button-success" onClick={handleFinalizeInspection}>
+            Finalizar y enviar inspección
           </button>
         </div>
       </div>

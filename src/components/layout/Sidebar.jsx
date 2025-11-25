@@ -1,11 +1,10 @@
 import React from 'react';
 import './Sidebar.css';
-import { ROLE_META } from '../../config/roles'; // <-- IMPORTADO
-// Se eliminó la importación de 'hexToRgba' porque ya no se usa aquí
+import { ROLE_META } from '../../config/roles';
+import AgroAliadosLogo from '../../views/LoginScreen/AgroAliadosLogo';
 
 // --- Iconos de Lucide-React ---
 import {
-  Sprout,
   LayoutDashboard,
   User,
   AlertTriangle,
@@ -17,6 +16,12 @@ import {
   ClipboardList,
   Calendar,
   ClipboardCheck,
+  CloudSunRain,
+  GaugeCircle,
+  Map,
+  BarChart2,
+  Camera,
+  GraduationCap
 } from 'lucide-react';
 
 const SidebarButton = ({ page, iconComponent, label, isSelected, onNavigate }) => {
@@ -31,6 +36,9 @@ const SidebarButton = ({ page, iconComponent, label, isSelected, onNavigate }) =
         <IconComponent size={18} />
       </span>
       <span className="sidebarButtonLabel">{label}</span>
+      {page === 'producerAlertList' && (
+        <span className="sidebarBadge">!</span>
+      )}
     </button>
   );
 };
@@ -53,10 +61,8 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
     <aside className="sidebar" style={{ '--sidebar-accent': roleMeta.accent }}>
       <div className="sidebarInner">
         <div className="sidebarHeader">
-          <span className="sidebarBrandIcon">
-            <Sprout size={22} />
-          </span>
-          <span className="sidebarBrandTitle">AgroAliados</span>
+          <AgroAliadosLogo className="sidebarBrandLogo" />
+          <span className="sidebarBrandFallback">AgroAliados</span>
         </div>
 
         {/* --- BLOQUE ELIMINADO --- 
@@ -118,6 +124,13 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
                   onNavigate={onNavigate}
                 />
                 <SidebarButton
+                  page="producerSuspicionInbox"
+                  iconComponent={AlertTriangle}
+                  label="Sospechas"
+                  isSelected={currentPage === 'producerSuspicionInbox'}
+                  onNavigate={onNavigate}
+                />
+                <SidebarButton
                   page="manageWorkers"
                   iconComponent={Users}
                   label="Mis trabajadores"
@@ -138,9 +151,30 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
                   isSelected={currentPage === 'workLogViewer'}
                   onNavigate={onNavigate}
                 />
+                <SidebarButton
+                  page="producerClimateLab"
+                  iconComponent={CloudSunRain}
+                  label="Laboratorio climático"
+                  isSelected={currentPage === 'producerClimateLab'}
+                  onNavigate={onNavigate}
+                />
+                <SidebarButton
+                  page="imageAnalytics"
+                  iconComponent={Camera}
+                  label="Análisis de imágenes"
+                  isSelected={currentPage === 'imageAnalytics'}
+                  onNavigate={onNavigate}
+                />
               </SidebarSection>
 
               <SidebarSection title="Certificación">
+                <SidebarButton
+                  page="producerSelfCheck"
+                  iconComponent={ClipboardCheck}
+                  label="Autoevaluación"
+                  isSelected={currentPage === 'producerSelfCheck'}
+                  onNavigate={onNavigate}
+                />
                 <SidebarButton
                   page="producerCertification"
                   iconComponent={ShieldCheck}
@@ -162,6 +196,20 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
                 onNavigate={onNavigate}
               />
               <SidebarButton
+                page="producerControlCenter"
+                iconComponent={GaugeCircle}
+                label="Control productores"
+                isSelected={currentPage === 'producerControlCenter'}
+                onNavigate={onNavigate}
+              />
+              <SidebarButton
+                page="fincaExecutiveSummary"
+                iconComponent={Map}
+                label="Resumen por finca"
+                isSelected={currentPage === 'fincaExecutiveSummary'}
+                onNavigate={onNavigate}
+              />
+              <SidebarButton
                 page="alertTriage"
                 iconComponent={AlertTriangle}
                 label="Alertas"
@@ -176,6 +224,13 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
                 onNavigate={onNavigate}
               />
               <SidebarButton
+                page="technicianPerformance"
+                iconComponent={BarChart2}
+                label="Desempeño técnico"
+                isSelected={currentPage === 'technicianPerformance'}
+                onNavigate={onNavigate}
+              />
+              <SidebarButton
                 page="visitorReport"
                 iconComponent={FileText}
                 label="Visitas"
@@ -186,22 +241,41 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
           )}
 
           {userRole === 'technician' && (
-            <SidebarSection title="Mi operación">
-              <SidebarButton
-                page="technicianSchedule"
-                iconComponent={Calendar}
-                label="Mi agenda"
-                isSelected={currentPage === 'technicianSchedule'}
-                onNavigate={onNavigate}
-              />
-              <SidebarButton
-                page="technicianProfile"
-                iconComponent={User}
-                label="Mi perfil"
-                isSelected={currentPage === 'technicianProfile'}
-                onNavigate={onNavigate}
-              />
-            </SidebarSection>
+            <>
+              <SidebarSection title="Operación">
+                <SidebarButton
+                  page="technicianCommandCenter"
+                  iconComponent={LayoutDashboard}
+                  label="Centro operativo"
+                  isSelected={currentPage === 'technicianCommandCenter'}
+                  onNavigate={onNavigate}
+                />
+                <SidebarButton
+                  page="technicianSchedule"
+                  iconComponent={Calendar}
+                  label="Mi agenda"
+                  isSelected={currentPage === 'technicianSchedule'}
+                  onNavigate={onNavigate}
+                />
+                <SidebarButton
+                  page="imageAnalytics"
+                  iconComponent={Camera}
+                  label="Análisis de imágenes"
+                  isSelected={currentPage === 'imageAnalytics'}
+                  onNavigate={onNavigate}
+                />
+              </SidebarSection>
+
+              <SidebarSection title="Perfil">
+                <SidebarButton
+                  page="technicianProfile"
+                  iconComponent={User}
+                  label="Mi perfil"
+                  isSelected={currentPage === 'technicianProfile'}
+                  onNavigate={onNavigate}
+                />
+              </SidebarSection>
+            </>
           )}
 
           {userRole === 'worker' && (
@@ -218,6 +292,13 @@ const Sidebar = ({ userRole, currentPage, onNavigate }) => {
                 iconComponent={ListTodo}
                 label="Registrar labor"
                 isSelected={currentPage === 'submitWorkLog'}
+                onNavigate={onNavigate}
+              />
+              <SidebarButton
+                page="workerTraining"
+                iconComponent={GraduationCap}
+                label="Capacitación continua"
+                isSelected={currentPage === 'workerTraining'}
                 onNavigate={onNavigate}
               />
             </SidebarSection>

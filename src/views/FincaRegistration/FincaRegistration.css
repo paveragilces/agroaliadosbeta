@@ -191,6 +191,57 @@
   overflow: hidden;
 }
 
+.finca-registration__boundary {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px dashed rgba(16, 122, 80, 0.4);
+  background: rgba(15, 159, 110, 0.05);
+  color: #0f172a;
+}
+
+.finca-registration__boundary.is-complete {
+  border-style: solid;
+  background: rgba(15, 159, 110, 0.08);
+}
+
+.finca-registration__boundary-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(15, 159, 110, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f9f6e;
+}
+
+.finca-registration__boundary-content strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.finca-registration__boundary-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.finca-registration__boundary-badge {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #0f9f6e;
+  color: #fff;
+}
+
 .finca-registration__location-feedback,
 .finca-registration__map-hint {
   display: inline-flex;
@@ -212,6 +263,16 @@
   background-color: #f4f6f8;
   color: #475569;
   border: 1px dashed #cbd5e1;
+}
+
+.finca-registration__parcel-note {
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(15, 107, 70, 0.35);
+  background: rgba(15, 107, 70, 0.06);
+  color: #0f5132;
+  font-size: 13px;
+  padding: 12px 16px;
 }
 
 .finca-registration__summary-grid {

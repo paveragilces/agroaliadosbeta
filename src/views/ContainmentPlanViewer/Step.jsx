@@ -11,8 +11,27 @@ const STEP_STATUS_META = {
   pending: { icon: ICONS.checkboxEmpty, label: 'Etapa pendiente' },
 };
 
+const STATUS_ORDER = {
+  in_progress: 0,
+  pending: 1,
+  completed: 2,
+};
+
 const Step = ({ step, status, isOpen, onToggle, onOpenTaskDetails, index, totalSteps }) => {
   const tasks = step.tasks || [];
+
+  const sortedTasks = useMemo(() => {
+    return [...tasks].sort((a, b) => {
+      const statusDiff =
+        (STATUS_ORDER[a.status] ?? Number.POSITIVE_INFINITY) -
+        (STATUS_ORDER[b.status] ?? Number.POSITIVE_INFINITY);
+      if (statusDiff !== 0) return statusDiff;
+
+      const aDate = new Date(a.targetDate || a.createdAt || 0).getTime();
+      const bDate = new Date(b.targetDate || b.createdAt || 0).getTime();
+      return aDate - bDate;
+    });
+  }, [tasks]);
 
   const progress = useMemo(() => {
     if (!tasks.length) {
@@ -41,12 +60,12 @@ const Step = ({ step, status, isOpen, onToggle, onOpenTaskDetails, index, totalS
   }, [step.title]);
 
   const primaryTask = useMemo(() => {
-    if (!tasks.length) {
+    if (!sortedTasks.length) {
       return null;
     }
 
-    return tasks.find((task) => task.status !== 'completed') || tasks[0];
-  }, [tasks]);
+    return sortedTasks.find((task) => task.status !== 'completed') || sortedTasks[0];
+  }, [sortedTasks]);
 
   const handleToggle = () => {
     onToggle();
@@ -112,7 +131,7 @@ const Step = ({ step, status, isOpen, onToggle, onOpenTaskDetails, index, totalS
 
         <div className={`step-content ${isOpen ? 'open' : ''}`}>
           <div className="step-tasks-list">
-            {tasks.map((task) => (
+            {sortedTasks.map((task) => (
               <TimelineCard key={task.id} task={task} onOpenTaskDetails={onOpenTaskDetails} />
             ))}
           </div>

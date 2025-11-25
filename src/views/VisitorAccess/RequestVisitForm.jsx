@@ -5,7 +5,7 @@ import Button from '../../components/ui/Button';
 import { VISIT_PURPOSES, VALUE_CHAIN_CATEGORIES } from '../../data/constants';
 // ¡CAMBIO IMPORTANTE! Usamos la lista plana de fincas
 import { MOCK_FINCAS_FLAT } from '../../data/mockData'; 
-import styles from './VisitorAccess.css'; // Usa el CSS compartido
+import './VisitorAccess.css'; // Usa el CSS compartido
 
 const initialFormState = {
   fincaId: MOCK_FINCAS_FLAT[0]?.id || 'f1', // Asegurar que el default sea válido

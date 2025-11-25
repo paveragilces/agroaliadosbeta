@@ -1,56 +1,530 @@
-.container {
-  background-color: #ffffff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+.managerDashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.h1 {
-  font-size: 28px;
-  color: #005a3a;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #a6e34b;
-  padding-bottom: 10px;
+.managerDashboard__hero {
+  position: relative;
+  border-radius: 28px;
+  padding: 36px;
+  background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.25), transparent 45%),
+    linear-gradient(120deg, #06361f, #115a3c 40%, #0b2f38 100%);
+  overflow: hidden;
+  color: #f1faf4;
+  box-shadow: 0 22px 54px rgba(6, 21, 19, 0.3);
 }
 
-.h2 {
-  font-size: 22px;
-  color: #222;
-  margin-bottom: 15px;
+.managerDashboard__heroPattern {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% 10%, rgba(255, 255, 255, 0.35), transparent 50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.managerDashboard__heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 840px;
+}
+
+.managerDashboard__heroEyebrow {
+  display: inline-flex;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.managerDashboard__hero h1 {
+  margin: 12px 0;
+  font-size: 2.4rem;
   font-weight: 600;
 }
 
-.dashboardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+.managerDashboard__hero p {
+  margin: 0;
+  font-size: 1.05rem;
+  color: rgba(241, 250, 244, 0.85);
 }
 
-.card {
-  background-color: #ffffff;
-  border: 1px solid #f0f0f0;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease-in-out;
+.managerDashboard__heroActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.managerDashboard__heroActions button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
+  box-shadow: 0 12px 26px rgba(6, 21, 19, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cardTitle {
-  font-size: 18px;
+.managerDashboard__heroActions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(6, 21, 19, 0.32);
+}
+
+.managerDashboard__heroStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.managerDashboard__statCard {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(4, 21, 18, 0.35);
+  border: 1px solid rgba(241, 250, 244, 0.12);
+  align-items: center;
+  box-shadow: 0 12px 28px rgba(3, 12, 10, 0.28);
+}
+
+.managerDashboard__statCard--success {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.managerDashboard__statCard--warning {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.managerDashboard__statCard--indigo {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.managerDashboard__statCard--info {
+  border-color: rgba(125, 211, 252, 0.4);
+}
+
+.managerDashboard__statIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.managerDashboard__statText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.managerDashboard__statText span {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(241, 250, 244, 0.7);
+}
+
+.managerDashboard__statText strong {
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+
+.managerDashboard__statText small {
+  color: rgba(241, 250, 244, 0.7);
+}
+
+.managerDashboard__section {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 26px 30px;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 107, 70, 0.08);
+}
+
+.managerDashboard__sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.managerDashboard__sectionHeader p {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #80918c;
+}
+
+.managerDashboard__sectionHeader h2 {
+  margin: 6px 0 0;
+  font-size: 1.65rem;
+  color: #0f2f25;
+}
+
+.managerDashboard__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 107, 70, 0.2);
+  background: rgba(15, 107, 70, 0.05);
+  color: #0f6b46;
   font-weight: 600;
-  color: #005a3a;
-  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.cardContent {
-  font-size: 16px;
+.managerDashboard__link:hover {
+  background: rgba(15, 107, 70, 0.12);
 }
 
-/* Estilo específico para los números grandes del dashboard */
-.cardNumericValue {
-  font-size: 32px;
-  font-weight: bold;
-  color: #005a3a;
+.managerDashboard__controlGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.controlCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(12, 67, 51, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 247, 246, 0.9) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 16px 32px rgba(15, 23, 42, 0.06);
+}
+
+.controlCard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.controlCard__header h3 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+  color: #0f2f25;
+}
+
+.controlCard__header span {
+  font-size: 0.9rem;
+  color: #708079;
+}
+
+.controlCard__badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(12, 67, 51, 0.08);
+  color: #0f2f25;
+}
+
+.controlCard__badge.has-critical {
+  background: rgba(244, 63, 94, 0.12);
+  color: #be123c;
+}
+
+.controlCard__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.controlCard__stats .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #80918c;
+}
+
+.controlCard__stats strong {
+  display: block;
+  font-size: 1.4rem;
+  color: #0f2f25;
+}
+
+.controlCard__stats small {
+  color: #7a8a84;
+}
+
+.controlCard__fincas {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.controlCard__fincas li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(12, 67, 51, 0.1);
+  align-items: center;
+}
+
+.controlCard__fincas li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.controlCard__fincaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.controlCard__fincaInfo span {
+  font-weight: 600;
+  color: #0f2f25;
+}
+
+.controlCard__fincaInfo small {
+  display: block;
+  color: #7a8a84;
+}
+
+.controlCard__fincaMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f6b46;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.controlCard__fincas button {
+  border: none;
+  border-radius: 12px;
+  padding: 6px 12px;
+  background: rgba(15, 107, 70, 0.12);
+  color: #0f6b46;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.controlCard__fincas button:hover {
+  background: rgba(15, 107, 70, 0.18);
+  transform: translateY(-1px);
+}
+
+.controlCard__techActions {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(12, 67, 51, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.controlCard__techActions > span {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7a8a84;
+  font-weight: 600;
+}
+
+.controlCard__techActions div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.controlCard__techActions button {
+  border: none;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  color: #1d4ed8;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.controlCard__techActions button:hover {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.managerDashboard__timelineFilters {
+  margin: 18px 0 24px;
+}
+
+.managerDashboard__timelineFilters .filterPanel {
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 16px 20px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.managerDashboard__timelineFilters .filterPanel__chip.is-active {
+  background: rgba(15, 107, 70, 0.15);
+  color: #0f5132;
+}
+
+.managerDashboard__timelineFilters .filterPanel__selectControl {
+  background: #ffffff;
+}
+
+.managerDashboard__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.managerDashboard__timelineGroup {
+  border: 1px solid rgba(12, 67, 51, 0.12);
+  border-radius: 18px;
+  padding: 18px;
+  background: #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.managerDashboard__timelineGroup header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  color: #0f2f25;
+  font-weight: 600;
+}
+
+.managerDashboard__timelineGroup small {
+  font-size: 0.85rem;
+  color: #7a8a84;
+}
+
+.managerDashboard__timelineGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.timelineCard {
+  border-radius: 18px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(12, 67, 51, 0.1);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.timelineCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+}
+
+.timelineCard__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.timelineCard__date {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f2f25;
+}
+
+.timelineCard__status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  align-self: flex-start;
+}
+
+.timelineCard__status.is-pending {
+  background: rgba(251, 191, 36, 0.16);
+  color: #92400e;
+}
+
+.timelineCard__status.is-assigned {
+  background: rgba(125, 211, 252, 0.18);
+  color: #0c4a6e;
+}
+
+.timelineCard__status.is-completed {
+  background: rgba(134, 239, 172, 0.2);
+  color: #166534;
+}
+
+.timelineCard__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #4b5c55;
+}
+
+.timelineCard__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.managerDashboard__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px dashed rgba(12, 67, 51, 0.2);
+  background: rgba(15, 107, 70, 0.03);
+  color: #708079;
+}
+
+@media (max-width: 960px) {
+  .managerDashboard__hero {
+    padding: 28px;
+  }
+
+  .managerDashboard__section {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .managerDashboard__hero h1 {
+    font-size: 2rem;
+  }
+
+  .managerDashboard__link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .controlCard__fincas li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

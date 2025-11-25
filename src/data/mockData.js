@@ -84,7 +84,80 @@ export const MOCK_VISITS = [
   { id: 'v5', producerId: 'p1', fincaId: 'f1', name: 'Visita Completada', company: 'EcoCert', purpose: 'Visita de Certificadora', valueChain: 'Certificación', entryTime: '2024-11-01T09:00', exitTime: '2024-11-01T11:00', status: 'CHECKED_OUT', qrData: 'v5|55555|LOW', risk: 'Low', checkIn: '2024-11-01T09:05:00', checkOut: '2024-11-01T10:58:00', signature: 'data:image/png;base64,SIGNATURE-MOCK', idNumber: '55555', visitorPhoto: 'data:image/png;base64,VISITOR-MOCK', vehiclePhoto: 'data:image/png;base64,VEHICLE-MOCK' },
 ];
 
-export const MOCK_TASKS = []; 
+export const MOCK_TASKS = [
+  {
+    id: 'task-training-1',
+    producerId: 'p1',
+    alertId: 'a4',
+    questionId: '1.2',
+    title: 'Capacitación: refuerzo en pediluvios',
+    description: 'Revisar con el personal el uso correcto de pediluvios y documentar evidencias fotográficas.',
+    minWatchTime: 70,
+    status: 'pending',
+    owner: 'producer',
+    createdAt: '2024-10-25T09:00:00Z'
+  },
+  {
+    id: 'task-tech-briefing',
+    producerId: 'p1',
+    alertId: 'a4',
+    questionId: '2.3',
+    title: 'Checklist técnico de aislamiento',
+    description: 'Verificar en campo el aislamiento de plantas sospechosas y documentar hallazgos.',
+    status: 'pending',
+    owner: 'technician',
+    createdAt: '2024-10-28T07:30:00Z'
+  }
+]; 
+
+export const MOCK_TECHNICIAN_ACTIONS = [
+  {
+    id: 'ta-01',
+    alertId: 'a4',
+    producerId: 'p1',
+    fincaName: 'Finca Santa Rita',
+    lote: 'Lote 01',
+    techId: 't1',
+    title: 'Toma de muestras confirmatorias',
+    description: 'Recolectar muestras de pseudotallo y suelo para descartar presencia de Moko.',
+    type: 'Muestreo',
+    status: 'assigned',
+    dueDate: '2024-11-04',
+    requiresValidation: true,
+    updates: [
+      {
+        id: 'ta-01-u1',
+        authorRole: 'manager',
+        authorName: 'Coordinación técnica',
+        message: 'Priorizar lotes con síntomas activos y adjuntar fotografías.',
+        timestamp: '2024-10-30T10:00:00Z'
+      }
+    ]
+  },
+  {
+    id: 'ta-02',
+    alertId: 'a3',
+    producerId: 'p1',
+    fincaName: 'Finca Santa Rita',
+    lote: 'Lote 03',
+    techId: 't2',
+    title: 'Capacitación express al personal',
+    description: 'Reunión rápida en empaque para repasar tips de detección temprana.',
+    type: 'Capacitación',
+    status: 'pending_validation',
+    dueDate: '2024-10-20',
+    requiresValidation: true,
+    updates: [
+      {
+        id: 'ta-02-u1',
+        authorRole: 'technician',
+        authorName: 'Ana Mendoza',
+        message: 'Entrenamiento completado con 12 personas, fotos cargadas al drive.',
+        timestamp: '2024-10-20T12:45:00Z'
+      }
+    ]
+  }
+];
 
 export const MOCK_NOTIFICATIONS = [
   { id: 'n1', producerId: 'p1', date: '2024-04-22', text: 'El Gerente ha asignado la Alerta #a3 (Finca Santa Rita). El técnico Ana Mendoza visitará su finca el 2024-04-25.', read: true, link: 'producerDashboard' },
@@ -93,6 +166,8 @@ export const MOCK_NOTIFICATIONS = [
   { id: 'n4', producerId: 'p1', date: '2024-05-06', text: 'El Gerente ha asignado la Alerta #a4 (Finca Santa Rita). El técnico Carlos Ruiz visitará su finca el 2024-11-01.', read: false, link: 'producerDashboard' },
   { id: 'n5', producerId: 'p1', date: '2024-10-30', text: 'La solicitud de visita de Carlos R. (AgroInsumos S.A.) para Finca Santa Rita está pendiente de aprobación.', read: false, link: 'visitorApproval' },
 ];
+
+export const MOCK_IMAGE_ANALYSES = [];
 
 export const MOCK_INSPECTION_MODULES = [
   { id: '1', name: 'Ingreso', questions: [
@@ -120,6 +195,81 @@ export const MOCK_INSPECTION_MODULES = [
     { id: '5.2', text: '¿Se mantiene registro de limpieza, ingreso y monitoreo de enfermedades?' },
     { id: '5.3', text: '¿Se dispone de productos de limpieza y desinfección aprobados?' },
   ]},
+];
+
+export const WORKER_KNOWLEDGE_QUESTIONS = [
+  {
+    id: 'symptom-1',
+    category: 'síntomas',
+    question: 'Al observar hojas con amarillamiento unilateral y colapso rápido, ¿qué acción tomas primero?',
+    options: [
+      'Registrar la planta, aislarla y avisar al encargado',
+      'Cortar las hojas amarillas y continuar la jornada',
+      'Aplicar fertilizante foliar inmediato',
+      'Mover la planta a otro lote'
+    ],
+    answerIndex: 0
+  },
+  {
+    id: 'disinfection-1',
+    category: 'desinfección',
+    question: 'Después de usar machetes en un lote sospechoso, ¿qué protocolo es correcto?',
+    options: [
+      'Ponerlos a la sombra hasta la próxima jornada',
+      'Lavarlos con agua, luego desinfectar con solución aprobada',
+      'Solo limpiar la hoja del machete',
+      'Compartirlos con otro compañero para avanzar'
+    ],
+    answerIndex: 1
+  },
+  {
+    id: 'residue-1',
+    category: 'residuos',
+    question: '¿Cómo manejas los residuos de plantas con síntomas cuarentenarios?',
+    options: [
+      'Se colocan en compostera general',
+      'Se dejan en el piso para secarse',
+      'Se embolsan, aíslan y se coordinan con el supervisor',
+      'Se usan como abono inmediato'
+    ],
+    answerIndex: 2
+  },
+  {
+    id: 'ingreso-1',
+    category: 'ingreso',
+    question: 'Al pasar de una finca externa a la tuya, ¿qué es obligatorio?',
+    options: [
+      'Solo reportar la visita',
+      'Uso de ropa limpia y pasar por pediluvio/rodiluvio',
+      'Cambiar botas únicamente',
+      'Desinfectar solo las manos'
+    ],
+    answerIndex: 1
+  },
+  {
+    id: 'general-1',
+    category: 'general',
+    question: '¿Cada cuánto revisas el nivel de la solución de desinfección en los recipientes?',
+    options: [
+      'Una vez al mes',
+      'Cada vez que entras o sales del lote',
+      'Cuando el supervisor lo indique',
+      'Solo si se ve turbio'
+    ],
+    answerIndex: 1
+  },
+  {
+    id: 'symptom-2',
+    category: 'síntomas',
+    question: 'Las rayas rojizas internas en pseudotallo son indicio de:',
+    options: [
+      'Moko o similar, se debe aislar',
+      'Deficiencia de potasio',
+      'Daño mecánico normal',
+      'Ataque de insecto superficial'
+    ],
+    answerIndex: 0
+  }
 ];
 
 

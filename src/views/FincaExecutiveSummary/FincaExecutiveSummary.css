@@ -1,0 +1,338 @@
+.fincaSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.fincaSummary__hero {
+  border-radius: 28px;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.28), transparent 45%),
+    linear-gradient(120deg, #0f6b46, #0b4e7a 60%, #0b2d36);
+  color: #f3fbf7;
+  box-shadow: 0 28px 60px rgba(7, 35, 47, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fincaSummary__hero span {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: rgba(243, 251, 247, 0.78);
+}
+
+.fincaSummary__hero h1 {
+  margin: 0;
+  font-size: 2.2rem;
+}
+
+.fincaSummary__hero p {
+  margin: 0;
+  max-width: 720px;
+  color: rgba(243, 251, 247, 0.85);
+}
+
+.fincaSummary__heroActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fincaSummary__heroActions button {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: rgba(4, 21, 18, 0.35);
+  color: #ffffff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.fincaSummary__heroActions button.primary {
+  background: #ffffff;
+  color: #0f2f25;
+  border-color: transparent;
+  box-shadow: 0 12px 28px rgba(4, 21, 18, 0.3);
+}
+.fincaSummary__heroActions button.secondary {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.fincaSummary__heroStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.fincaSummary__statCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(4, 21, 18, 0.3);
+  box-shadow: 0 18px 32px rgba(3, 12, 10, 0.3);
+}
+
+.fincaSummary__statIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fincaSummary__statCard span {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(243, 251, 247, 0.8);
+  margin-bottom: 4px;
+}
+
+.fincaSummary__statCard strong {
+  font-size: 1.5rem;
+  color: #ffffff;
+  display: block;
+  margin: 2px 0;
+}
+
+.fincaSummary__statCard small {
+  display: block;
+  margin-top: 2px;
+  color: rgba(243, 251, 247, 0.75);
+}
+
+.fincaSummary__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.fincaSummary__card {
+  border-radius: 22px;
+  border: 1px solid rgba(12, 67, 51, 0.1);
+  background: #ffffff;
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fincaSummary__card.is-selected {
+  border-color: rgba(15, 107, 70, 0.4);
+  box-shadow: 0 18px 40px rgba(15, 107, 70, 0.12);
+}
+
+.fincaSummary__card.is-focused {
+  outline: 3px solid rgba(15, 107, 70, 0.4);
+}
+
+.fincaSummary__card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fincaSummary__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #0f2f25;
+}
+
+.fincaSummary__checkbox input {
+  accent-color: #0f6b46;
+}
+
+.fincaSummary__card h2 {
+  margin: 2px 0 0;
+  font-size: 1.4rem;
+  color: #0f2f25;
+}
+
+.fincaSummary__card p {
+  margin: 2px 0 0;
+  color: #4f5f59;
+}
+
+.fincaSummary__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.fincaSummary__metrics span {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7a8a84;
+}
+
+.fincaSummary__metrics strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.05rem;
+  color: #0f2f25;
+}
+
+.fincaSummary__metrics small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  font-size: 0.85rem;
+  color: #b91c1c;
+}
+
+.fincaSummary__notes {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px dashed rgba(12, 67, 51, 0.2);
+  color: #0f2f25;
+  font-size: 0.95rem;
+}
+.fincaSummary__technicians {
+  margin-top: 32px;
+  border: 1px solid rgba(12, 67, 51, 0.12);
+  border-radius: 20px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
+}
+
+.fincaSummary__technicians header p {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #80918c;
+  font-size: 0.75rem;
+}
+
+.fincaSummary__technicians header h2 {
+  margin: 6px 0 0;
+  color: #0f2f25;
+}
+
+.technicianTable {
+  margin-top: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  overflow-x: auto;
+}
+
+.technicianTableWrapper {
+  min-width: 720px;
+}
+
+.technicianRow {
+  display: grid;
+  grid-template-columns: 2fr repeat(6, minmax(80px, 1fr));
+  padding: 12px 16px;
+  gap: 12px;
+  font-size: 0.95rem;
+  align-items: center;
+}
+
+.technicianRow:nth-child(even) {
+  background: rgba(226, 232, 240, 0.35);
+}
+
+.technicianRow--head {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: #5f6f69;
+  font-weight: 600;
+  background: rgba(226, 232, 240, 0.6);
+}
+
+.technicianRow strong {
+  color: #0f2f25;
+}
+
+.technicianRow__name {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.technicianRow__name button {
+  align-self: flex-start;
+  border: 1px solid rgba(15, 107, 70, 0.3);
+  border-radius: 999px;
+  background: rgba(15, 107, 70, 0.08);
+  color: #065f46;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.fincaSummary__extra {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(12, 67, 51, 0.08);
+  background: rgba(248, 250, 252, 0.8);
+  color: #0f2f25;
+}
+
+.fincaSummary__extra span {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5b6b66;
+  margin-bottom: 4px;
+}
+
+.fincaSummary__extra p {
+  margin: 0;
+}
+
+.fincaSummary__extra ul {
+  margin: 0;
+  padding-left: 16px;
+  color: #0f2f25;
+}
+
+.summary-attachments {
+  margin-top: 12px;
+  border-top: 1px solid rgba(12, 67, 51, 0.1);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-attachments span {
+  font-weight: 700;
+  color: #0f2f25;
+}
+
+@media (max-width: 640px) {
+  .fincaSummary__hero {
+    padding: 26px;
+  }
+}

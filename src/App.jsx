@@ -15,13 +15,16 @@ import {
   MOCK_ALERTS,
   MOCK_VISITS,
   MOCK_TASKS,
+  MOCK_TECHNICIAN_ACTIONS,
   MOCK_NOTIFICATIONS,
   MOCK_INSPECTION_MODULES,
   MOCK_FINCAS_FLAT,
   MOCK_CERTIFICATION_HISTORY,
   MOCK_WORKERS,
   MOCK_WORK_LOGS,
-  MOCK_CONTAINMENT_PLANS
+  MOCK_CONTAINMENT_PLANS,
+  MOCK_IMAGE_ANALYSES,
+  WORKER_KNOWLEDGE_QUESTIONS
 } from './data/mockData';
 import { 
   MOCK_TASK_TEMPLATES, 
@@ -58,7 +61,9 @@ import NotificationCenter from './views/NotificationCenter/NotificationCenter';
 import TechnicianInspectionCenter from './views/TechnicianInspectionCenter/TechnicianInspectionCenter';
 import ProducerProfile from './views/ProducerProfile/ProducerProfile'; 
 import ProducerAlertList from './views/ProducerAlertList/ProducerAlertList'; 
+import ProducerSelfCheck from './views/ProducerSelfCheck/ProducerSelfCheck';
 import TechnicianProfile from './views/TechnicianProfile/TechnicianProfile'; 
+import TechnicianCommandCenter from './views/TechnicianCommandCenter/TechnicianCommandCenter';
 import FincaRegistration from './views/FincaRegistration/FincaRegistration'; 
 import VisitorAccessPage from './views/VisitorAccess/VisitorAccessPage';
 import VisitorCheckIn from './views/VisitorCheckIn/VisitorCheckIn';
@@ -66,9 +71,16 @@ import ProducerVisitorLog from './views/ProducerVisitorLog/ProducerVisitorLog';
 import ManageWorkers from './views/ManageWorkers/ManageWorkers';
 import WorkerLogViewer from './views/WorkerLogViewer/WorkerLogViewer';
 import WorkerProfile from './views/WorkerProfile/WorkerProfile';
+import WorkerTrainingCenter from './views/WorkerTrainingCenter/WorkerTrainingCenter';
 import SubmitWorkLog from './views/SubmitWorkLog/SubmitWorkLog';
 import WorkerCheckInLog from './views/WorkerCheckInLog/WorkerCheckInLog'; 
 import ContainmentPlanViewer from './views/ContainmentPlanViewer/ContainmentPlanViewer'; 
+import ProducerClimateLab from './views/ProducerClimateLab/ProducerClimateLab';
+import ProducerControlCenter from './views/ProducerControlCenter/ProducerControlCenter';
+import FincaExecutiveSummary from './views/FincaExecutiveSummary/FincaExecutiveSummary';
+import TechnicianPerformanceDashboard from './views/TechnicianPerformanceDashboard/TechnicianPerformanceDashboard';
+import ImageAnalytics from './views/ImageAnalytics/ImageAnalytics';
+import ProducerSuspicionInbox from './views/ProducerSuspicionInbox/ProducerSuspicionInbox';
 
 // --- IMPORTACIONES PARA GENERACIÓN DE PDF ---
 import { jsPDF } from 'jspdf';
@@ -76,40 +88,49 @@ import { jsPDF } from 'jspdf';
 
 // --- COMPONENTE INTERNO: Formulario de Registro de Técnico ---
 const RegisterTechnicianForm = ({ onSubmit, onCancel }) => {
-  // ... (Sin cambios) ...
   const [name, setName] = useState('');
   const [zone, setZone] = useState('Norte');
-  const handleSubmit = (e) => { e.preventDefault(); if (name && zone) { onSubmit(name, zone); } };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    if (!name.trim()) return;
+    onSubmit(name.trim(), zone);
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      <Input
-        label="Nombre Completo del Técnico"
-        name="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
-      <div className="formGroup">
-        <label className="label" htmlFor="zone">Zona Asignada</label>
-        <select
-          id="zone"
-          name="zone"
-          className="select" 
-          value={zone}
-          onChange={(e) => setZone(e.target.value)}
-        >
-          <option value="Norte">Norte</option>
-          <option value="Sur">Sur</option>
-          <option value="Este">Este</option>
-          <option value="Oeste">Oeste</option>
-        </select>
+    <form className="registerTechForm" onSubmit={handleSubmit}>
+      <div className="registerTechForm__fields">
+        <Input
+          label="Nombre completo"
+          name="name"
+          value={name}
+          onChange={event => setName(event.target.value)}
+          placeholder="Ej. Ana Mendoza"
+          required
+        />
+        <label className="registerTechForm__label" htmlFor="zone">
+          Zona asignada
+          <div className="registerTechForm__selectWrapper">
+            <select
+              id="zone"
+              name="zone"
+              value={zone}
+              onChange={event => setZone(event.target.value)}
+            >
+              <option value="Norte">Norte</option>
+              <option value="Sur">Sur</option>
+              <option value="Este">Este</option>
+              <option value="Oeste">Oeste</option>
+            </select>
+          </div>
+        </label>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-        <button type="button" className="button button-secondary" onClick={onCancel}>
+      <div className="registerTechForm__actions">
+        <button type="button" className="buttonGhost" onClick={onCancel}>
           Cancelar
         </button>
-        <button type="submit" className="button btn-primary">
-          Registrar Técnico
+        <button type="submit" className="buttonPrimary">
+          Registrar técnico
         </button>
       </div>
     </form>
@@ -137,6 +158,9 @@ function App() {
   // --- Estado de Datos (Mocks) ---
   const [alerts, setAlerts] = useState(MOCK_ALERTS);
   const [visits, setVisits] = useState(MOCK_VISITS);
+  const [producerVisitNotes, setProducerVisitNotes] = useState({});
+  const [producerVisitEvidence, setProducerVisitEvidence] = useState({});
+  const [producerVisitFollowups, setProducerVisitFollowups] = useState({});
   const [technicians, setTechnicians] = useState(
     MOCK_TECHNICIANS_PROFILES.map(t => ({
       ...t,
@@ -144,6 +168,7 @@ function App() {
     }))
   );
   const [tasks, setTasks] = useState(MOCK_TASKS);
+  const [technicianActions, setTechnicianActions] = useState(MOCK_TECHNICIAN_ACTIONS);
   const [producers, setProducers] = useState(MOCK_PRODUCERS);
   const [fincas, setFincas] = useState(MOCK_FINCAS_FLAT);
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
@@ -151,6 +176,11 @@ function App() {
   const [workers, setWorkers] = useState(MOCK_WORKERS);
   const [workLogs, setWorkLogs] = useState(MOCK_WORK_LOGS);
   const [containmentPlans, setContainmentPlans] = useState(MOCK_CONTAINMENT_PLANS);
+  const [imageAnalyses, setImageAnalyses] = useState(MOCK_IMAGE_ANALYSES);
+  const [selfAssessments, setSelfAssessments] = useState({});
+  const [workerKnowledgeChecks, setWorkerKnowledgeChecks] = useState({});
+  const [workerTrainingTasks, setWorkerTrainingTasks] = useState({});
+  const [workerSuspicions, setWorkerSuspicions] = useState([]);
 
 
   // --- Efecto para generar tareas iniciales (basado en mocks) ---
@@ -172,6 +202,7 @@ function App() {
                 alertId: alert.id,
                 questionId: q.id,
                 status: 'pending',
+                owner: 'producer',
                 createdAt: new Date().toISOString(),
               });
             }
@@ -207,6 +238,163 @@ function App() {
       read: false,
     };
     setNotifications(prev => [newNotif, ...prev]);
+  };
+
+  const handleSaveSelfAssessment = (assessment) => {
+    if (!assessment?.producerId) return;
+    setSelfAssessments(prev => ({ ...prev, [assessment.producerId]: assessment }));
+    showLoadingAndModal('Autoevaluación guardada. El gerente verá los refuerzos priorizados.', 'success', 700);
+    createNotification(
+      assessment.producerId,
+      'Tu autoevaluación fue guardada y enviada al gerente.',
+      'producerSelfCheck'
+    );
+  };
+
+  const knowledgeWindowDays = 7;
+  const getWorkerById = (workerId) => workers.find(w => w.id === workerId);
+
+  const workerNeedsKnowledgeCheck = (workerId) => {
+    const record = workerKnowledgeChecks[workerId];
+    if (!record?.completedAt) return true;
+    const last = new Date(record.completedAt);
+    const diff = (Date.now() - last.getTime()) / (1000 * 60 * 60 * 24);
+    return diff >= knowledgeWindowDays;
+  };
+
+  const handleSaveWorkerKnowledgeCheck = (workerId, result) => {
+    if (!workerId || !result) return;
+    const completedAt = new Date().toISOString();
+    const failCount = result.passed ? 0 : (workerKnowledgeChecks[workerId]?.failCount || 0) + 1;
+    setWorkerKnowledgeChecks(prev => ({
+      ...prev,
+      [workerId]: {
+        ...result,
+        completedAt,
+        failCount
+      }
+    }));
+
+    const workerData = getWorkerById(workerId);
+    if (!result.passed) {
+      const trainingTask = {
+        id: `training-${Date.now()}`,
+        title: 'Refuerzo express de bioseguridad',
+        description: 'Revisa este video con buenas prácticas de desinfección y manejo de residuos.',
+        videoUrl: 'https://www.youtube.com/embed/TCt8f2O3p6c',
+        videoId: 'TCt8f2O3p6c',
+        minWatchTime: 120,
+        assignedAt: completedAt,
+        completed: false
+      };
+      setWorkerTrainingTasks(prev => ({ ...prev, [workerId]: trainingTask }));
+      if (workerData?.producerId) {
+        createNotification(
+          workerData.producerId,
+          `El trabajador ${workerData.name} necesita refuerzo de bioseguridad.`,
+          'manageWorkers'
+        );
+      }
+    } else {
+      setWorkerTrainingTasks(prev => {
+        if (!prev[workerId]) return prev;
+        return {
+          ...prev,
+          [workerId]: { ...prev[workerId], completed: true }
+        };
+      });
+    }
+  };
+
+  const handleCompleteWorkerTraining = (workerId) => {
+    setWorkerTrainingTasks(prev => {
+      if (!prev[workerId]) return prev;
+      return {
+        ...prev,
+        [workerId]: { ...prev[workerId], completed: true, completedAt: new Date().toISOString() }
+      };
+    });
+  };
+
+  const handleSubmitSuspicion = (suspicion) => {
+    if (!suspicion?.workerId || !suspicion?.producerId) return;
+    const newSuspicion = {
+      id: `s-${Date.now()}`,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      ...suspicion
+    };
+    setWorkerSuspicions(prev => [newSuspicion, ...prev]);
+    createNotification(
+      suspicion.producerId,
+      `Nueva sospecha reportada por ${suspicion.workerName || 'trabajador'}.`,
+      'producerSuspicionInbox'
+    );
+    showLoadingAndModal('Sospecha enviada al productor.', 'success', 500);
+  };
+
+  const handleUpdateWorkerProfile = (workerId, updates = {}) => {
+    if (!workerId || !updates) return;
+    setWorkers(prev =>
+      prev.map(worker => (worker.id === workerId ? { ...worker, ...updates } : worker))
+    );
+    if (userRole === 'worker' && currentUser?.id === workerId) {
+      setCurrentUser(prev => ({ ...prev, ...updates }));
+    }
+    showLoadingAndModal('Perfil del trabajador actualizado.', 'success', 500);
+  };
+
+  const handleUpdateTechnicianProfile = (technicianId, updates = {}) => {
+    if (!technicianId || !updates) return;
+    setTechnicians(prev =>
+      prev.map(tech => (tech.id === technicianId ? { ...tech, ...updates } : tech))
+    );
+    if (userRole === 'technician' && currentUser?.id === technicianId) {
+      setCurrentUser(prev => ({ ...prev, ...updates }));
+    }
+    showLoadingAndModal('Perfil del técnico actualizado.', 'success', 500);
+  };
+
+  const handleDismissSuspicion = (suspicionId) => {
+    setWorkerSuspicions(prev =>
+      prev.map(item => item.id === suspicionId ? { ...item, status: 'dismissed' } : item)
+    );
+  };
+
+  const handleConvertSuspicionToAlert = (suspicionId) => {
+    const suspicion = workerSuspicions.find(s => s.id === suspicionId);
+    if (!suspicion) return;
+    const fincaData = fincas.find(f => f.id === suspicion.fincaId);
+    const newAlert = {
+      id: `a${Date.now()}`,
+      producerId: suspicion.producerId,
+      fincaId: suspicion.fincaId,
+      lote: suspicion.lote || 'Sin lote',
+      farmName: fincaData?.name || 'Finca',
+      date: new Date().toISOString(),
+      parts: {},
+      symptoms: suspicion.type ? [suspicion.type] : [],
+      photos: {},
+      location: fincaData?.location || null,
+      status: 'pending',
+      techId: null,
+      visitDate: null,
+      priority: 'Media',
+      managerComment: suspicion.note || 'Sospecha reportada por trabajador.',
+      possibleDisease: null,
+      inspectionData: null,
+      comments: suspicion.note || ''
+    };
+    setAlerts(prev => [newAlert, ...prev]);
+    setWorkerSuspicions(prev =>
+      prev.map(item => item.id === suspicionId ? { ...item, status: 'converted', alertId: newAlert.id } : item)
+    );
+    createNotification(
+      suspicion.producerId,
+      `Sospecha convertida en alerta ${newAlert.id}.`,
+      'producerAlertList'
+    );
+    showLoadingAndModal('Se creó una alerta a partir de la sospecha.', 'success', 600);
   };
 
   const handleCreateContainmentPlan = (diagnosisList, alert) => {
@@ -303,8 +491,11 @@ function App() {
       });
       return; 
     }
-    if (!completedTrainingIds.includes(task.id)) {
+    if (task.id && !completedTrainingIds.includes(task.id)) {
       setCompletedTrainingIds(prev => [...prev, task.id]);
+    }
+    if (typeof task.onComplete === 'function') {
+      task.onComplete();
     }
   };
 
@@ -532,6 +723,32 @@ function App() {
       }, 500);
     });
   };
+
+  const handleProducerVisitNoteChange = (alertId, noteValue) => {
+    setProducerVisitNotes(prev => ({ ...prev, [alertId]: noteValue }));
+  };
+
+  const handleProducerVisitEvidenceChange = (alertId, fileData) => {
+    setProducerVisitEvidence(prev => {
+      if (!fileData) {
+        if (!prev[alertId]) return prev;
+        const next = { ...prev };
+        delete next[alertId];
+        return next;
+      }
+      return { ...prev, [alertId]: fileData };
+    });
+  };
+
+  const handleProducerVisitFollowupToggle = alertId => {
+    setProducerVisitFollowups(prev => ({
+      ...prev,
+      [alertId]: {
+        completed: !prev[alertId]?.completed,
+        timestamp: new Date().toISOString(),
+      },
+    }));
+  };
   
   const handleCaptureEvidence = (visitId, type, data) => {
     // ... (Sin cambios) ...
@@ -720,6 +937,139 @@ function App() {
     setLoading(false);
   };
   
+  const renderFincaSummaryPage = (doc, summary) => {
+    const margin = 16;
+    const drawCard = (x, y, w, h, options = {}) => {
+      const { fill = [248, 250, 252], stroke = [230, 235, 242] } = options;
+      doc.setDrawColor(...stroke);
+      doc.setFillColor(...fill);
+      doc.roundedRect(x, y, w, h, 4, 4, 'FD');
+    };
+
+    // Hero banner
+    doc.setFillColor(11, 78, 122);
+    doc.rect(0, 0, 210, 42, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text(`Resumen ejecutivo de ${summary.fincaName}`, 105, 17, { align: 'center' });
+    doc.setFontSize(12);
+    doc.text(`Productor: ${summary.producerName}`, margin, 30);
+    doc.text(`Hectáreas: ${summary.hectares}  |  Lotes: ${summary.lotes}`, 210 - margin, 30, { align: 'right' });
+    doc.setTextColor(15, 23, 42);
+
+    // KPI cards (bicolor)
+    const kpiData = [
+      { label: 'Alertas activas', value: `${summary.alertsActive}`, detail: `${summary.alertsCritical} críticas`, color: [243, 244, 255] },
+      { label: 'Planes activos', value: `${summary.containmentActive}`, detail: 'Contención', color: [236, 253, 245] },
+      { label: 'Tareas pendientes', value: `${summary.tasksPending}`, detail: `${summary.tasksCompleted} completadas`, color: [255, 248, 237] },
+      { label: 'Visitas pendientes', value: `${summary.visitsPending}`, detail: `${summary.visitsUpcoming} programadas`, color: [239, 246, 255] }
+    ];
+    const cardWidth = 92;
+    kpiData.forEach((kpi, index) => {
+      const x = margin + (index % 2) * (cardWidth + 12);
+      const y = 50 + Math.floor(index / 2) * 38;
+      drawCard(x, y, cardWidth, 34, { fill: kpi.color });
+      doc.setFontSize(9);
+      doc.text(kpi.label.toUpperCase(), x + 6, y + 10);
+      doc.setFontSize(18);
+      doc.text(kpi.value, x + 6, y + 22);
+      doc.setFontSize(9);
+      doc.text(kpi.detail, x + 6, y + 29);
+    });
+
+    // Table of indicators
+    const indicators = [
+      ['Alertas completadas', `${summary.alertsCompleted}`],
+      ['Alertas críticas', `${summary.alertsCritical}`],
+      ['Planes activos', `${summary.containmentActive}`],
+      ['Tareas completadas', `${summary.tasksCompleted}`],
+      ['Visitas programadas', `${summary.visitsUpcoming}`]
+    ];
+    const pageHeight = 297;
+    const resetTextColor = () => doc.setTextColor(15, 23, 42);
+    const ensureSectionSpace = (currentY, needed) => {
+      if (currentY + needed > pageHeight - 20) {
+        doc.addPage();
+        resetTextColor();
+        return 20;
+      }
+      return currentY;
+    };
+
+    const tableY = 130;
+    doc.setFontSize(12);
+    doc.text('Indicadores clave', margin, tableY);
+    doc.setFontSize(10);
+    let rowY = tableY + 6;
+    indicators.forEach(([label, value]) => {
+      drawCard(margin, rowY - 4, 178, 12);
+      doc.text(label, margin + 4, rowY + 4);
+      doc.text(value, 196 - margin, rowY + 4, { align: 'right' });
+      rowY += 14;
+    });
+
+    // Alert status breakdown
+    let sectionY = rowY + 8;
+    sectionY = ensureSectionSpace(sectionY, 26);
+    doc.setFontSize(12);
+    doc.text('Estado de alertas', margin, sectionY);
+    drawCard(margin, sectionY + 4, 178, 18);
+    doc.setFontSize(10);
+    doc.text(
+      `Pendientes: ${summary.statusBreakdown.pending} · Asignadas: ${summary.statusBreakdown.assigned} · Completadas: ${summary.statusBreakdown.completed}`,
+      margin + 4,
+      sectionY + 16
+    );
+
+    // Diseases
+    sectionY += 26;
+    sectionY = ensureSectionSpace(sectionY, 30);
+    doc.setFontSize(12);
+    doc.text('Enfermedades detectadas', margin, sectionY);
+    drawCard(margin, sectionY + 4, 178, 20);
+    doc.setFontSize(10);
+    const diseases = summary.topDiseases.length
+      ? summary.topDiseases.map(d => `${d.name} (${d.count})`).join(', ')
+      : 'Sin registros recientes.';
+    doc.text(diseases, margin + 4, sectionY + 16, { maxWidth: 170 });
+
+    // Biosecurity and visits
+    sectionY += 30;
+    sectionY = ensureSectionSpace(sectionY, 34);
+    doc.setFontSize(12);
+    doc.text('Bioseguridad y visitas', margin, sectionY);
+    drawCard(margin, sectionY + 4, 178, 24);
+    doc.setFontSize(10);
+    const bioText = summary.biosecurity
+      ? `Última auditoría: ${summary.biosecurity.lastStatus} (${summary.biosecurity.lastScore}%) · ${summary.biosecurity.approvals}/${summary.biosecurity.totalAudits} aprobadas`
+      : 'Sin historial de certificaciones.';
+    doc.text(bioText, margin + 4, sectionY + 14, { maxWidth: 170 });
+    doc.text(`Visitas de alto riesgo: ${summary.highRiskVisits}`, margin + 4, sectionY + 22);
+
+    // Notes section
+    sectionY += 34;
+    sectionY = ensureSectionSpace(sectionY, 40);
+    doc.setFontSize(12);
+    doc.text('Notas', margin, sectionY);
+    drawCard(margin, sectionY + 4, 178, 30);
+    doc.setFontSize(10);
+    doc.text(summary.notes || 'Sin observaciones registradas.', margin + 4, sectionY + 12, { maxWidth: 170 });
+  };
+
+  const handleGenerateFincaSummaryPDF = payload => {
+    const doc = new jsPDF();
+    const summaries = Array.isArray(payload) ? payload : [payload];
+    summaries.forEach((summary, index) => {
+      if (index > 0) doc.addPage();
+      renderFincaSummaryPage(doc, summary);
+    });
+    const filename =
+      summaries.length === 1
+        ? `Resumen_${summaries[0].fincaName}.pdf`
+        : `Resumen_${summaries.length}_Fincas.pdf`;
+    doc.save(filename);
+  };
+  
   const handleAssignAlert = (alertId, comment, diseases, techId, date, priority) => { /* ... */ };
   
   const handleCompleteTask = (taskId) => {
@@ -728,7 +1078,96 @@ function App() {
     showLoadingAndModal('¡Tarea completada!', 'success');
   };
 
-  const handleMarkAsRead = (notificationId) => { /* ... */ };
+  const handleTechnicianActionProgress = (actionId, note, authorName = 'Técnico') => {
+    const cleanNote = (note || '').trim();
+    if (!cleanNote) return;
+    const timestamp = new Date().toISOString();
+    setTechnicianActions(prevActions =>
+      prevActions.map(action => {
+        if (action.id !== actionId) return action;
+        const updates = [
+          ...(action.updates || []),
+          {
+            id: `${actionId}-u-${Date.now()}`,
+            authorRole: 'technician',
+            authorName,
+            message: cleanNote,
+            timestamp
+          }
+        ];
+        const nextStatus = action.status === 'assigned' ? 'in_progress' : action.status;
+        return { ...action, status: nextStatus, updates, lastUpdate: timestamp };
+      })
+    );
+    showLoadingAndModal('Seguimiento técnico actualizado', 'success', 300);
+  };
+
+  const handleTechnicianActionSubmit = (actionId, summary, authorName = 'Técnico') => {
+    const cleanSummary = (summary || '').trim();
+    const timestamp = new Date().toISOString();
+    let actionForNotification = null;
+    setTechnicianActions(prevActions =>
+      prevActions.map(action => {
+        if (action.id !== actionId) return action;
+        actionForNotification = action;
+        const updates = [
+          ...(action.updates || []),
+          {
+            id: `${actionId}-u-${Date.now()}`,
+            authorRole: 'technician',
+            authorName,
+            message: cleanSummary || 'Se solicita validación del trabajo realizado.',
+            timestamp
+          }
+        ];
+        return { ...action, status: 'pending_validation', updates, lastUpdate: timestamp };
+      })
+    );
+    if (actionForNotification) {
+      createNotification(
+        actionForNotification.producerId,
+        `El técnico ${authorName} solicitó validar "${actionForNotification.title}"`,
+        'producerTasks'
+      );
+    }
+    showLoadingAndModal('Acción enviada a validación', 'info', 400);
+  };
+
+  const handleValidateTechnicianAction = (actionId, approverName = 'Productor') => {
+    const timestamp = new Date().toISOString();
+    setTechnicianActions(prevActions =>
+      prevActions.map(action => {
+        if (action.id !== actionId) return action;
+        const updates = [
+          ...(action.updates || []),
+          {
+            id: `${actionId}-u-${Date.now()}`,
+            authorRole: 'producer',
+            authorName: approverName,
+            message: 'Trabajo validado y cerrado.',
+            timestamp
+          }
+        ];
+        return { ...action, status: 'validated', updates, lastUpdate: timestamp };
+      })
+    );
+    showLoadingAndModal('Acción técnica validada', 'success', 300);
+  };
+
+  const handleMarkAsRead = (notificationId) => {
+    if (!notificationId) return;
+    setNotifications(prev =>
+      prev.map(notification => {
+        if (notificationId === 'all') {
+          return notification.read ? notification : { ...notification, read: true };
+        }
+        if (notification.id === notificationId) {
+          return { ...notification, read: true };
+        }
+        return notification;
+      })
+    );
+  };
   
   const handleSaveInspectionModule = (alertId, partialInspectionData, finalize = false) => {
     // ... (Sin cambios) ...
@@ -773,7 +1212,6 @@ function App() {
   };
 
   const handleRegisterTechnician = (name, zone) => { /* ... */ };
-  const handleUpdateTechnicianProfile = (specialties) => { /* ... */ };
   
   const handleEditFinca = (fincaId) => {
     // ... (Sin cambios) ...
@@ -782,6 +1220,12 @@ function App() {
       setFincaToEdit(finca); 
       setCurrentPage('fincaRegistration'); 
     }
+  };
+
+  const handleSaveImageAnalysis = analysis => {
+    if (!analysis) return;
+    setImageAnalyses(prev => [analysis, ...prev]);
+    setModal({ show: true, message: 'Análisis de imagen guardado correctamente.', type: 'success' });
   };
 
   const handleRegisterFinca = (fincaData) => {
@@ -904,24 +1348,106 @@ function App() {
         // ... (Sin cambios) ...
         switch (currentPage) {
           case 'managerDashboard':
-            return <ManagerDashboard alerts={alerts} visits={visits} technicians={technicians} onNavigate={handleNavigate} />;
+            return (
+              <ManagerDashboard
+                alerts={alerts}
+                visits={visits}
+                technicians={technicians}
+                tasks={tasks}
+                producers={producers}
+                containmentPlans={containmentPlans}
+                onNavigate={handleNavigate}
+              />
+            );
           case 'technicianControl':
-            return <TechnicianControl technicians={technicians} onNavigate={handleNavigate} onShowRegisterModal={() => setRegisterTechModal(true)} />;
+            return (
+              <TechnicianControl
+                technicians={technicians}
+                alerts={alerts}
+                onNavigate={handleNavigate}
+                onShowRegisterModal={() => setRegisterTechModal(true)}
+              />
+            );
           case 'visitorReport':
             return <VisitorReport visits={visits} fincas={fincas} pageData={pageData} onNavigate={handleNavigate} />;
+          case 'producerControlCenter':
+            return (
+              <ProducerControlCenter
+                producers={producers}
+                alerts={alerts}
+              tasks={tasks}
+              workers={workers}
+              containmentPlans={containmentPlans}
+              visits={visits}
+              selfAssessments={selfAssessments}
+              onNavigate={handleNavigate}
+            />
+          );
+          case 'fincaExecutiveSummary':
+            return (
+              <FincaExecutiveSummary
+                producers={producers}
+                alerts={alerts}
+                tasks={tasks}
+                visits={visits}
+                containmentPlans={containmentPlans}
+                certificationHistory={certificationHistory}
+                technicians={technicians}
+                pageData={pageData}
+                onDownloadSummary={handleGenerateFincaSummaryPDF}
+                onNavigate={handleNavigate}
+              />
+            );
+          case 'technicianPerformance':
+            return (
+              <TechnicianPerformanceDashboard
+                technicians={technicians}
+                alerts={alerts}
+                tasks={tasks}
+                technicianActions={technicianActions}
+                onNavigate={handleNavigate}
+                pageData={pageData}
+              />
+            );
           case 'alertTriage':
             return <AlertTriageView alerts={alerts} technicians={technicians} onAssignAlert={handleAssignAlert} setModal={setModal} pageData={pageData} onNavigate={handleNavigate} />; 
           case 'technicianSchedule':
             return <TechnicianSchedule technician={pageData || technicians[0]} alerts={alerts} onNavigate={handleNavigate} />;
           default:
-            return <ManagerDashboard alerts={alerts} visits={visits} technicians={technicians} onNavigate={handleNavigate} />;
+            return (
+              <ManagerDashboard
+                alerts={alerts}
+                visits={visits}
+                technicians={technicians}
+                tasks={tasks}
+                producers={producers}
+                containmentPlans={containmentPlans}
+                onNavigate={handleNavigate}
+              />
+            );
         }
 
       case 'producer':
         switch (currentPage) {
           // ... (Sin cambios en otros cases) ...
           case 'producerDashboard':
-            return <ProducerDashboard producer={currentUser} alerts={alerts} visits={visits} tasks={tasks} technicians={technicians} onNavigate={handleNavigate} />;
+            return (
+              <ProducerDashboard
+                producer={currentUser}
+                alerts={alerts}
+                visits={visits}
+                tasks={tasks}
+                technicians={technicians}
+                onNavigate={handleNavigate}
+                visitNotes={producerVisitNotes}
+                visitEvidence={producerVisitEvidence}
+                onVisitNoteChange={handleProducerVisitNoteChange}
+                onVisitEvidenceChange={handleProducerVisitEvidenceChange}
+                visitFollowups={producerVisitFollowups}
+                onVisitFollowupToggle={handleProducerVisitFollowupToggle}
+                selfAssessment={selfAssessments[currentUser?.id]}
+              />
+            );
           case 'reportAlert':
             return <AlertReportForm producer={currentUser} onSubmitAlert={handleSubmitAlert} setModal={setModal} onNavigate={handleNavigate} />;
           
@@ -935,6 +1461,16 @@ function App() {
               pageData={pageData} 
               onGenerateAlertPDF={handleGenerateAlertPDF} // <-- Pasa la función modificada
             />;
+
+          case 'producerSelfCheck':
+            return (
+              <ProducerSelfCheck
+                producer={currentUser}
+                savedAssessment={selfAssessments[currentUser.id]}
+                onSaveAssessment={handleSaveSelfAssessment}
+                onNavigate={handleNavigate}
+              />
+            );
           
           case 'visitorApproval': 
             const myFincaIds = currentUser.fincas.map(f => f.id);
@@ -944,16 +1480,22 @@ function App() {
             const myFincaIdsLog = currentUser.fincas.map(f => f.id);
             const producerLog = visits.filter(v => myFincaIdsLog.includes(v.fincaId));
             return <ProducerVisitorLog producerLog={producerLog} onGeneratePDF={handleGeneratePDF} producer={currentUser} onNavigate={handleNavigate} />;
-          case 'producerTasks':
-            return <ProducerTasks 
-              producer={currentUser} 
-              tasks={tasks} 
-              onCompleteTask={handleCompleteTask} 
-              onShowTraining={handleShowTraining} 
-              pageData={pageData} 
+        case 'producerTasks':
+          return (
+            <ProducerTasks
+              producer={currentUser}
+              tasks={tasks}
+              technicianActions={technicianActions}
+              onCompleteTask={handleCompleteTask}
+              onShowTraining={handleShowTraining}
+              pageData={pageData}
               completedTrainingIds={completedTrainingIds}
-              onNavigate={handleNavigate} 
-            />;
+              onValidateTechnicianAction={actionId =>
+                handleValidateTechnicianAction(actionId, currentUser.name)
+              }
+              onNavigate={handleNavigate}
+            />
+          );
           case 'containmentPlans':
             const myPlans = containmentPlans.filter(p => p.producerId === currentUser.id);
             return <ContainmentPlanViewer
@@ -964,11 +1506,32 @@ function App() {
               onNavigate={handleNavigate}
             />;
           case 'producerCertification':
-            return <ProducerCertification 
-              certificationHistory={certificationHistory}
-              onShowHistoryModal={setCertHistoryModal} 
-              onNavigate={handleNavigate}
-            />;
+            return <ProducerCertification certificationHistory={certificationHistory} />;
+          case 'producerClimateLab':
+            return (
+              <ProducerClimateLab
+                producer={currentUser}
+                onNavigate={handleNavigate}
+              />
+            );
+          case 'imageAnalytics': {
+            const producerFincaOptions = (currentUser.fincas || []).map(f => ({
+              id: f.id,
+              name: f.name,
+              producerId: currentUser.id,
+              producerName: currentUser.owner || currentUser.name
+            }));
+            const myAnalyses = imageAnalyses.filter(analysis => analysis.producerId === currentUser.id);
+            return (
+              <ImageAnalytics
+                role="producer"
+                currentUser={currentUser}
+                fincas={producerFincaOptions}
+                analyses={myAnalyses}
+                onSaveAnalysis={handleSaveImageAnalysis}
+              />
+            );
+          }
           case 'notifications':
             return <NotificationCenter
               notifications={notifications.filter(n => n.producerId === currentUser.id)}
@@ -981,6 +1544,19 @@ function App() {
               onNavigate={handleNavigate} 
               onEditFinca={handleEditFinca}
             />;
+          case 'producerSuspicionInbox': {
+            const mySuspicions = workerSuspicions.filter(s => s.producerId === currentUser.id);
+            return (
+              <ProducerSuspicionInbox
+                producer={currentUser}
+                suspicions={mySuspicions}
+                workers={workers}
+                onConvertSuspicion={handleConvertSuspicionToAlert}
+                onDismissSuspicion={handleDismissSuspicion}
+                onNavigate={handleNavigate}
+              />
+            );
+          }
           case 'fincaRegistration':
             return <FincaRegistration 
               onRegisterFinca={handleRegisterFinca} 
@@ -989,14 +1565,17 @@ function App() {
               onUpdateFinca={handleUpdateFinca}
               fincaToEdit={fincaToEdit}
             />;
-          case 'manageWorkers':
-            const myWorkers = workers.filter(w => w.producerId === currentUser.id);
-            return <ManageWorkers 
-              workers={myWorkers} 
-              labores={LABORES_FINCA}
-              onRegisterWorker={handleRegisterWorker} 
-              onNavigate={handleNavigate}
-            />;
+        case 'manageWorkers':
+          const myWorkers = workers.filter(w => w.producerId === currentUser.id);
+          const myWorkerIdsForManage = myWorkers.map(w => w.id);
+          const myWorkerLogs = workLogs.filter(log => myWorkerIdsForManage.includes(log.workerId));
+          return <ManageWorkers 
+            workers={myWorkers} 
+            labores={LABORES_FINCA}
+            workLogs={myWorkerLogs}
+            onRegisterWorker={handleRegisterWorker} 
+            onNavigate={handleNavigate}
+          />;
           case 'workLogViewer':
             const myWorkerIds = workers.filter(w => w.producerId === currentUser.id).map(w => w.id);
             const myCompletedWorkLogs = workLogs.filter(log => 
@@ -1019,12 +1598,44 @@ function App() {
               onNavigate={handleNavigate}
             />;
           default:
-            return <ProducerDashboard producer={currentUser} alerts={alerts} visits={visits} tasks={tasks} technicians={technicians} onNavigate={handleNavigate} />;
+            return (
+              <ProducerDashboard
+                producer={currentUser}
+                alerts={alerts}
+                visits={visits}
+                tasks={tasks}
+                technicians={technicians}
+                onNavigate={handleNavigate}
+                visitNotes={producerVisitNotes}
+                visitEvidence={producerVisitEvidence}
+                onVisitNoteChange={handleProducerVisitNoteChange}
+                onVisitEvidenceChange={handleProducerVisitEvidenceChange}
+                visitFollowups={producerVisitFollowups}
+                onVisitFollowupToggle={handleProducerVisitFollowupToggle}
+                selfAssessment={selfAssessments[currentUser?.id]}
+              />
+            );
         }
 
       case 'technician':
-        // ... (Sin cambios) ...
         switch (currentPage) {
+          case 'technicianCommandCenter':
+            return (
+              <TechnicianCommandCenter
+                currentUser={currentUser}
+                alerts={alerts}
+                visits={visits}
+                tasks={tasks}
+                technicianActions={technicianActions}
+                onLogActionProgress={(actionId, note) =>
+                  handleTechnicianActionProgress(actionId, note, currentUser.name)
+                }
+                onSubmitAction={(actionId, note) =>
+                  handleTechnicianActionSubmit(actionId, note, currentUser.name)
+                }
+                onUpdateActionMeta={handleTechnicianActionMeta}
+              />
+            );
           case 'technicianSchedule':
             return <TechnicianSchedule technician={currentUser} alerts={alerts} onNavigate={handleNavigate} />;
           case 'technicianInspection':
@@ -1035,13 +1646,50 @@ function App() {
               setModal={setModal}
             />;
           case 'technicianProfile':
-            return <TechnicianProfile 
-              currentUser={currentUser} 
-              onSaveProfile={handleUpdateTechnicianProfile} 
-              onNavigate={handleNavigate}
-            />;
+            return (
+              <TechnicianProfile
+                currentUser={currentUser}
+                alerts={alerts}
+                visits={visits}
+                tasks={tasks}
+                onSaveProfile={handleUpdateTechnicianProfile}
+                onNavigate={handleNavigate}
+              />
+            );
+          case 'imageAnalytics': {
+            const technicianFincas = fincas.map(f => ({
+              id: f.id,
+              name: f.name,
+              producerId: f.producerId,
+              producerName: f.owner
+            }));
+            return (
+              <ImageAnalytics
+                role="technician"
+                currentUser={currentUser}
+                fincas={technicianFincas}
+                analyses={imageAnalyses}
+                onSaveAnalysis={handleSaveImageAnalysis}
+              />
+            );
+          }
           default:
-            return <TechnicianSchedule technician={currentUser} alerts={alerts} onNavigate={handleNavigate} />;
+            return (
+              <TechnicianCommandCenter
+                currentUser={currentUser}
+                alerts={alerts}
+                visits={visits}
+                tasks={tasks}
+                technicianActions={technicianActions}
+                onLogActionProgress={(actionId, note) =>
+                  handleTechnicianActionProgress(actionId, note, currentUser.name)
+                }
+                onSubmitAction={(actionId, note) =>
+                  handleTechnicianActionSubmit(actionId, note, currentUser.name)
+                }
+                onUpdateActionMeta={handleTechnicianActionMeta}
+              />
+            );
         }
       
       case 'worker':
@@ -1053,7 +1701,16 @@ function App() {
             return <WorkerProfile 
               worker={currentUser}
               labor={LABORES_FINCA.find(l => l.value === currentUser.labor)}
+              laborOptions={LABORES_FINCA}
               onNavigate={handleNavigate}
+              knowledgeCheck={workerKnowledgeChecks[currentUser.id]}
+              needsKnowledgeCheck={workerNeedsKnowledgeCheck(currentUser.id)}
+              trainingTask={workerTrainingTasks[currentUser.id]}
+              onCompleteTraining={() => handleCompleteWorkerTraining(currentUser.id)}
+              knowledgeQuestions={WORKER_KNOWLEDGE_QUESTIONS}
+              onCompleteKnowledgeCheck={(result) => handleSaveWorkerKnowledgeCheck(currentUser.id, result)}
+              onUpdateProfile={(updates) => handleUpdateWorkerProfile(currentUser.id, updates)}
+              onLaunchTraining={handleShowTraining}
             />;
           case 'submitWorkLog':
             const myPendingLogs = workLogs.filter(log => 
@@ -1065,12 +1722,42 @@ function App() {
               onSubmitWorkLog={handleSubmitWorkLog}
               onNavigate={handleNavigate}
               cintasOptions={CINTAS_COSECHA}
+              onSubmitSuspicion={handleSubmitSuspicion}
+              worker={currentUser}
+              knowledgeCheck={workerKnowledgeChecks[currentUser.id]}
+              needsKnowledgeCheck={workerNeedsKnowledgeCheck(currentUser.id)}
+              onCompleteKnowledgeCheck={(result) => handleSaveWorkerKnowledgeCheck(currentUser.id, result)}
+              knowledgeQuestions={WORKER_KNOWLEDGE_QUESTIONS}
+              trainingTask={workerTrainingTasks[currentUser.id]}
+              onCompleteTraining={() => handleCompleteWorkerTraining(currentUser.id)}
             />;
+          case 'workerTraining':
+            return (
+              <WorkerTrainingCenter
+                worker={currentUser}
+                knowledgeCheck={workerKnowledgeChecks[currentUser.id]}
+                needsKnowledgeCheck={workerNeedsKnowledgeCheck(currentUser.id)}
+                trainingTask={workerTrainingTasks[currentUser.id]}
+                onCompleteTraining={() => handleCompleteWorkerTraining(currentUser.id)}
+                knowledgeQuestions={WORKER_KNOWLEDGE_QUESTIONS}
+                onCompleteKnowledgeCheck={(result) => handleSaveWorkerKnowledgeCheck(currentUser.id, result)}
+                onLaunchTraining={handleShowTraining}
+              />
+            );
           default:
             return <WorkerProfile 
               worker={currentUser}
               labor={LABORES_FINCA.find(l => l.value === currentUser.labor)}
+              laborOptions={LABORES_FINCA}
               onNavigate={handleNavigate}
+              knowledgeCheck={workerKnowledgeChecks[currentUser.id]}
+              needsKnowledgeCheck={workerNeedsKnowledgeCheck(currentUser.id)}
+              trainingTask={workerTrainingTasks[currentUser.id]}
+              onCompleteTraining={() => handleCompleteWorkerTraining(currentUser.id)}
+              knowledgeQuestions={WORKER_KNOWLEDGE_QUESTIONS}
+              onCompleteKnowledgeCheck={(result) => handleSaveWorkerKnowledgeCheck(currentUser.id, result)}
+              onUpdateProfile={(updates) => handleUpdateWorkerProfile(currentUser.id, updates)}
+              onLaunchTraining={handleShowTraining}
             />;
         }
 
@@ -1193,3 +1880,18 @@ function App() {
 }
 
 export default App;
+  const handleTechnicianActionMeta = (actionId, meta) => {
+    if (!meta) return;
+    setTechnicianActions(prevActions =>
+      prevActions.map(action => {
+        if (action.id !== actionId) return action;
+        return {
+          ...action,
+          meta: {
+            ...(action.meta || {}),
+            ...meta,
+          },
+        };
+      })
+    );
+  };

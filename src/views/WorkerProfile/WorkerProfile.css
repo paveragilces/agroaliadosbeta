@@ -1,114 +1,339 @@
 /* En: src/views/WorkerProfile/WorkerProfile.css */
 /* --- ARCHIVO COMPLETO Y REDISEÑADO --- */
 
-.worker-profile-page .profile-header {
+.worker-profile-page .worker-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid #eef0f2;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(15, 107, 70, 0.08), rgba(10, 47, 82, 0.05));
+  margin-bottom: 14px;
+}
+
+.worker-profile-page .hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 107, 70, 0.1);
+  color: #0f6b46;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.worker-profile-page .hero-sub {
+  margin: 4px 0 0;
+  color: #6b7280;
+}
+
+.worker-profile-page .hero-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
-  border-bottom: 2px solid #a6e34b;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  gap: 12px;
 }
-.worker-profile-page .header-icon {
-  width: 48px;
-  height: 48px;
-  color: #005a3a;
+
+.worker-profile-page .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: #0f2f25;
 }
-.worker-profile-page .h1 {
-  margin: 0;
-  border: none;
-  padding: 0;
+
+.worker-profile-page .worker-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
 }
-.worker-profile-page .worker-id {
-  font-size: 1.1rem;
-  color: #777;
-  margin: 0;
+
+.worker-profile-page .stat-card {
+  border: 1px solid #eef0f2;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+}
+
+.worker-profile-page .stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(15, 107, 70, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f6b46;
+}
+
+.worker-profile-page .stat-label {
+  margin: 6px 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  color: #7a8a84;
+}
+
+.worker-profile-page .stat-value {
+  font-size: 18px;
+  color: #0f2f25;
 }
 
 .worker-profile-page .profile-grid {
   display: grid;
-  /* --- CAMBIO: La información ahora es 40% y el QR 60% --- */
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   align-items: flex-start;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .worker-profile-page .profile-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.worker-profile-page .worker-knowledge {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.knowledge-card {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 107, 70, 0.18);
+  padding: 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  background: linear-gradient(135deg, rgba(15, 107, 70, 0.06), rgba(10, 47, 82, 0.04));
+}
+
+.knowledge-card h3 {
+  margin: 6px 0;
+  font-size: 1.2rem;
+}
+
+.knowledge-eyebrow {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin: 0;
+}
+
+.knowledge-meta {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.knowledge-hint {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #0f6b46;
+}
+
+.knowledge-card.status-refuerzo {
+  border-color: rgba(228, 79, 79, 0.3);
+  background: rgba(228, 79, 79, 0.06);
+}
+
+.knowledge-card.status-pendiente {
+  border-color: rgba(247, 181, 55, 0.4);
+  background: rgba(247, 181, 55, 0.08);
+}
+
+.training-card {
+  border: 1px dashed rgba(15, 107, 70, 0.4);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.training-desc {
+  margin: 6px 0 12px;
+  color: #475569;
+}
+
+.training-meta {
+  margin: 0 0 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.training-link-card {
+  border: 1px dashed rgba(15, 107, 70, 0.3);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(15, 107, 70, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.training-link-text {
+  margin: 0;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.training-video iframe {
+  width: 100%;
+  height: 200px;
+  border: none;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
 .worker-profile-page .qr-card,
 .worker-profile-page .details-card {
   background-color: #fff;
   border: 1px solid #eef0f2;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
 .worker-profile-page .h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 10px;
+  margin: 0;
+  border: none;
+  padding: 0;
 }
 
-.worker-profile-page .qr-card p {
-  font-size: 1rem;
-  color: #555;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* --- CAMBIO: Estilos para la credencial QR --- */
-.worker-profile-page .qr-code-badge {
-  max-width: 300px;
-  margin: 0 auto;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-.worker-profile-page .qr-badge-header {
-  background-color: #005a3a;
-  color: white;
-  padding: 8px 15px;
+.worker-profile-page .card-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.8rem;
+  margin-bottom: 10px;
+}
+
+.worker-profile-page .qr-helper {
+  margin: 0 0 12px;
+  color: #6b7280;
+}
+
+.worker-profile-page .qr-code-badge {
+  max-width: 320px;
+  margin: 0 auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+.worker-profile-page .qr-badge-header {
+  background-color: #0f6b46;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 .worker-profile-page .qr-code-container {
-  padding: 20px;
+  padding: 18px;
   background: #fff;
 }
 .worker-profile-page .qr-badge-footer {
-  background-color: #f7f9fa;
+  background-color: #f8fafc;
   padding: 12px 15px;
   text-align: center;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #e2e8f0;
 }
 .worker-profile-page .qr-name {
   display: block;
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #0f2f25;
 }
 .worker-profile-page .qr-id {
   display: block;
   font-size: 0.9rem;
-  color: #777;
+  color: #6b7280;
 }
 
-/* --- CAMBIO: Estilos para la tarjeta de detalles --- */
+.qr-pill-group {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qr-pill {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: #f1f5f9;
+  color: #0f2f25;
+}
+
+.qr-pill.status-apto {
+  background: rgba(15, 107, 70, 0.15);
+  color: #0f6b46;
+}
+
+.qr-pill.status-refuerzo {
+  background: rgba(228, 79, 79, 0.18);
+  color: #b42318;
+}
+
+.qr-pill.status-pendiente {
+  background: rgba(247, 181, 55, 0.18);
+  color: #b45309;
+}
+
+.qr-pill.warning {
+  background: rgba(228, 79, 79, 0.12);
+  color: #b42318;
+}
+
+.worker-edit-form .formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.worker-edit-form .formGroup {
+  margin-bottom: 16px;
+}
+
+.worker-edit-form .formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
 .worker-profile-page .worker-details-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.worker-profile-page .worker-contact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid #eef0f2;
+}
+
+.worker-profile-page .worker-contact .detail-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .worker-profile-page .worker-detail .detail-label {
   font-size: 0.8rem;
@@ -116,14 +341,16 @@
   text-transform: uppercase;
 }
 .worker-profile-page .worker-detail .detail-value {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f2f25;
 }
-/* Estilos para la Labor (movida arriba) */
 .worker-profile-page .worker-labor-primary {
-  padding-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 12px;
+  border: 1px solid #eef0f2;
+  border-radius: 12px;
+  background: #f9fbfa;
+  margin-bottom: 12px;
 }
 .worker-profile-page .worker-labor-primary .detail-label {
   font-size: 0.9rem;
@@ -132,8 +359,8 @@
   margin-bottom: 5px;
 }
 .worker-profile-page .worker-labor-primary .labor-name {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #005a3a;
-  margin: 0 0 10px 0;
+  color: #0f6b46;
+  margin: 0 0 8px 0;
 }

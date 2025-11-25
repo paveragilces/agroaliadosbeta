@@ -1,298 +1,320 @@
-/* En: src/views/ProducerCertification/ProducerCertification.css */
-/* --- ARCHIVO COMPLETO CON HEADER FUSIONADO --- */
-
-.container {
-  background-color: #ffffff;
+.producerCertificationPage {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f5fbf6 0%, #fefefe 75%);
+  box-shadow: 0 20px 50px rgba(15, 55, 40, 0.12);
 }
 
-.h1 {
-  font-size: 28px;
-  color: #005a3a;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #a6e34b;
-  padding-bottom: 10px;
+.certHero {
+  border-radius: 18px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: #0f172a;
+  background: var(--hero-surface);
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  box-shadow: 0 18px 38px rgba(15, 55, 40, 0.1);
 }
 
-.h2 {
-  font-size: 22px;
-  color: #222;
-  margin-bottom: 15px;
-  font-weight: 600;
+.certHero-certified {
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), #ffffff);
 }
 
-/* --- CAMBIO 1: Nuevo contenedor principal --- */
-.certificationContainer {
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 30px;
-  border: 1px solid;
-  transition: box-shadow 0.2s ease-in-out;
-}
-.certificationContainer:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-}
-.certificationContainer.certified {
-  border-color: #5cb85c;
-}
-.certificationContainer.pending {
-  border-color: #f0ad4e;
+.certHero-pending {
+  background: linear-gradient(135deg, rgba(255, 248, 235, 0.9), #ffffff);
 }
 
-/* Modificamos el header para que no tenga borde inferior */
-.certificationHeader {
+.certHero-top {
   display: flex;
   align-items: stretch;
+  gap: 20px;
 }
-.certificationHeader.certified {
-  background-color: #f0f9f5;
-}
-.certificationHeader.pending {
-  background-color: #fffaf5;
-}
-/* ... (El resto de .certificationBadge, .certificationSummary, .certificationScoreBox no cambia) ... */
-.certificationBadge {
-  display: flex;
+
+.certHero-badge {
+  width: 70px;
+  height: 70px;
+  border-radius: 20px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 30px;
+  background: rgba(15, 118, 110, 0.12);
+  color: #0f766e;
+  flex-shrink: 0;
+  box-shadow: 0 10px 24px rgba(15, 55, 40, 0.12);
 }
-.certificationHeader.certified .certificationBadge {
-  background-color: #5cb85c;
-  color: white;
-}
-.certificationHeader.pending .certificationBadge {
-  background-color: #f0ad4e;
-  color: white;
-}
-.certificationSummary {
+
+.certHero-copy {
   flex: 1;
-  padding: 20px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.summaryTitle {
-  font-size: 20px;
-  font-weight: 700;
+
+.certHero-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  color: #0f766e;
 }
-.certificationHeader.certified .summaryTitle {
-  color: #005a3a;
+
+.certHero-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #0b2d21;
 }
-.certificationHeader.pending .summaryTitle {
-  color: #f0ad4e;
+
+.certHero-description {
+  margin: 0;
+  color: #475569;
+  max-width: 600px;
 }
-.certificationSummary p {
-  font-size: 15px;
-  color: #4A5568;
-  margin: 5px 0 0 0;
-}
-.certificationScoreBox {
+
+.certHero-score {
+  width: 140px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
-  padding: 20px 30px;
-  border-left: 1px solid #eef0f2;
-}
-.scoreLabel {
-  font-size: 14px;
+  gap: 6px;
   font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.certHero-score span {
+  font-size: 0.85rem;
   color: #718096;
 }
-.scoreValue {
-  font-size: 36px;
-  font-weight: 700;
-  color: #005a3a;
-  line-height: 1.2;
+
+.certHero-score strong {
+  font-size: 2.4rem;
+  color: #0f172a;
 }
 
-/* --- CAMBIO 3: Nuevo botón "Ver Desglose" para el header --- */
-.headerCta {
-  background: none;
-  border: none;
-  padding: 0;
-  margin-top: 15px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: #005a3a;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.certHero-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
 }
-.headerCta:hover {
-  text-decoration: underline;
-}
-
-/* --- CAMBIO 2: Eliminada la sección estática .certificationBreakdown --- */
 
 .progressGrid {
-  margin-top: 25px;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 columnas */
-  gap: 15px 25px;
+  gap: 16px 24px;
 }
 
-/* --- Historial de Revisiones (Sin cambios) --- */
-.certificationHistory {
-  margin-top: 30px;
+.certMetricCard {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 12px 24px rgba(15, 55, 40, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.certificationHistory .h2 {
-  border-bottom: 1px solid #eef0f2;
+
+.certMetricCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(15, 55, 40, 0.1);
 }
+
+.certMetricCard .metric-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #64748b;
+}
+
+.certMetricCard .metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.certMetricCard p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.certModules {
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 26px 28px;
+  box-shadow: 0 16px 32px rgba(15, 55, 40, 0.1);
+}
+
+.certModules-header {
+  margin-bottom: 16px;
+}
+
+.certModules-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  margin: 0;
+  color: #94a3b8;
+}
+
+.certModules-header h2 {
+  margin: 6px 0;
+  font-size: 1.3rem;
+  color: #0f172a;
+}
+
+.certModules-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.progressGrid.moduleGrid {
+  margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.certHistorySection {
+  border-radius: 18px;
+  padding: 26px 28px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.certHistoryHeader {
+  margin-bottom: 18px;
+}
+
+.certHistoryHeader h2 {
+  margin: 6px 0;
+  font-size: 1.3rem;
+  color: #0f172a;
+}
+
+.certHistoryHeader p {
+  margin: 0;
+  color: #64748b;
+}
+
 .historyList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
-.historyItemContainer {
-  background-color: #fff;
-  border: 1px solid #eef0f2;
-  border-radius: 8px;
-  transition: all 0.2s ease-in-out;
+
+.historyCard {
+  border-radius: 18px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: #ffffff;
+  box-shadow: 0 12px 24px rgba(15, 55, 40, 0.08);
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.historyItemContainer:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+
+.historyCard.open {
+  border-color: rgba(15, 118, 110, 0.3);
+  box-shadow: 0 18px 36px rgba(15, 55, 40, 0.12);
 }
-.historyItem {
-  background: none;
-  border: none;
+
+.historyCard-header {
   width: 100%;
-  font-family: inherit;
+  border: none;
+  background: transparent;
+  padding: 16px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  text-align: left;
+  justify-content: space-between;
+  gap: 12px;
+  font: inherit;
   cursor: pointer;
 }
-.historyItemContainer:hover .historyItem {
-  background-color: #f7f9fa;
-}
-.historyItemContainer:hover .historyCta {
-  color: #005a3a;
-}
-.historyInfo {
+
+.historyCard-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
-.historyDate {
-  font-size: 16px;
+
+.history-date {
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #2D3748;
+  color: #0f172a;
 }
-.historyScore {
-  font-size: 14px;
-  color: #4A5568;
+
+.history-score {
+  font-size: 0.85rem;
+  color: #475569;
 }
-.historyActions {
+
+.historyCard-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
-.historyCta {
-  font-size: 14px;
+
+.tag {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #718096;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: color 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
+
+.tag-aprobado {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+}
+
+.tag-no-aprobado {
+  background: rgba(248, 113, 113, 0.16);
+  color: #b91c1c;
+}
+
 .historyCtaIcon {
-  transform: rotate(-90deg);
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
+
 .historyCtaIcon.expanded {
-  transform: rotate(0deg);
+  transform: rotate(180deg);
 }
-
-/* --- CAMBIO 4: Nuevo desglose para el header (animación smooth) --- */
-.currentBreakdown {
-  background-color: #fdfdfd; /* Fondo blanco para el desglose */
-  overflow: hidden;
-  max-height: 0; 
-  opacity: 0;
-  padding: 0 25px; 
-  margin-top: 0;
-  border-top: none;
-  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s ease-out, margin-top 0.4s ease-out;
-}
-.currentBreakdown.expanded {
-  max-height: 500px; 
-  opacity: 1;
-  padding: 20px 25px 25px 25px; 
-  border-top: 1px solid #eef0f2;
-  margin-top: -1px;
-  transition: max-height 0.4s ease-in, opacity 0.3s ease-in, padding 0.4s ease-in;
-}
-.currentBreakdown .progressGrid {
-  margin-top: 0; /* Quitamos el margen superior */
-}
-
 
 .historyBreakdown {
-  background-color: #fbfdfe; 
+  max-height: 0;
   overflow: hidden;
-  max-height: 0; 
-  opacity: 0;
-  padding: 0 25px; 
-  margin-top: 0;
-  border-top: none;
-  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s ease-out, margin-top 0.4s ease-out;
+  transition: max-height 0.35s ease, padding 0.3s ease;
+  padding: 0 20px;
 }
+
 .historyBreakdown.expanded {
-  max-height: 500px; 
-  opacity: 1;
-  padding: 20px 25px 25px 25px; 
-  border-top: 1px solid #f0f0f0;
-  margin-top: -1px;
-  transition: max-height 0.4s ease-in, opacity 0.3s ease-in, padding 0.4s ease-in;
+  padding: 16px 20px 22px;
+  max-height: 480px;
 }
-.historyBreakdown .progressGrid {
-  margin-top: 20px;
-  gap: 10px 20px;
+
+.historyBreakdown .moduleGrid {
+  margin: 0;
 }
-.tag {
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.tag-aprobado {
-  background-color: #e8f5e9;
-  color: #4caf50;
-}
-.tag-no-aprobado {
-  background-color: #ffebee;
-  color: #f44336;
-}
-.historyModalContent .h2 {
-  margin-top: 0;
-  color: #005a3a;
-  border: none;
-  padding: 0;
-}
-.historyModalContent .progressGrid {
-  grid-template-columns: 1fr;
-}
+
 @media (max-width: 768px) {
-  .progressGrid {
-    grid-template-columns: 1fr;
-  }
-  .certificationHeader {
+  .certHero-top {
     flex-direction: column;
   }
-  .certificationScoreBox {
-    border-left: none;
-    border-top: 1px solid #eef0f2;
-    align-items: flex-start;
-    padding: 15px 25px;
+
+  .certHero-score {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .progressGrid.moduleGrid {
+    grid-template-columns: 1fr;
   }
 }

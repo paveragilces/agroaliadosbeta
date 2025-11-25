@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import FilterPanel from '../../components/ui/FilterPanel/FilterPanel';
 import './ProducerAlertList.css';
 
 // --- CAMBIO: Importaciones de Lucide ---
@@ -47,6 +48,31 @@ const MONTHS = [
   { value: '12', label: 'Diciembre' }
 ];
 
+const getSafeDate = (value) => {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const getYearToken = (value) => {
+  const parsed = getSafeDate(value);
+  if (parsed) return String(parsed.getFullYear());
+  if (typeof value === 'string' && value.length >= 4) return value.substring(0, 4);
+  return null;
+};
+
+const getMonthToken = (value) => {
+  const parsed = getSafeDate(value);
+  if (parsed) return String(parsed.getMonth() + 1).padStart(2, '0');
+  if (typeof value === 'string' && value.length >= 7) return value.substring(5, 7);
+  return null;
+};
+
+const getDateSortValue = (value) => {
+  const parsed = getSafeDate(value);
+  return parsed ? parsed.getTime() : 0;
+};
+
 const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData, onGenerateAlertPDF }) => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
@@ -66,10 +92,10 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
   }, [pageData]);
 
   // --- CAMBIO: Generar opciones de finca ---
-  const fincaOptions = useMemo(
-    () => [{ id: 'all', name: 'Todas mis Fincas' }, ...producer.fincas],
-    [producer.fincas]
-  );
+  const fincaOptions = useMemo(() => {
+    const fincas = Array.isArray(producer?.fincas) ? producer.fincas : [];
+    return [{ id: 'all', name: 'Todas mis Fincas' }, ...fincas];
+  }, [producer?.fincas]);
 
   const getTechnicianName = (techId) => {
     const tech = technicians.find(t => t.id === techId);
@@ -136,13 +162,17 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
   }, [alerts]);
 
   const uniqueYears = useMemo(() => {
-    const years = new Set(alerts.map(alert => alert.date.substring(0, 4)));
-    return Array.from(years).sort((a, b) => b - a);
+    const years = new Set(
+      alerts
+        .map(alert => getYearToken(alert.date))
+        .filter(Boolean)
+    );
+    return Array.from(years).sort((a, b) => Number(b) - Number(a));
   }, [alerts]);
 
   // --- CAMBIO: Lógica de filtro actualizada ---
   const filteredAlerts = useMemo(() => {
-    let sorted = [...alerts].sort((a, b) => new Date(b.date) - new Date(a.date));
+    let sorted = [...alerts].sort((a, b) => getDateSortValue(b.date) - getDateSortValue(a.date));
 
     // 1. Filtro de estado
     if (activeFilter !== 'all') {
@@ -156,16 +186,38 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
 
     // 3. Filtro de Año
     if (filterYear !== 'all') {
-      sorted = sorted.filter(alert => alert.date.substring(0, 4) === filterYear);
+      sorted = sorted.filter(alert => getYearToken(alert.date) === filterYear);
     }
 
     // 4. Filtro de Mes
     if (filterMonth !== 'all') {
-      sorted = sorted.filter(alert => alert.date.substring(5, 7) === filterMonth);
+      sorted = sorted.filter(alert => getMonthToken(alert.date) === filterMonth);
     }
 
     return sorted;
   }, [alerts, activeFilter, filterFinca, filterYear, filterMonth]); // Dependencia añadida
+
+  const formatGroupLabel = (date) => {
+    const month = date.toLocaleString('es-ES', { month: 'long' });
+    return `${month.charAt(0).toUpperCase() + month.slice(1)} ${date.getFullYear()}`;
+  };
+
+  const groupedAlerts = useMemo(() => {
+    const groupsMap = new Map();
+    filteredAlerts.forEach(alert => {
+      const date = getSafeDate(alert.date) || new Date();
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!groupsMap.has(key)) {
+        groupsMap.set(key, {
+          key,
+          label: formatGroupLabel(date),
+          alerts: []
+        });
+      }
+      groupsMap.get(key).alerts.push(alert);
+    });
+    return Array.from(groupsMap.values());
+  }, [filteredAlerts]);
 
   const renderAlertCard = (alert) => {
     const techName = getTechnicianName(alert.techId);
@@ -173,12 +225,14 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
     const priorityInfo = getPriorityInfo(alert.priority);
     const lastUpdate = formatDate(getLastUpdate(alert));
 
-    const d = new Date(alert.date);
+    const d = getSafeDate(alert.date) || new Date();
     const day = d.getUTCDate();
     const month = d.toLocaleString('es-ES', { month: 'short', timeZone: 'UTC' }).toUpperCase().replace('.', '');
 
     const photos = alert.photos ? Object.values(alert.photos).filter(Boolean) : [];
     const hasPhotos = photos.length > 0;
+    const symptoms = Array.isArray(alert.symptoms) ? alert.symptoms.filter(Boolean) : [];
+    const symptomsText = symptoms.length ? symptoms.join(', ') : 'Sin síntomas reportados';
 
     let managerDiagnosis = 'Sin diagnóstico';
     if (alert.possibleDisease && alert.possibleDisease.length > 0) {
@@ -195,7 +249,7 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
     return (
       <button
         key={alert.id}
-        className="alert-card"
+        className={`alert-card alert-card--${alert.status || 'default'}`}
         onClick={() => onNavigate('producerAlertList', alert)}
         title="Ver detalles de la alerta"
       >
@@ -244,7 +298,7 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
             <div className="mosaic-placeholder">
               <CameraOff size={24} />
               <span>No hay fotos, síntomas reportados:</span>
-              <p>{alert.symptoms.join(', ')}</p>
+              <p>{symptomsText}</p>
             </div>
           )}
         </div>
@@ -279,19 +333,54 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
     );
   };
 
-  const renderAlertList = () => (
-    <div className="alert-list-container">
-      {filteredAlerts.length > 0 ? (
-        filteredAlerts.map(alert => renderAlertCard(alert))
-      ) : (
+  const renderAlertList = () => {
+    if (groupedAlerts.length === 0) {
+      return (
         <div className="emptyState full-width">
           <Filter size={60} color="#ccc" />
           <h2>Sin alertas</h2>
           <p>No se encontraron alertas que coincidan con el filtro seleccionado.</p>
         </div>
-      )}
-    </div>
-  );
+      );
+    }
+
+    return (
+      <section className="alert-log-panel surface-card">
+        <div className="alert-log-panelHeader">
+          <div>
+            <p className="alert-log-eyebrow">Historial consolidado</p>
+            <h2>Registros de campo</h2>
+          </div>
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={() => onNavigate('producerDashboard')}
+          >
+            <ArrowLeft size={16} />
+            Volver al panel
+          </button>
+        </div>
+        <div className="alert-log-timeline">
+          {groupedAlerts.map(group => (
+            <section key={group.key} className="alert-log-group">
+              <header className="alert-log-groupHeader">
+                <div className="alert-log-title">
+                  <Calendar size={16} />
+                  <span>{group.label}</span>
+                </div>
+                <span className="alert-log-count">
+                  {group.alerts.length} {group.alerts.length === 1 ? 'alerta' : 'alertas'}
+                </span>
+              </header>
+              <div className="alert-log-groupBody">
+                {group.alerts.map(alert => renderAlertCard(alert))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+    );
+  };
 
   const renderStatusSummary = () => (
     <div className="status-summary">
@@ -317,57 +406,62 @@ const ProducerAlertList = ({ producer, alerts, technicians, onNavigate, pageData
     </div>
   );
 
-  const renderFiltersToolbar = () => (
-    <div className="filters-toolbar">
-      <div className="filters-toolbar-title">
-        <Filter />
-        <span>Explora alertas</span>
-      </div>
-      <div className="filter-selects">
-        {/* --- CAMBIO: Filtro de Finca Añadido --- */}
-        <div className="filter-select-wrapper">
-          <MapPin size={16} />
-          <select
-            className="filter-select"
-            value={filterFinca}
-            onChange={(e) => setFilterFinca(e.target.value)}
-          >
-            {fincaOptions.map(finca => (
-              <option key={finca.id} value={finca.id}>{finca.name}</option>
-            ))}
-          </select>
-        </div>
+  const renderFiltersToolbar = () => {
+    const pillGroups = [
+      {
+        id: 'alert-status',
+        label: 'Estado',
+        items: statusSummary.map(summary => ({
+          id: summary.key,
+          label: `${summary.label} (${summary.value})`,
+          active: activeFilter === summary.key,
+          onClick: () => setActiveFilter(summary.key)
+        }))
+      }
+    ];
 
-        <div className="filter-select-wrapper">
-          <Calendar />
-          <select
-            className="filter-select"
-            value={filterYear}
-            onChange={(e) => setFilterYear(e.target.value)}
-          >
-            <option value="all">Todos los años</option>
-            {uniqueYears.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-        </div>
+    const selectGroups = [
+      {
+        id: 'finca',
+        label: 'Finca',
+        value: filterFinca,
+        onChange: (event) => setFilterFinca(event.target.value),
+        icon: MapPin,
+        options: fincaOptions.map(finca => ({ value: finca.id, label: finca.name }))
+      },
+      {
+        id: 'year',
+        label: 'Año',
+        value: filterYear,
+        onChange: (event) => setFilterYear(event.target.value),
+        icon: Calendar,
+        options: [{ value: 'all', label: 'Todos los años' }, ...uniqueYears.map(year => ({ value: year, label: year }))]
+      },
+      {
+        id: 'month',
+        label: 'Mes',
+        value: filterMonth,
+        onChange: (event) => setFilterMonth(event.target.value),
+        icon: Calendar,
+        disabled: filterYear === 'all',
+        options: MONTHS.map(month => ({ value: month.value, label: month.label }))
+      }
+    ];
 
-        <div className="filter-select-wrapper">
-          <Calendar />
-          <select
-            className="filter-select"
-            value={filterMonth}
-            onChange={(e) => setFilterMonth(e.target.value)}
-            disabled={filterYear === 'all'}
-          >
-            {MONTHS.map(month => (
-              <option key={month.value} value={month.value}>{month.label}</option>
-            ))}
-          </select>
+    return (
+      <div className="filters-toolbar surface-card">
+        <div className="filters-toolbar-title">
+          <Filter />
+          <span>Explora alertas</span>
         </div>
+        <FilterPanel
+          className="filters-toolbar-panel"
+          pillGroups={pillGroups}
+          selectGroups={selectGroups}
+        />
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderAlertDetail = (alert) => {
     const techName = getTechnicianName(alert.techId);

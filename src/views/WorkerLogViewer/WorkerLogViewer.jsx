@@ -3,9 +3,24 @@
 
 import React, { useMemo, useState } from 'react';
 import EmptyState from '../../components/ui/EmptyState';
+import FilterPanel from '../../components/ui/FilterPanel/FilterPanel';
 import ColorPaletteSelector from '../../components/ui/ColorPaletteSelector/ColorPaletteSelector';
+import Modal from '../../components/ui/Modal';
 import { LABORES_FINCA } from '../../data/constants';
 import { ICONS } from '../../config/icons';
+import {
+  Activity,
+  Users,
+  Clock3,
+  Filter as FilterIcon,
+  MapPin,
+  CalendarClock,
+  Search,
+  Tags,
+  ClipboardList,
+  PlusCircle,
+  Layers
+} from 'lucide-react';
 import './WorkerLogViewer.css';
 
 const HOURS_IN_MS = 1000 * 60 * 60;
@@ -37,6 +52,7 @@ const WorkerLogViewer = ({
     endTime: '16:00',
     description: '',
   });
+  const [activeNote, setActiveNote] = useState(null);
 
   const cintaMap = useMemo(() => {
     const map = {};
@@ -112,6 +128,41 @@ const WorkerLogViewer = ({
     });
   }, [sortedLogs, workerFilter, fincaFilter, cintaFilter, dateRange, searchTerm, fincas, fromDate, toDate]);
 
+  const lastActivity = useMemo(() => {
+    if (sortedLogs.length === 0) {
+      return 'Sin actividad reciente';
+    }
+
+    const latest = sortedLogs[0];
+    const activityDate = latest.checkOut || latest.checkIn || latest.date;
+
+    if (!activityDate) {
+      return 'Sin actividad reciente';
+    }
+
+    return new Date(activityDate).toLocaleString('es-EC', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }, [sortedLogs]);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+
+    if (workerFilter !== 'all') count += 1;
+    if (fincaFilter !== 'all') count += 1;
+    if (cintaFilter !== 'all') count += 1;
+    if (dateRange !== 'all') count += 1;
+    if (searchTerm) count += 1;
+    if (fromDate) count += 1;
+    if (toDate) count += 1;
+
+    return count;
+  }, [workerFilter, fincaFilter, cintaFilter, dateRange, searchTerm, fromDate, toDate]);
+
   const metrics = useMemo(() => {
     const uniqueWorkers = new Set();
     let totalHours = 0;
@@ -136,6 +187,32 @@ const WorkerLogViewer = ({
     };
   }, [filteredLogs]);
 
+  const formatHours = (hours) => {
+    if (!hours) return '0 h';
+    return `${hours.toFixed(hours >= 10 ? 0 : 1)} h`;
+  };
+
+  const heroStats = [
+    {
+      label: 'Registros vistos',
+      value: metrics.totalLogs,
+      hint: 'Según los filtros activos.',
+      Icon: Activity,
+    },
+    {
+      label: 'Trabajadores',
+      value: metrics.activeWorkers,
+      hint: 'Con labores concluidas.',
+      Icon: Users,
+    },
+    {
+      label: 'Horas reportadas',
+      value: formatHours(metrics.totalHours),
+      hint: 'Check-in y check-out confirmados.',
+      Icon: Clock3,
+    },
+  ];
+
   const workerOptions = useMemo(() => {
     return workers
       .filter(worker => workLogs.some(log => log.workerId === worker.id))
@@ -147,6 +224,46 @@ const WorkerLogViewer = ({
       .filter(finca => workLogs.some(log => log.fincaId === finca.id))
       .map(finca => ({ value: finca.id, label: finca.name }));
   }, [fincas, workLogs]);
+
+  const rangeOptions = useMemo(() => ([
+    { value: 'all', label: 'Todo' },
+    { value: '7', label: '7 días' },
+    { value: '14', label: '14 días' },
+    { value: '30', label: '30 días' },
+    { value: '90', label: '90 días' },
+  ]), []);
+
+  const filterSelectGroups = useMemo(() => [
+    {
+      id: 'worker',
+      label: 'Trabajador',
+      value: workerFilter,
+      icon: Users,
+      onChange: event => setWorkerFilter(event.target.value),
+      options: [{ value: 'all', label: 'Todos los trabajadores' }, ...workerOptions],
+    },
+    {
+      id: 'finca',
+      label: 'Finca',
+      value: fincaFilter,
+      icon: MapPin,
+      onChange: event => setFincaFilter(event.target.value),
+      options: [{ value: 'all', label: 'Todas las fincas' }, ...fincaOptions],
+    },
+  ], [workerFilter, fincaFilter, workerOptions, fincaOptions]);
+
+  const filterPillGroups = useMemo(() => [
+    {
+      id: 'quick-range',
+      label: 'Rango rápido',
+      items: rangeOptions.map(option => ({
+        id: option.value,
+        label: option.label,
+        active: dateRange === option.value,
+        onClick: () => setDateRange(option.value),
+      })),
+    },
+  ], [rangeOptions, dateRange]);
 
   const resetFilters = () => {
     setWorkerFilter('all');
@@ -169,11 +286,6 @@ const WorkerLogViewer = ({
     return finca ? finca.name : 'N/A';
   };
 
-  const formatHours = (hours) => {
-    if (!hours) return '0 h';
-    return `${hours.toFixed(hours >= 10 ? 0 : 1)} h`;
-  };
-
   const formatDate = (value) => {
     if (!value) return '—';
     return new Date(value).toLocaleDateString('es-EC', {
@@ -181,6 +293,18 @@ const WorkerLogViewer = ({
       month: 'short',
       year: 'numeric',
     });
+  };
+
+  const getDateParts = (value) => {
+    if (!value) {
+      return { day: '—', rest: '' };
+    }
+    const day = new Date(value).toLocaleDateString('es-EC', { day: '2-digit' });
+    const rest = new Date(value).toLocaleDateString('es-EC', {
+      month: 'short',
+      year: 'numeric',
+    });
+    return { day, rest };
   };
 
   const formatTimeRange = (log) => {
@@ -260,64 +384,79 @@ const WorkerLogViewer = ({
   };
 
   return (
-    <div className="worker-log-viewer">
-      <header className="worker-log-viewer__header">
-        <div>
-          <p className="worker-log-viewer__eyebrow">Bitácora de campo</p>
-          <h1 className="worker-log-viewer__title">Registro de labores completadas</h1>
-          <p className="worker-log-viewer__subtitle">
+    <div className="container workerLogViewer">
+      <header className="workerLogViewer__hero">
+        <div className="workerLogViewer__heroContent">
+          <p className="workerLogViewer__heroEyebrow">Bitácora de campo</p>
+          <h1 className="h1 workerLogViewer__heroTitle">Registro de labores completadas</h1>
+          <p className="workerLogViewer__heroSubtitle">
             Supervisa las actividades finalizadas y publica nuevas labores para guiar a tu equipo.
           </p>
+
+          <div className="workerLogViewer__metaChips">
+            <span className="workerLogViewer__metaChip">
+              <Clock3 size={16} />
+              <span>Última actividad:</span>
+              <strong>{lastActivity}</strong>
+            </span>
+            <span className="workerLogViewer__metaChip">
+              <FilterIcon size={16} />
+              {activeFilterCount === 0
+                ? 'Sin filtros activos'
+                : `${activeFilterCount} filtro${activeFilterCount > 1 ? 's' : ''} aplicado${activeFilterCount > 1 ? 's' : ''}`}
+            </span>
+          </div>
         </div>
-        <div className="worker-log-viewer__actions">
+
+        <div className="workerLogViewer__heroActions">
           {onNavigate && (
             <button
               type="button"
-              className="worker-log-viewer__link"
+              className="button button-secondary workerLogViewer__ghostButton"
               onClick={() => onNavigate('manageWorkers')}
             >
+              <ClipboardList size={18} />
               Gestionar trabajadores
             </button>
           )}
           <button
             type="button"
-            className="worker-log-viewer__primary"
+            className="button btn-primary"
             onClick={() => setShowDraftForm(prev => !prev)}
           >
+            {showDraftForm ? <Layers size={18} /> : <PlusCircle size={18} />}
             {showDraftForm ? 'Cerrar creador de labor' : 'Publicar nueva labor'}
           </button>
         </div>
       </header>
 
-      <section className="worker-log-viewer__summary">
-        <article className="worker-log-viewer__summary-card">
-          <h3>Registros vistos</h3>
-          <p>{metrics.totalLogs}</p>
-          <span>Según los filtros activos.</span>
-        </article>
-        <article className="worker-log-viewer__summary-card">
-          <h3>Trabajadores</h3>
-          <p>{metrics.activeWorkers}</p>
-          <span>Con labores concluidas.</span>
-        </article>
-        <article className="worker-log-viewer__summary-card">
-          <h3>Horas reportadas</h3>
-          <p>{formatHours(metrics.totalHours)}</p>
-          <span>Check-in y check-out confirmados.</span>
-        </article>
+      <section className="workerLogViewer__statsRow">
+        {heroStats.map(({ label, value, hint, Icon }) => (
+          <article key={label} className="workerLogViewer__statCard">
+            <span className="workerLogViewer__statIcon">
+              <Icon size={22} strokeWidth={1.8} />
+            </span>
+            <div className="workerLogViewer__statCopy">
+              <span className="workerLogViewer__statLabel">{label}</span>
+              <strong className="workerLogViewer__statValue">{value}</strong>
+              <p className="workerLogViewer__statHint">{hint}</p>
+            </div>
+          </article>
+        ))}
       </section>
 
       {showDraftForm && (
-        <section className="worker-log-viewer__draft">
+        <section className="workerLogViewer__draft">
           <h2>Crear labor para tu equipo</h2>
           <p>
             Las labores publicadas aparecerán como pendientes para el trabajador seleccionado en su perfil diario.
           </p>
-          <form className="worker-log-viewer__draft-form" onSubmit={handleSubmitDraft}>
-            <div className="worker-log-viewer__draft-grid">
-              <label>
-                <span>Trabajador</span>
+          <form className="workerLogViewer__draftForm" onSubmit={handleSubmitDraft}>
+            <div className="workerLogViewer__draftGrid">
+              <label className="workerLogViewer__field">
+                <span className="label">Trabajador</span>
                 <select
+                  className="select"
                   value={draft.workerId}
                   onChange={(event) => handleDraftChange('workerId', event.target.value)}
                   required
@@ -328,9 +467,10 @@ const WorkerLogViewer = ({
                   ))}
                 </select>
               </label>
-              <label>
-                <span>Finca</span>
+              <label className="workerLogViewer__field">
+                <span className="label">Finca</span>
                 <select
+                  className="select"
                   value={draft.fincaId}
                   onChange={(event) => handleDraftChange('fincaId', event.target.value)}
                   required
@@ -341,18 +481,20 @@ const WorkerLogViewer = ({
                   ))}
                 </select>
               </label>
-              <label>
-                <span>Lote</span>
+              <label className="workerLogViewer__field">
+                <span className="label">Lote</span>
                 <input
                   type="text"
+                  className="input"
                   value={draft.lote}
                   onChange={(event) => handleDraftChange('lote', event.target.value)}
                   placeholder="Ej. Lote 03"
                 />
               </label>
-              <label>
-                <span>Labor</span>
+              <label className="workerLogViewer__field">
+                <span className="label">Labor</span>
                 <select
+                  className="select"
                   value={draft.labor}
                   onChange={(event) => handleDraftChange('labor', event.target.value)}
                 >
@@ -361,35 +503,38 @@ const WorkerLogViewer = ({
                   ))}
                 </select>
               </label>
-              <label>
-                <span>Fecha</span>
+              <label className="workerLogViewer__field">
+                <span className="label">Fecha</span>
                 <input
                   type="date"
+                  className="input"
                   value={draft.date}
                   onChange={(event) => handleDraftChange('date', event.target.value)}
                   required
                 />
               </label>
-              <label>
-                <span>Hora inicio</span>
+              <label className="workerLogViewer__field">
+                <span className="label">Hora inicio</span>
                 <input
                   type="time"
+                  className="input"
                   value={draft.startTime}
                   onChange={(event) => handleDraftChange('startTime', event.target.value)}
                 />
               </label>
-              <label>
-                <span>Hora fin</span>
+              <label className="workerLogViewer__field">
+                <span className="label">Hora fin</span>
                 <input
                   type="time"
+                  className="input"
                   value={draft.endTime}
                   onChange={(event) => handleDraftChange('endTime', event.target.value)}
                 />
               </label>
             </div>
 
-            <div className="worker-log-viewer__draft-cintas">
-              <span>Colores de cinta a trabajar</span>
+            <div className="workerLogViewer__draftCintas">
+              <span className="label">Colores de cinta a trabajar</span>
               <ColorPaletteSelector
                 options={cintasOptions}
                 selected={draft.cintas}
@@ -397,20 +542,21 @@ const WorkerLogViewer = ({
               />
             </div>
 
-            <label className="worker-log-viewer__draft-description">
-              <span>Notas para el trabajador</span>
+            <label className="workerLogViewer__draftDescription">
+              <span className="label">Notas para el trabajador</span>
               <textarea
                 rows="3"
+                className="textarea"
                 value={draft.description}
                 onChange={(event) => handleDraftChange('description', event.target.value)}
                 placeholder="Detalla objetivos, requisitos o recordatorios importantes."
               />
             </label>
 
-            <div className="worker-log-viewer__draft-actions">
+            <div className="workerLogViewer__draftActions">
               <button
                 type="button"
-                className="worker-log-viewer__ghost"
+                className="button button-secondary"
                 onClick={() => {
                   resetDraft();
                   setShowDraftForm(false);
@@ -420,7 +566,7 @@ const WorkerLogViewer = ({
               </button>
               <button
                 type="submit"
-                className="worker-log-viewer__primary"
+                className="button btn-primary"
                 disabled={!draft.workerId || !draft.fincaId || !draft.date || draft.cintas.length === 0}
               >
                 Publicar labor
@@ -430,86 +576,83 @@ const WorkerLogViewer = ({
         </section>
       )}
 
-      <section className="worker-log-viewer__filters">
-        <div className="worker-log-viewer__search">
-          <label htmlFor="log-search">Buscar</label>
-          <input
-            id="log-search"
-            type="search"
-            placeholder="Descripción o lote"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-          />
+      <section className="workerLogViewer__filtersCard">
+        <div className="workerLogViewer__filtersHeader">
+          <div className="workerLogViewer__filtersTitleWrap">
+            <span className="workerLogViewer__filtersIcon">
+              <FilterIcon size={18} />
+            </span>
+            <div>
+              <h2 className="workerLogViewer__filtersTitle">Historial de labores</h2>
+              <p className="workerLogViewer__filtersHint">
+                Refina la vista por equipo, finca o colores de cinta para ubicar rápidamente los registros.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="button button-secondary workerLogViewer__clearFilters"
+            onClick={resetFilters}
+            disabled={
+              workerFilter === 'all' &&
+              fincaFilter === 'all' &&
+              cintaFilter === 'all' &&
+              dateRange === 'all' &&
+              searchTerm === '' &&
+              fromDate === '' &&
+              toDate === ''
+            }
+          >
+            Limpiar filtros
+          </button>
         </div>
 
-        <div className="worker-log-viewer__selectors">
-          <div className="worker-log-viewer__chip-group" role="group" aria-label="Filtrar por trabajador">
-            <span className="worker-log-viewer__chip-group-label">Trabajador</span>
-            <button
-              type="button"
-              className={`worker-log-viewer__chip ${workerFilter === 'all' ? 'is-active' : ''}`}
-              onClick={() => setWorkerFilter('all')}
-            >
-              Todos
-            </button>
-            {workerOptions.map(option => (
-              <button
-                key={option.value}
-                type="button"
-                className={`worker-log-viewer__chip ${workerFilter === option.value ? 'is-active' : ''}`}
-                onClick={() => setWorkerFilter(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+        <FilterPanel
+          className="workerLogViewer__filterPanel"
+          selectGroups={filterSelectGroups}
+          pillGroups={filterPillGroups}
+        />
 
-          <div className="worker-log-viewer__chip-group" role="group" aria-label="Filtrar por finca">
-            <span className="worker-log-viewer__chip-group-label">Finca</span>
-            <button
-              type="button"
-              className={`worker-log-viewer__chip ${fincaFilter === 'all' ? 'is-active' : ''}`}
-              onClick={() => setFincaFilter('all')}
-            >
-              Todas
-            </button>
-            {fincaOptions.map(option => (
-              <button
-                key={option.value}
-                type="button"
-                className={`worker-log-viewer__chip ${fincaFilter === option.value ? 'is-active' : ''}`}
-                onClick={() => setFincaFilter(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          <label className="worker-log-viewer__range">
-            <span>Rango rápido</span>
-            <select value={dateRange} onChange={(event) => setDateRange(event.target.value)}>
-              <option value="all">Todo</option>
-              <option value="7">Últimos 7 días</option>
-              <option value="30">Últimos 30 días</option>
-              <option value="90">Últimos 90 días</option>
-            </select>
+        <div className="workerLogViewer__filtersGrid workerLogViewer__filtersGrid--secondary">
+          <label className="workerLogViewer__field workerLogViewer__searchField workerLogViewer__field--wide">
+            <span className="workerLogViewer__fieldLabel">
+              <Search size={16} aria-hidden="true" />
+              Buscar
+            </span>
+            <div className="workerLogViewer__searchInput">
+              <Search size={16} aria-hidden="true" />
+              <input
+                type="search"
+                className="input"
+                placeholder="Notas, labores o finca…"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+            </div>
           </label>
-        </div>
 
-        <div className="worker-log-viewer__date-search">
-          <label>
-            <span>Desde</span>
+          <label className="workerLogViewer__field">
+            <span className="workerLogViewer__fieldLabel">
+              <CalendarClock size={16} />
+              Desde
+            </span>
             <input
               type="date"
+              className="input"
               value={fromDate}
               max={toDate || undefined}
               onChange={(event) => setFromDate(event.target.value)}
             />
           </label>
-          <label>
-            <span>Hasta</span>
+
+          <label className="workerLogViewer__field">
+            <span className="workerLogViewer__fieldLabel">
+              <CalendarClock size={16} />
+              Hasta
+            </span>
             <input
               type="date"
+              className="input"
               value={toDate}
               min={fromDate || undefined}
               onChange={(event) => setToDate(event.target.value)}
@@ -517,12 +660,18 @@ const WorkerLogViewer = ({
           </label>
         </div>
 
-        <div className="worker-log-viewer__cinta-filter">
-          <span className="worker-log-viewer__cinta-filter-label">Filtrar por cinta trabajada</span>
-          <div className="worker-log-viewer__cinta-options">
+        <div className="workerLogViewer__cintaFilter">
+          <div className="workerLogViewer__cintaFilterHeader">
+            <span className="workerLogViewer__fieldLabel">
+              <Tags size={16} />
+              Colores de cinta
+            </span>
+            <span className="workerLogViewer__cintaHint">Enfócate en las tareas por color de cinta asignado.</span>
+          </div>
+          <div className="workerLogViewer__cintaOptions">
             <button
               type="button"
-              className={`worker-log-viewer__cinta-option ${cintaFilter === 'all' ? 'is-active' : ''}`}
+              className={`workerLogViewer__cintaOption ${cintaFilter === 'all' ? 'is-active' : ''}`}
               onClick={() => setCintaFilter('all')}
             >
               Todas
@@ -531,7 +680,7 @@ const WorkerLogViewer = ({
               <button
                 type="button"
                 key={option.value}
-                className={`worker-log-viewer__cinta-option ${cintaFilter === option.value ? 'is-active' : ''}`}
+                className={`workerLogViewer__cintaOption ${cintaFilter === option.value ? 'is-active' : ''}`}
                 style={{ '--cinta-color': option.color }}
                 onClick={() => toggleCintaFilter(option.value)}
               >
@@ -540,23 +689,6 @@ const WorkerLogViewer = ({
             ))}
           </div>
         </div>
-
-        <button
-          type="button"
-          className="worker-log-viewer__ghost"
-          onClick={resetFilters}
-          disabled={
-            workerFilter === 'all' &&
-            fincaFilter === 'all' &&
-            cintaFilter === 'all' &&
-            dateRange === 'all' &&
-            searchTerm === '' &&
-            fromDate === '' &&
-            toDate === ''
-          }
-        >
-          Limpiar filtros
-        </button>
       </section>
 
       {filteredLogs.length === 0 ? (
@@ -566,66 +698,137 @@ const WorkerLogViewer = ({
           message="Ajusta los filtros para revisar otra parte del historial."
         />
       ) : (
-        <section className="worker-log-viewer__table-wrapper">
-          <table className="worker-log-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Horario</th>
-                <th>Trabajador</th>
-                <th>Finca</th>
-                <th>Lote</th>
-                <th>Labor</th>
-                <th>Horas</th>
-                <th>Cintas</th>
-                <th>Notas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLogs.map(log => {
-                const cintas = log.cintas || [];
-                const workerName = getWorkerName(log.workerId);
-                const fincaName = getFincaName(log.fincaId);
-                const durationHours = log.checkIn && log.checkOut
-                  ? Math.max((new Date(log.checkOut) - new Date(log.checkIn)) / HOURS_IN_MS, 0)
-                  : 0;
-                const primaryCinta = cintas[0];
-                const primaryColor = primaryCinta ? getCintaDisplay(primaryCinta).color : 'rgba(31, 157, 102, 0.14)';
+        <section className="workerLogViewer__tableCard">
+          <div className="workerLogViewer__tableHeader">
+            <div className="workerLogViewer__tableTitle">
+              <span className="workerLogViewer__tableIcon">
+                <ClipboardList size={20} />
+              </span>
+              <div>
+                <h2>Registros completados</h2>
+                <p>
+                  {filteredLogs.length} resultado{filteredLogs.length === 1 ? '' : 's'} — Ordenados por fecha más reciente.
+                </p>
+              </div>
+            </div>
+          </div>
 
-                return (
-                  <tr key={log.id} style={{ '--worker-log-row-accent': primaryColor }}>
-                    <td data-label="Fecha">{formatDate(log.date)}</td>
-                    <td data-label="Horario">{formatTimeRange(log)}</td>
-                    <td data-label="Trabajador">{workerName}</td>
-                    <td data-label="Finca">{fincaName}</td>
-                    <td data-label="Lote">{log.lote || '—'}</td>
-                    <td data-label="Labor">{log.labor || 'Labor sin especificar'}</td>
-                    <td data-label="Horas">{formatHours(durationHours)}</td>
-                    <td data-label="Cintas" className="worker-log-table__cintas">
-                      {cintas.length === 0 ? (
-                        <span className="worker-log-table__cinta worker-log-table__cinta--empty">Sin cinta</span>
-                      ) : (
-                        cintas.map(value => {
-                          const cinta = getCintaDisplay(value);
-                          return (
-                            <span
-                              key={value}
-                              className="worker-log-table__cinta"
-                              style={{ '--cinta-color': cinta.color }}
-                            >
-                              {cinta.label}
-                            </span>
-                          );
-                        })
-                      )}
-                    </td>
-                    <td data-label="Notas" className="worker-log-table__notes">{log.description || 'Sin detalles registrados.'}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="workerLogViewer__tableWrapper">
+            <div className="workerLogTable">
+              <div className="workerLogTable__row workerLogTable__row--header">
+                <span>Fecha</span>
+                <span>Horario</span>
+                <span>Trabajador</span>
+                <span>Finca</span>
+                <span>Lote</span>
+                <span>Labor</span>
+                <span>Horas</span>
+                <span>Cintas</span>
+                <span>Notas</span>
+              </div>
+              {filteredLogs.map(log => {
+                  const cintas = log.cintas || [];
+                  const workerName = getWorkerName(log.workerId);
+                  const fincaName = getFincaName(log.fincaId);
+                  const durationHours = log.checkIn && log.checkOut
+                    ? Math.max((new Date(log.checkOut) - new Date(log.checkIn)) / HOURS_IN_MS, 0)
+                    : 0;
+                  const primaryCinta = cintas[0];
+                  const primaryColor = primaryCinta ? getCintaDisplay(primaryCinta).color : 'rgba(31, 157, 102, 0.14)';
+                  const notePreview = log.description || 'Sin detalles registrados.';
+                  const dateParts = getDateParts(log.date);
+
+                  return (
+                    <div
+                      key={log.id}
+                      className="workerLogTable__row"
+                      style={{ '--worker-log-row-accent': primaryColor }}
+                    >
+                      <div className="workerLogTable__cell workerLogTable__date">
+                        <span className="workerLogTable__dateDay">{dateParts.day}</span>
+                        <span className="workerLogTable__dateRest">{dateParts.rest}</span>
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__time">
+                        {formatTimeRange(log)}
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__text-group">
+                        <strong>{workerName}</strong>
+                        {log.workerId && <span>ID: {log.workerId}</span>}
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__text-group">
+                        <strong>{fincaName}</strong>
+                        {log.fincaId && <span>#{log.fincaId}</span>}
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__text-group">
+                        <strong>{log.lote || '—'}</strong>
+                        <span>Lote</span>
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__text-group">
+                        <strong>{log.labor || 'Sin especificar'}</strong>
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__hours">
+                        <strong>{formatHours(durationHours)}</strong>
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__cintas">
+                        {cintas.length === 0 ? (
+                          <span className="workerLogTable__cinta workerLogTable__cinta--empty">Sin cinta</span>
+                        ) : (
+                          cintas.map(value => {
+                            const cinta = getCintaDisplay(value);
+                            return (
+                              <span
+                                key={value}
+                                className="workerLogTable__cinta"
+                                style={{ '--cinta-color': cinta.color }}
+                                data-label={cinta.label}
+                              >
+                                <span className="sr-only">{cinta.label}</span>
+                              </span>
+                            );
+                          })
+                        )}
+                      </div>
+                      <div className="workerLogTable__cell workerLogTable__notes">
+                        {notePreview ? (
+                          <button
+                            type="button"
+                            className="workerLogTable__noteButton"
+                            onClick={() =>
+                              setActiveNote({
+                                date: formatDate(log.date),
+                                worker: workerName,
+                                finca: fincaName,
+                                note: notePreview,
+                              })
+                            }
+                          >
+                            Ver nota
+                          </button>
+                        ) : (
+                          <span className="workerLogTable__noNote">Sin nota</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
         </section>
+      )}
+
+      {activeNote && (
+        <Modal
+          title="Detalle de nota"
+          size="large"
+          onClose={() => setActiveNote(null)}
+        >
+          <div className="workerLogViewer__noteModal">
+            <p className="workerLogViewer__noteMeta"><strong>Fecha:</strong> {activeNote.date}</p>
+            <p className="workerLogViewer__noteMeta"><strong>Trabajador:</strong> {activeNote.worker}</p>
+            <p className="workerLogViewer__noteMeta"><strong>Finca:</strong> {activeNote.finca}</p>
+            <p className="workerLogViewer__noteText">{activeNote.note}</p>
+          </div>
+        </Modal>
       )}
     </div>
   );

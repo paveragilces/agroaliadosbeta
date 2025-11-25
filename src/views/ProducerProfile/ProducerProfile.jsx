@@ -169,6 +169,13 @@ const ProducerProfile = ({ producer, onNavigate, onEditFinca }) => {
           </button>
           <button
             type="button"
+            className="button button-secondary"
+            onClick={() => onNavigate('producerClimateLab')}
+          >
+            <Icon path={ICONS.thermometer} size={18} /> Laboratorio climático
+          </button>
+          <button
+            type="button"
             className="button btn-primary"
             onClick={() => onNavigate('fincaRegistration')}
           >

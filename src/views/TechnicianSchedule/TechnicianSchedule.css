@@ -1,101 +1,284 @@
-.container {
-  background-color: #ffffff;
+.techSchedule {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.techSchedule__hero {
+  border-radius: 26px;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+  background: linear-gradient(120deg, #063521, #0a6593 65%, #0b2d36);
+  color: #f8fafc;
+  box-shadow: 0 25px 65px rgba(6, 53, 33, 0.35);
+  display: grid;
+  grid-template-columns: minmax(220px, 1.1fr) minmax(220px, 1fr);
+  gap: 28px;
 }
 
-.h1 {
-  font-size: 28px;
-  color: #005a3a;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #a6e34b;
-  padding-bottom: 10px;
+.techSchedule__hero span {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  color: rgba(248, 250, 252, 0.75);
 }
 
-.h2 {
-  font-size: 22px;
-  color: #222;
-  margin-bottom: 15px;
+.techSchedule__hero h1 {
+  margin: 8px 0 10px;
+  font-size: 2.2rem;
+}
+
+.techSchedule__hero p {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.85);
+  line-height: 1.5;
+}
+
+.techSchedule__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.techSchedule__stats article {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(3, 12, 10, 0.35);
+  display: flex;
+  gap: 12px;
+}
+
+.techSchedule__statIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.techSchedule__stats span {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: rgba(248, 250, 252, 0.7);
+}
+
+.techSchedule__stats strong {
+  display: block;
+  font-size: 1.4rem;
+  margin-top: 4px;
+}
+
+.techSchedule__stats p {
+  margin: 4px 0 0;
+  color: rgba(248, 250, 252, 0.85);
+  font-size: 0.85rem;
+}
+
+.techSchedule__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.techSchedule__card {
+  border-radius: 22px;
+  border: 1px solid rgba(12, 67, 51, 0.12);
+  background: #ffffff;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.techSchedule__card--wide {
+  grid-column: span 2;
+}
+
+.techSchedule__card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.techSchedule__card h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #0f2f25;
+}
+
+.techSchedule__card p {
+  margin: 4px 0 0;
+  color: #5c6b66;
+}
+
+.techSchedule__chip {
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: rgba(10, 101, 147, 0.12);
+  color: #0a6593;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
   font-weight: 600;
 }
-.h2-today {
-  color: #d9534f;
+
+.techSchedule__chip--success {
+  background: rgba(15, 107, 70, 0.12);
+  color: #0f6b46;
 }
 
-.listItem {
+.techSchedule__empty {
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px dashed rgba(12, 67, 51, 0.25);
+  color: #5f6f69;
+  text-align: center;
+}
+
+.visitList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.visitCard {
+  border: 1px solid rgba(12, 67, 51, 0.12);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8fafc;
+}
+
+.visitCard--completed {
+  background: #f1f5f9;
+}
+
+.visitCard__meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  border: 1px solid #f0f0f0;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  font-size: 0.9rem;
+  color: #475569;
 }
 
-.listItemContent {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-.listItemContent p {
-  margin: 2px 0;
-}
-
-.listItemActions {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.farmName {
-  font-weight: bold;
-  font-size: 18px;
-}
-.managerComment {
-  color: #777;
-  font-style: italic;
-}
-
-/* Tags */
-.tag {
-  padding: 5px 12px;
-  border-radius: 99px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #fff;
+.visitCard__date {
   text-transform: uppercase;
-  margin-left: 0; /* Override */
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
 }
-.tag-high { background-color: #d9534f; color: #fff; }
-.tag-medium { background-color: #f0ad4e; color: #fff; }
-.tag-low { background-color: #5bc0de; color: #fff; }
-.tag-completed { background-color: #5cb85c; color: #fff; }
 
-/* Botones */
-.button {
-  background-color: #005a3a;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+.priorityBadge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+}
+
+.priorityBadge--high {
+  background: rgba(217, 83, 79, 0.15);
+  color: #b42318;
+}
+
+.priorityBadge--medium {
+  background: rgba(240, 173, 78, 0.18);
+  color: #a15a00;
+}
+
+.priorityBadge--low {
+  background: rgba(91, 192, 222, 0.18);
+  color: #0f4c81;
+}
+
+.visitCard__comment {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 5px rgba(0, 74, 47, 0.1);
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #4c5c56;
 }
 
-.button-secondary {
-  background-color: #f0f0f0;
-  color: #444;
-  padding: 10px 18px;
-  box-shadow: none;
+.visitCard__actions button {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(120deg, #0f6b46, #0b5033);
+  color: #ffffff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.timelineList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.timelineList li {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.timelineList__date {
+  font-weight: 600;
+  color: #0f2f25;
+}
+
+.timelineList button {
+  border: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: rgba(10, 101, 147, 0.12);
+  color: #0a6593;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.summaryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0f2f25;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .techSchedule__hero {
+    grid-template-columns: 1fr;
+  }
+
+  .techSchedule__card--wide {
+    grid-column: span 1;
+  }
 }

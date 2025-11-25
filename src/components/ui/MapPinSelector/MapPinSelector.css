@@ -1,83 +1,143 @@
 .mapPinContainer {
   position: relative;
   width: 100%;
-  border-radius: 12px;
+  border-radius: 16px;
   border: 1px solid #e0e0e0;
   background-color: #f7f9fa;
-  overflow: hidden; /* Importante para los bordes redondeados del mapa */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
-/* Contenedor del mapa Leaflet */
+.mapTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e6ecec;
+  background: #fff;
+}
+
+.mapStatusChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #0f5132;
+  background: rgba(15, 159, 110, 0.1);
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+
+.mapStatusChip svg {
+  color: #0f9f6e;
+}
+
+.button-compact {
+  padding: 8px 14px !important;
+  height: auto;
+  font-size: 14px;
+  border-radius: 999px;
+}
+
 .leaflet-container {
-  height: 350px;
+  height: 360px;
   width: 100%;
   z-index: 1;
 }
 
-/* Pin Fijo en el Centro */
 .mapPinCenter {
   position: absolute;
   top: 50%;
   left: 50%;
-  /* Centra el pin (mitad de altura - 350px/2, más la mitad del pin 48px/2) */
   transform: translate(-50%, -50%);
-  margin-top: -24px; /* Ajuste fino para la punta del pin */
+  margin-top: -20px;
   z-index: 2;
-  pointer-events: none; /* El pin no se puede clickear, el mapa sí */
+  pointer-events: none;
 }
 
 .mapInstructions {
   position: absolute;
-  top: 10px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(15, 18, 38, 0.75);
   color: white;
-  padding: 8px 15px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px;
   font-weight: 500;
   z-index: 3;
+  max-width: calc(100% - 40px);
+  text-align: center;
+  pointer-events: none;
 }
+
 .mapInstructions p {
   margin: 0;
 }
 
-.mapPinContainer .button {
-  width: 100%;
-  border-radius: 0 0 12px 12px;
-  height: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  z-index: 2; /* Asegura que esté sobre el mapa */
-  position: relative; /* Complementa el z-index */
+.polygonSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid #e6ecec;
+  border-bottom: 1px solid #e6ecec;
+  background: #fff;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.locationFeedback {
-  padding: 20px;
+.polygonSummary__info {
   display: flex;
   align-items: center;
-  gap: 15px;
-}
-.locationFeedback.success {
-  color: #005a3a;
-}
-.locationFeedback.error {
-  color: #d9534f;
-  background-color: #fff8f8;
-}
-.locationFeedback p {
-  margin: 4px 0 10px 0;
-  font-size: 15px;
-}
-.locationFeedback .button-secondary {
-  padding: 6px 12px;
-  font-size: 14px;
-  height: auto;
-  border-radius: 8px; /* Restaura el borde */
+  gap: 12px;
+  color: #102a43;
 }
 
-/* Estilos de botones (copiados de FincaRegistration.css) */
+.polygonSummary__info strong {
+  display: block;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.polygonSummary__info p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.polygonSummary__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mapActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  gap: 16px;
+}
+
+.mapActions .button {
+  flex: 0 0 auto;
+  min-width: 220px;
+  height: 48px;
+}
+
+.mapStatusMessage {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #0f4a3a;
+}
+
 .button {
   background-color: #005a3a;
   color: white;

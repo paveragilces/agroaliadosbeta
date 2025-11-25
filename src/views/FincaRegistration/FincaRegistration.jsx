@@ -5,6 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Icon from '../../components/ui/Icon';
 import Input from '../../components/ui/Input';
 import MapPinSelector from '../../components/ui/MapPinSelector/MapPinSelector';
+import ParcelDesigner from '../../components/ui/ParcelDesigner/ParcelDesigner';
 import { ICONS } from '../../config/icons';
 import './FincaRegistration.css'; // <-- Corregido
 
@@ -13,11 +14,11 @@ import './FincaRegistration.css'; // <-- Corregido
  * Formulario para REGISTRAR o MODIFICAR una finca.
  */
 const FincaRegistration = ({ 
-  onRegisterFinca, 
-  onUpdateFinca,  // <-- Nueva prop para guardar cambios
-  onNavigate, 
-  setModal,
-  fincaToEdit = null // <-- Prop para recibir la finca a editar
+  onRegisterFinca = () => {},
+  onUpdateFinca = () => {},
+  onNavigate = () => {},
+  setModal = () => {},
+  fincaToEdit = null
 }) => {
   
   const isEditMode = Boolean(fincaToEdit);
@@ -26,9 +27,16 @@ const FincaRegistration = ({
   const [hectares, setHectares] = useState('');
   const [loteCount, setLoteCount] = useState('');
   const [location, setLocation] = useState(null);
+  const [boundary, setBoundary] = useState(null);
   const [mapInstanceKey, setMapInstanceKey] = useState(() => (
     fincaToEdit ? `edit-${fincaToEdit.id}` : 'new'
   ));
+  const [parcelInitialLots, setParcelInitialLots] = useState(() => (fincaToEdit?.lotParcels || []));
+  const [lotParcels, setLotParcels] = useState(() => fincaToEdit?.lotParcels || []);
+  const [lotGuide, setLotGuide] = useState(() => fincaToEdit?.lotGuide || null);
+  const [parcelDesignerKey, setParcelDesignerKey] = useState(() =>
+    fincaToEdit ? `parcel-${fincaToEdit.id}` : 'parcel-new'
+  );
 
   // useEffect para rellenar o limpiar el formulario según el modo
   useEffect(() => {
@@ -45,13 +53,23 @@ const FincaRegistration = ({
           : ''
       );
       setLocation(fincaToEdit.location || null);
+      setBoundary(fincaToEdit.boundary || null);
       setMapInstanceKey(`edit-${fincaToEdit.id}`);
+      setParcelInitialLots(fincaToEdit.lotParcels || []);
+      setLotParcels(fincaToEdit.lotParcels || []);
+      setLotGuide(fincaToEdit.lotGuide || null);
+      setParcelDesignerKey(`parcel-${fincaToEdit.id}`);
     } else {
       setFincaName('');
       setHectares('');
       setLoteCount('');
       setLocation(null);
+      setBoundary(null);
       setMapInstanceKey('new');
+      setParcelInitialLots([]);
+      setLotParcels([]);
+      setLotGuide(null);
+      setParcelDesignerKey('parcel-new');
     }
   }, [isEditMode, fincaToEdit]);
 
@@ -69,15 +87,40 @@ const FincaRegistration = ({
           : ''
       );
       setLocation(fincaToEdit.location || null);
+      setBoundary(fincaToEdit.boundary || null);
       setMapInstanceKey(`edit-${fincaToEdit.id}-reset-${Date.now()}`);
+      setParcelInitialLots(fincaToEdit.lotParcels || []);
+      setLotParcels(fincaToEdit.lotParcels || []);
+      setLotGuide(fincaToEdit.lotGuide || null);
+      setParcelDesignerKey(`parcel-${fincaToEdit.id}-reset-${Date.now()}`);
     } else {
       setFincaName('');
       setHectares('');
       setLoteCount('');
       setLocation(null);
+      setBoundary(null);
       setMapInstanceKey(`new-${Date.now()}`);
+      setParcelInitialLots([]);
+      setLotParcels([]);
+      setLotGuide(null);
+      setParcelDesignerKey(`parcel-new-${Date.now()}`);
     }
   };
+
+  useEffect(() => {
+    if (lotParcels.length && loteCount !== String(lotParcels.length)) {
+      setLoteCount(String(lotParcels.length));
+    }
+  }, [lotParcels.length, loteCount]);
+
+  useEffect(() => {
+    if (!boundary && lotParcels.length) {
+      setLotParcels([]);
+      setParcelInitialLots([]);
+      setParcelDesignerKey(prev => `${prev}-reset-${Date.now()}`);
+      setLotGuide(null);
+    }
+  }, [boundary, lotParcels.length]);
 
   const hectaresNumber = useMemo(() => {
     const parsed = parseFloat(hectares);
@@ -90,23 +133,34 @@ const FincaRegistration = ({
   }, [loteCount]);
 
   const averageLotSize = useMemo(() => {
+    if (lotParcels.length) {
+      const totalHa = lotParcels.reduce((sum, lot) => sum + (lot.areaHectares || 0), 0);
+      if (totalHa <= 0) return null;
+      return (totalHa / lotParcels.length).toFixed(2);
+    }
     if (!hectaresNumber || !lotesNumber || lotesNumber <= 0) {
       return null;
     }
     const precision = lotesNumber >= 10 ? 1 : 2;
     return (hectaresNumber / lotesNumber).toFixed(precision);
-  }, [hectaresNumber, lotesNumber]);
+  }, [hectaresNumber, lotParcels, lotesNumber]);
 
   const lotsPreview = useMemo(() => {
+    if (lotParcels.length) {
+      return lotParcels.slice(0, 6).map(lot => lot.name || 'Lote sin nombre');
+    }
     if (!lotesNumber || lotesNumber <= 0) {
       return [];
     }
     const previewLength = Math.min(lotesNumber, 6);
     return Array.from({ length: previewLength }, (_, index) => `Lote ${index + 1}`);
-  }, [lotesNumber]);
+  }, [lotParcels, lotesNumber]);
+
+  const totalLotsPlanned = lotParcels.length || lotesNumber || 0;
 
   const hasGeneralInfo = Boolean(fincaName.trim()) && Boolean(hectares) && Boolean(loteCount);
   const hasLocation = Boolean(location);
+  const hasParcelDesign = lotParcels.length > 0;
   const isReadyToSubmit = hasGeneralInfo && hasLocation;
 
   const progressSteps = useMemo(
@@ -122,12 +176,17 @@ const FincaRegistration = ({
         status: hasLocation ? 'complete' : hasGeneralInfo ? 'active' : 'pending',
       },
       {
+        title: 'Parcelación del predio',
+        description: 'Dibuja cada lote o define la cantidad total',
+        status: hasParcelDesign ? 'complete' : hasLocation ? 'active' : 'pending',
+      },
+      {
         title: 'Revisión final',
         description: 'Verifica los datos antes de guardar',
         status: isReadyToSubmit ? 'active' : 'pending',
       },
     ],
-    [hasGeneralInfo, hasLocation, isReadyToSubmit]
+    [hasGeneralInfo, hasLocation, hasParcelDesign, isReadyToSubmit]
   );
 
   const handleSubmit = (e) => {
@@ -144,13 +203,21 @@ const FincaRegistration = ({
       return;
     }
 
+    const normalizedLots = lotParcels.map((lot, index) => ({
+      ...lot,
+      name: lot.name?.trim() || `Lote ${index + 1}`,
+    }));
+    const lotNamesFromDesigner = normalizedLots.map(lot => lot.name);
     const generatedLotes = Array.from({ length: numLotes }, (_, i) => `Lote ${i + 1}`);
 
     const fincaData = {
       name: fincaName,
       hectares: parseFloat(hectares),
-      lotes: generatedLotes,
+      lotes: lotNamesFromDesigner.length ? lotNamesFromDesigner : generatedLotes,
+      lotParcels: normalizedLots,
+      lotGuide,
       location,
+      boundary,
       id: isEditMode ? fincaToEdit.id : `f${Date.now()}` 
     };
 
@@ -171,6 +238,21 @@ const FincaRegistration = ({
         maximumFractionDigits: 2,
       }).format(Number(averageLotSize))
     : '--';
+
+  const normalizeLocation = raw => {
+    if (!raw) return null;
+    const lat = Number(raw.lat);
+    const lon = Number(raw.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    return { lat, lon };
+  };
+
+  const safeInitialLocation = useMemo(
+    () => normalizeLocation(isEditMode ? fincaToEdit?.location : null),
+    [isEditMode, fincaToEdit]
+  );
+
+  const formattedCoords = location ? normalizeLocation(location) : null;
 
   return (
     <div className="container finca-registration">
@@ -283,15 +365,36 @@ const FincaRegistration = ({
             <div className="finca-registration__map">
               <MapPinSelector
                 key={mapInstanceKey}
-                onLocationSet={setLocation}
-                initialLocation={isEditMode ? fincaToEdit?.location ?? null : null}
+                onLocationSet={loc => setLocation(normalizeLocation(loc))}
+                initialLocation={safeInitialLocation}
+                enablePolygonDrawing
+                onBoundarySet={setBoundary}
+                initialBoundary={isEditMode ? fincaToEdit?.boundary ?? null : null}
               />
+            </div>
+
+            <div className={`finca-registration__boundary ${boundary ? 'is-complete' : ''}`}>
+              <div className="finca-registration__boundary-icon">
+                <Icon path={ICONS.shape} size={20} />
+              </div>
+              <div className="finca-registration__boundary-content">
+                <strong>Contorno digital del predio</strong>
+                <p>
+                  {boundary?.areaHectares
+                    ? `Área estimada: ${boundary.areaHectares.toFixed(2)} ha (${boundary.areaSqMeters?.toLocaleString('es-EC', { maximumFractionDigits: 0 })} m²)`
+                    : 'Dibuja el perímetro en el mapa para calcular el área automáticamente y habilitar los análisis climáticos.'}
+                </p>
+              </div>
+              {boundary && (
+                <span className="finca-registration__boundary-badge">Guardado</span>
+              )}
             </div>
 
             {location ? (
               <div className="finca-registration__location-feedback">
                 <Icon path={ICONS.checkCircle} size={18} />
-                Ubicación fijada: {location.lat.toFixed(6)}, {location.lon.toFixed(6)}
+                Ubicación fijada:{' '}
+                {formattedCoords ? `${formattedCoords.lat.toFixed(6)}, ${formattedCoords.lon.toFixed(6)}` : 'Coordenadas no válidas'}
               </div>
             ) : (
               <div className="finca-registration__map-hint">
@@ -299,6 +402,37 @@ const FincaRegistration = ({
                 Asegúrate de fijar la ubicación para habilitar el botón de guardado.
               </div>
             )}
+          </section>
+
+          <section className="finca-registration__card">
+            <div className="finca-registration__card-header">
+              <span className="finca-registration__card-header-icon">
+                <Icon path={ICONS.shape} size={22} />
+              </span>
+              <div>
+                <h2 className="finca-registration__section-title">Parcelación inteligente</h2>
+                <p className="finca-registration__section-subtitle">
+                  Dibuja los lotes de banano dentro del perímetro georreferenciado para habilitar reportes productivos y logísticos.
+                </p>
+              </div>
+            </div>
+
+            <ParcelDesigner
+              key={parcelDesignerKey}
+              boundary={boundary}
+              initialLots={parcelInitialLots}
+              initialGuide={lotGuide}
+              onChange={({ lots, guide }) => {
+                setLotParcels(lots);
+                setLotGuide(guide || null);
+              }}
+            />
+
+            <p className="finca-registration__parcel-note">
+              {lotParcels.length > 0
+                ? `${lotParcels.length} lote${lotParcels.length === 1 ? '' : 's'} registrados en el mapa con ${lotParcels.reduce((sum, lot) => sum + (Number(lot.plantCount) || 0), 0).toLocaleString('es-EC')} plantas estimadas.`
+                : 'Cada lote puede registrar número estimado de plantas para proyectar producción y visitas técnicas.'}
+            </p>
           </section>
 
           <section className="finca-registration__card finca-registration__card--summary">
@@ -325,17 +459,23 @@ const FincaRegistration = ({
               </div>
               <div className="finca-registration__summary-item">
                 <span className="finca-registration__summary-label">Total de lotes</span>
-                <span className="finca-registration__summary-value">{lotesNumber || '--'}</span>
+                <span className="finca-registration__summary-value">{totalLotsPlanned || '--'}</span>
               </div>
               <div className="finca-registration__summary-item">
                 <span className="finca-registration__summary-label">Área promedio por lote</span>
-                <span className_Name="finca-registration__summary-value">{averageLotSize ? `${formattedAverageLotSize} ha` : '--'}</span>
+                <span className="finca-registration__summary-value">{averageLotSize ? `${formattedAverageLotSize} ha` : '--'}</span>
+              </div>
+              <div className="finca-registration__summary-item">
+                <span className="finca-registration__summary-label">Área digitalizada</span>
+                <span className="finca-registration__summary-value">
+                  {Number.isFinite(boundary?.areaHectares) ? `${boundary.areaHectares.toFixed(2)} ha` : 'Pendiente'}
+                </span>
               </div>
               <div className="finca-registration__summary-item">
                 <span className="finca-registration__summary-label">Coordenadas</span>
                 <span className="finca-registration__summary-value">
-                  {location
-                    ? `${location.lat.toFixed(5)}, ${location.lon.toFixed(5)}`
+                  {formattedCoords
+                    ? `${formattedCoords.lat.toFixed(5)}, ${formattedCoords.lon.toFixed(5)}`
                     : 'Pendiente'}
                 </span>
               </div>
@@ -344,21 +484,23 @@ const FincaRegistration = ({
             <div className="finca-registration__lots-preview">
               {lotsPreview.length > 0 ? (
                 <>
-                  <span className="finca-registration__lots-preview-label">Lotes generados:</span>
+                  <span className="finca-registration__lots-preview-label">
+                    {lotParcels.length ? 'Lotes trazados en el mapa' : 'Lotes generados'}
+                  </span>
                   <div className="finca-registration__chip-group">
                     {lotsPreview.map((lote) => (
                       <span key={lote} className="finca-registration__chip">{lote}</span>
                     ))}
-                    {lotesNumber && lotesNumber > lotsPreview.length && (
+                    {totalLotsPlanned > lotsPreview.length && (
                       <span className="finca-registration__chip finca-registration__chip--muted">
-                        +{lotesNumber - lotsPreview.length} más
+                        +{totalLotsPlanned - lotsPreview.length} más
                       </span>
                     )}
                   </div>
                 </>
               ) : (
                 <span className="finca-registration__lots-preview-empty">
-                  Define el número de lotes para generar los identificadores automáticamente.
+                  Define el número total o utiliza el diseñador de parcelas para habilitar los identificadores.
                 </span>
               )}
             </div>

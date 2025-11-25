@@ -1,25 +1,82 @@
 .emptyStateContainer {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  padding: 40px;
-  background-color: #f7f9fa;
-  border-radius: 12px;
-  border: 1px dashed #e0e0e0;
+  padding: 48px 32px;
+  border-radius: var(--radius-lg, 20px);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow-soft, 0 14px 32px rgba(15, 23, 42, 0.08));
+  background: linear-gradient(135deg, rgba(15, 107, 70, 0.08), rgba(10, 47, 82, 0.08));
+  backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.emptyStateHalo {
+  position: absolute;
+  inset: 12px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  pointer-events: none;
 }
 
 .emptyStateIcon {
-  color: #005a3a;
-  opacity: 0.6;
+  width: 86px;
+  height: 86px;
+  border-radius: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(15, 107, 70, 0.15);
+  color: var(--brand-primary, #0f6b46);
+  box-shadow: 0 12px 28px rgba(15, 107, 70, 0.12);
+}
+
+.emptyStateIcon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.emptyStateCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 420px;
+}
+
+.emptyStateEyebrow {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.55);
 }
 
 .emptyStateTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: #005a3a;
-  margin-top: 15px;
-  margin-bottom: 5px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary, #0f172a);
+  margin: 0;
 }
 
 .emptyStateMessage {
   font-size: 16px;
-  color: #555;
+  color: var(--color-text-secondary, rgba(15, 23, 42, 0.7));
+  margin: 0;
+}
+
+.emptyStateHint {
+  font-size: 14px;
+  color: rgba(15, 23, 42, 0.55);
+  margin: 6px 0 0;
+}
+
+.emptyStateActions {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }

@@ -1,518 +1,665 @@
-/* Estilos modernizados para la pantalla pública de login */
+/* src/views/LoginScreen/LoginScreen.css - Versión Definitiva */
 
 :root {
-  /* Paleta de Colores Primarios */
-  --color-primary: #0f5d3b;
-  --color-primary-dark: #0a3e2b;
-  --color-primary-light: #eef7f2;
-  --color-primary-light-bg: #dff2ea;
-  --color-primary-bg: rgba(15, 93, 59, 0.12);
-  --color-primary-bg-hover: rgba(15, 93, 59, 0.16);
-  --color-primary-border: rgba(15, 93, 59, 0.2);
-  --color-primary-border-hover: rgba(15, 93, 59, 0.45);
-
-  /* Paleta de Colores Hero */
-  --color-hero-bg: linear-gradient(135deg, #0b4330 0%, #0f5d3b 45%, #0f3a68 100%);
-  --color-hero-text: #f5fffa;
-  --color-hero-text-muted: rgba(255, 255, 255, 0.82);
-  --color-hero-badge-bg: rgba(255, 255, 255, 0.14);
-  --color-hero-highlight-bg: rgba(255, 255, 255, 0.12);
-  --color-hero-icon-bg: rgba(255, 255, 255, 0.14);
-  --color-hero-icon-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  /* Colores de marca */
+  --color-primary: #10b981; /* Emerald 500 */
+  --color-primary-dark: #059669;
+  --bg-dark: #064e3b; /* Color de respaldo oscuro */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   
-  /* Paleta de Colores Panel */
-  --color-panel-bg: rgba(255, 255, 255, 0.88);
-  --color-panel-border: rgba(255, 255, 255, 0.35);
-  --color-panel-text-header: #0f2a1f;
-  --color-panel-text-body: #1a2d25;
-  --color-panel-text-muted: #4a5f57;
-  --color-panel-text-muted-light: #51625b;
-  --color-card-bg: rgba(255, 255, 255, 0.8);
-
-  /* Radios (Bordes) */
-  --radius-xl: 28px;
-  --radius-l-panel: 26px; /* Específico para el panel */
-  --radius-l: 20px;
-  --radius-m-highlight: 18px; /* Específico para highlight */
-  --radius-m: 16px;
-  --radius-s-highlight: 14px; /* Específico para highlight icon */
-  --radius-s: 12px;
-  --radius-full: 999px;
-
-  /* Sombras */
-  --shadow-hero: 0 25px 60px rgba(6, 46, 37, 0.35);
-  --shadow-panel: 0 22px 60px rgba(13, 44, 35, 0.16);
-  --shadow-card: 0 12px 30px rgba(13, 44, 35, 0.08);
-  --shadow-card-hover: 0 18px 36px rgba(13, 44, 35, 0.18);
-  --shadow-button: 0 10px 24px rgba(13, 44, 35, 0.08);
-  --shadow-button-hover: 0 18px 34px rgba(13, 44, 35, 0.18);
-
-  /* Transiciones */
-  --transition-fast: all 0.25s ease;
-  --transition-smooth: all 0.28s ease;
+  /* Radios y Sombras Estándar */
+  --radius-xl: 24px;
+  --radius-l: 16px;
+  --radius-m: 12px;
 }
 
-/* --- ANIMACIONES --- */
-@keyframes slideUpFade {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slowDrift {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(15px, -20px) rotate(45deg); }
-  50% { transform: translate(-10px, 10px) rotate(90deg); }
-  75% { transform: translate(5px, 20px) rotate(135deg); }
-  100% { transform: translate(0, 0) rotate(180deg); }
-}
-
-
-/* --- ESTILOS BASE --- */
-
+/* --- LAYOUT PRINCIPAL (FULL SCREEN / SIN SCROLL EXCESIVO) --- */
 .loginScreen {
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh; /* Fuerza a ocupar exactamente la pantalla */
+  position: relative;
+  overflow: hidden; /* Evita scroll del body en desktop */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(32px, 6vw, 64px) clamp(20px, 6vw, 64px);
-  background: linear-gradient(160deg, var(--color-primary-light) 0%, var(--color-primary-light-bg) 40%, #e1ecf9 100%);
-  position: relative;
-  overflow: hidden;
+  background: var(--bg-dark); /* Respaldo si falla el canvas */
+  font-family: var(--font-sans);
+  padding: 2vh 2vw; /* Padding dinámico pequeño para evitar bordes pegados */
+  box-sizing: border-box;
 }
 
-.loginScreen::before,
-.loginScreen::after {
-  content: '';
-  position: absolute;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(15, 94, 59, 0.18) 0%, rgba(15, 94, 59, 0) 70%);
-  z-index: 0;
-}
-
-.loginScreen::before {
-  top: -160px;
-  right: -120px;
-  animation: slowDrift 35s ease-in-out infinite alternate;
-}
-
-.loginScreen::after {
-  bottom: -200px;
-  left: -140px;
-  animation: slowDrift 45s ease-in-out infinite alternate-reverse;
-}
-
+/* Contenedor Flotante Central */
 .loginShell {
   position: relative;
-  z-index: 1;
-  width: min(1120px, 100%);
+  z-index: 10; /* Por encima del Canvas de partículas */
+  width: min(1100px, 98%);
+  height: min(720px, 92vh); /* Altura contenida para evitar scroll en laptops */
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 420px);
-  gap: clamp(32px, 5vw, 56px);
-  align-items: stretch;
+  grid-template-columns: 1.1fr 0.9fr; /* Hero un poco más ancho que el login */
+  gap: clamp(16px, 2vw, 32px);
+  margin: 0 auto;
 }
 
-/* --- PANEL HERO (IZQUIERDA) --- */
+/* --- ESTILOS DE VIDRIO (GLASSMORPHISM) --- */
 
+/* Hero: Vidrio Oscuro, Profundo y Tecnológico */
+.dark-glass {
+  background: rgba(2, 44, 34, 0.65); /* Verde muy oscuro translúcido */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  color: #ecfdf5;
+}
+
+/* Login: Vidrio Claro, Limpio y Accesible */
+.light-glass {
+  background: rgba(255, 255, 255, 0.92); /* Casi sólido para legibilidad */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
+  color: #111827;
+}
+
+/* Paneles internos (Métricas) */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-m);
+}
+
+/* --- SECCIÓN HERO (IZQUIERDA) --- */
 .loginHero {
-  background: var(--color-hero-bg);
   border-radius: var(--radius-xl);
-  padding: clamp(32px, 4vw, 48px);
-  color: var(--color-hero-text);
-  position: relative;
+  padding: clamp(24px, 4vh, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribuye el contenido verticalmente */
   overflow: hidden;
-  box-shadow: var(--shadow-hero);
-  animation: slideUpFade 0.6s ease-out 0.2s backwards;
 }
 
-.loginHero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(155deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 60%);
-  pointer-events: none;
+.heroHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1vh;
 }
 
-.heroBadge {
-  display: inline-flex;
+.heroLogo {
+  height: 40px;
+  width: auto;
+  color: #fff;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Badge "En Vivo" */
+.liveBadge {
+  display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--color-hero-badge-bg);
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  font-size: 14px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  padding: 6px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 99px;
+  font-size: 11px;
   font-weight: 600;
-  backdrop-filter: blur(8px);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dotpulse {
+  width: 6px;
+  height: 6px;
+  background: #34d399;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+.heroContent {
+  margin-top: 1vh;
 }
 
 .heroTitle {
-  font-size: clamp(32px, 4vw, 44px);
-  font-weight: 700;
-  margin: 20px 0 12px;
+  font-size: clamp(28px, 2.5vw, 38px);
+  font-weight: 800;
   line-height: 1.1;
-  color: #ffffff;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.text-highlight {
+  color: #34d399; /* Verde neón */
+  position: relative;
+  display: inline-block;
+  min-width: 180px; /* Reserva espacio para texto dinámico */
 }
 
 .heroSubtitle {
-  font-size: clamp(16px, 2vw, 18px);
-  color: var(--color-hero-text-muted);
-  max-width: 480px;
-  margin-bottom: clamp(24px, 4vw, 32px);
-}
-
-.heroIconStack {
-  display: flex;
-  gap: 14px;
-  margin-bottom: clamp(28px, 4vw, 36px);
-}
-
-.heroIconBubble {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-m);
-  background: var(--color-hero-icon-bg);
-  box-shadow: var(--color-hero-icon-shadow);
-  backdrop-filter: blur(12px);
-}
-
-.heroHighlights {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 18px;
-}
-
-.heroHighlights li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 16px;
-  align-items: center;
-  background: var(--color-hero-highlight-bg);
-  border-radius: var(--radius-m-highlight);
-  padding: 18px 22px;
-  backdrop-filter: blur(10px);
-  box-shadow: var(--color-hero-icon-shadow);
-}
-
-.highlightIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-s-highlight);
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-}
-
-.highlightTitle {
-  font-weight: 600;
-  font-size: 16px;
-  color: #ffffff;
-}
-
-.highlightCopy {
-  margin: 4px 0 0;
-  font-size: 14px;
-  color: var(--color-hero-text-muted);
+  font-size: 15px;
   line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 95%;
 }
 
-/* --- PANEL LOGIN (DERECHA) --- */
-
-.loginPanel {
-  background: var(--color-panel-bg);
-  border-radius: var(--radius-l-panel);
-  padding: clamp(28px, 4vw, 36px);
-  box-shadow: var(--shadow-panel);
-  border: 1px solid var(--color-panel-border);
-  backdrop-filter: blur(16px);
-  color: var(--color-panel-text-body);
+/* Métricas en Vivo (Live Deck) */
+.liveMetricsDeck {
   display: flex;
-  flex-direction: column;
-  animation: slideUpFade 0.6s ease-out 0.4s backwards;
+  gap: 12px;
+  margin: 2vh 0;
 }
 
-.loginPanelHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: clamp(20px, 3vw, 28px);
-}
-
-.loginPanelBadge {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  background: var(--color-primary-bg);
-  border: 1px solid var(--color-primary-border);
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-  align-self: flex-start;
-}
-
-.loginPanelHeader h2 {
-  font-size: clamp(24px, 3vw, 30px);
-  margin: 0;
-  color: var(--color-panel-text-header);
-}
-
-.loginPanelHeader p {
-  margin: 0;
-  color: var(--color-panel-text-muted);
-  font-size: 15px;
-}
-
-.loginContent {
+/* Ajuste para React Parallax Tilt en métricas */
+.metricTilt {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  display: flex; /* Para que el div interno llene el tilt */
 }
 
-/* --- ELEMENTOS INTERACTIVOS --- */
-
-.loginBackButton {
-  display: inline-flex;
+.metricCard {
+  width: 100%;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  align-self: flex-start;
-  padding: 10px 14px;
-  border-radius: var(--radius-s);
-  border: 1px solid rgba(15, 93, 59, 0.12);
-  background: rgba(15, 93, 59, 0.08);
-  color: var(--color-primary);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: var(--transition-fast);
+  gap: 12px;
+  padding: 12px 16px;
+  transition: background 0.3s;
 }
 
-.loginBackButton:hover {
-  background: var(--color-primary-bg-hover);
-  border-color: rgba(15, 93, 59, 0.3);
-  transform: translateY(-1px);
+.metricIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.loginBackButton:focus-visible {
-  outline: none;
-  background: var(--color-primary-bg-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 3px var(--color-primary-light), 0 0 0 5px var(--color-primary);
+.metricValue {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
 }
 
-.loginBackButton:active {
-  transform: translateY(0) scale(0.98);
-  background: var(--color-primary-bg);
+.metricLabel {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-
-.loginViewPanel {
+/* Lista de Características */
+.featureList {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px; /* Compacto */
+  margin-bottom: 2vh;
 }
 
-.loginViewTitle {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--color-panel-text-header);
-}
-
-.loginViewSubtitle {
-  margin: 0;
-  font-size: 15px;
-  color: var(--color-panel-text-muted-light);
-}
-
-.loginCardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 18px;
-}
-
-.loginSelectCard {
-  position: relative;
-  overflow: hidden;
+.featureItem {
   display: flex;
-  flex-direction: column;
+  gap: 12px;
   align-items: flex-start;
-  gap: 14px;
-  border: 1px solid var(--color-primary-border);
-  border-radius: var(--radius-l);
-  padding: 22px 20px;
-  background: var(--color-card-bg);
-  color: var(--color-panel-text-header);
-  font-weight: 600;
-  font-size: 16px;
-  text-align: left;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  box-shadow: var(--shadow-card);
 }
 
-.loginSelectCard::after {
-  content: '';
+.featureIcon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #34d399;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.featureText h4 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.featureText p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.3;
+}
+
+/* Call to Action */
+.heroCTA {
+  padding-top: 2vh;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ctaText {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.ctaButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #34d399;
+  color: #022c22;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+}
+
+.ctaButton:hover {
+  background: #6ee7b7;
+  transform: translateY(-2px);
+}
+
+.heroFooter {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 10px;
+}
+
+/* --- SECCIÓN PANEL LOGIN (DERECHA) --- */
+.loginPanel {
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 4vh, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centrado vertical */
+}
+
+.panelHeader {
+  margin-bottom: 24px;
+}
+
+.panelTag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.panelHeader h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+}
+
+.panelHeader p {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* --- EFECTO SPOTLIGHT (Tarjetas Inteligentes) --- */
+.loginCardGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Estructura Base de Tarjeta Moderna */
+.modernCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparente para spotlight */
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  border-radius: 16px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden; /* Contiene el brillo */
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  height: 100%;
+  
+  /* Variables CSS para Spotlight (controladas por JS) */
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+}
+
+/* Capa de Brillo Interno (Fondo) */
+.spotlight-bg {
+  pointer-events: none;
   position: absolute;
   inset: 0;
-  background: linear-gradient(145deg, rgba(15, 93, 59, 0.08) 0%, rgba(255, 255, 255, 0) 60%);
   opacity: 0;
-  transition: opacity var(--transition-smooth);
+  transition: opacity 0.5s;
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    rgba(16, 185, 129, 0.15),
+    transparent 40%
+  );
+  z-index: 0;
 }
 
-.loginSelectCard:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-primary-border-hover);
-  box-shadow: var(--shadow-card-hover);
+/* Borde Brillante (Pseudo-elemento) */
+.modernCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1.5px;
+  background: radial-gradient(
+    800px circle at var(--mouse-x) var(--mouse-y),
+    rgba(16, 185, 129, 0.6),
+    transparent 40%
+  );
+  -webkit-mask: 
+     linear-gradient(#fff 0 0) content-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.loginSelectCard:hover::after {
+/* Activar brillo al hover en el Grid */
+.loginCardGrid:hover .modernCard::before,
+.loginCardGrid:hover .spotlight-bg {
   opacity: 1;
 }
 
-.loginSelectCard:focus-visible {
-  outline: none;
-  transform: translateY(-4px);
-  border-color: var(--color-primary-border-hover);
-  box-shadow: var(--shadow-card-hover), 0 0 0 3px var(--color-primary-light), 0 0 0 5px var(--color-primary);
+/* Hover individual de tarjeta */
+.modernCard:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
 }
 
-.loginSelectCard:active {
-  transform: translateY(-1px) scale(0.98);
-  box-shadow: var(--shadow-card);
-}
-
-.loginCardIcon {
-  display: inline-flex;
+/* --- CONTENIDO TARJETA --- */
+.modernIconBox {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-m);
-  background: var(--color-primary-bg);
-  color: var(--color-primary);
-  transition: background var(--transition-smooth), color var(--transition-smooth);
-  z-index: 1;
-}
-
-.loginSelectCard:hover .loginCardIcon {
-  background: var(--color-primary);
-  color: #ffffff;
-}
-
-.loginCardLabel {
+  flex-shrink: 0;
+  transition: all 0.3s ease;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
-.loginButtonList {
+/* Temas de Color Iconos */
+.blue-theme { background: #eff6ff; color: #3b82f6; }
+.green-theme { background: #ecfdf5; color: #10b981; }
+.orange-theme { background: #fff7ed; color: #f97316; }
+
+/* Intensificar icono al hover */
+.modernCard:hover .blue-theme { background: #3b82f6; color: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+.modernCard:hover .green-theme { background: #10b981; color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+.modernCard:hover .orange-theme { background: #f97316; color: #fff; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+
+.modernCardContent {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.cardTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.modernCard h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.modernCard p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.arrowIcon {
+  color: #cbd5e1;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.modernCard:hover .arrowIcon {
+  color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+/* --- VISTAS SECUNDARIAS --- */
+.buttonList {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
-.loginSelectButton {
+.listBtn {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  border-radius: var(--radius-m);
-  border: 1px solid var(--color-primary-border);
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--color-panel-text-header);
-  font-weight: 600;
-  font-size: 16px;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   cursor: pointer;
-  transition: var(--transition-fast);
-  box-shadow: var(--shadow-button);
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s;
 }
 
-.loginSelectButton .icon-svg {
-  color: var(--color-primary);
-  transition: color var(--transition-fast);
-}
-
-.loginSelectButton:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-primary-border-hover);
-  box-shadow: var(--shadow-button-hover);
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.loginSelectButton:hover .icon-svg {
+.listBtn:hover {
+  background: #f0fdf4;
   color: var(--color-primary-dark);
+  border-color: #86efac;
+  transform: translateX(4px);
 }
 
-.loginSelectButton:focus-visible {
-  outline: none;
-  transform: translateY(-3px);
-  border-color: var(--color-primary-border-hover);
-  box-shadow: var(--shadow-button-hover), 0 0 0 3px var(--color-primary-light), 0 0 0 5px var(--color-primary);
+.backLink {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0;
+  transition: color 0.2s;
 }
 
-.loginSelectButton:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: var(--shadow-button);
+.backLink:hover {
+  color: #111827;
+}
+
+/* --- UTILIDADES TEXTO DINÁMICO --- */
+.font-mono {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0;
 }
 
 /* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .loginScreen {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto; /* Permite scroll en tablets/móviles */
+    padding: 20px;
+    display: block; /* Quita el centrado flex forzado para permitir scroll natural */
+  }
 
-@media (max-width: 1080px) {
   .loginShell {
     grid-template-columns: 1fr;
+    height: auto; /* Altura automática */
+    max-height: none;
+    margin-top: 20px;
+    gap: 24px;
   }
 
   .loginHero {
-    order: 2;
-    /* Las animaciones se verán bien en móvil */
+    min-height: auto;
+    padding: 32px;
   }
 
   .loginPanel {
-    order: 1;
+    padding: 32px;
+  }
+  
+  .liveMetricsDeck {
+    flex-wrap: wrap;
   }
 }
 
-@media (max-width: 640px) {
-  .loginScreen {
-    padding: 24px 18px;
-  }
+/* --- EFECTO SCANNER (Tech Feel) --- */
+.card-scanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%; /* Ancho del haz de luz */
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%, /* Luz blanca pura */
+    transparent 100%
+  );
+  transform: skewX(-20deg); /* Inclinación para dinamismo */
+  pointer-events: none;
+  z-index: 1; /* Sobre el fondo, bajo el texto */
+  mix-blend-mode: overlay; /* Fusión suave */
+}
 
-  .loginPanel,
-  .loginHero {
-    border-radius: var(--radius-l);
-    padding: 24px;
-  }
+/* Ajuste para que el botón (modernCard) soporte motion.button */
+.modernCard {
+  /* Aseguramos que outline no moleste en focus */
+  outline: none;
+  /* El resto de estilos de modernCard se mantienen */
+}
 
-  .heroIconStack {
-    gap: 10px;
-  }
+/* --- SPLASH SCREEN (INTRO) --- */
+.splashScreen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 100; /* Por encima de todo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Usamos un fondo oscuro semi-transparente para ver las partículas detrás */
+  background: rgba(2, 44, 34, 0.95); 
+  backdrop-filter: blur(10px);
+}
 
-  .heroIconBubble {
-    width: 46px;
-    height: 46px;
-  }
+.splashContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
 
-  .heroHighlights li {
-    padding: 16px 18px;
-  }
+.splashLogo {
+  width: 180px;
+  height: auto;
+  margin-bottom: 32px;
+  color: #fff;
+}
 
-  .loginCardGrid {
-    grid-template-columns: 1fr;
+.loadingBarContainer {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.loadingBar {
+  height: 100%;
+  background: #34d399; /* Verde marca */
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+}
+
+.splashText {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: rgba(52, 211, 153, 0.8);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* --- ACCESIBILIDAD PREMIUM (FOCUS RING) --- */
+
+/* Eliminar outline nativo en elementos interactivos clave */
+.ctaButton:focus-visible,
+.modernCard:focus-visible,
+.listBtn:focus-visible,
+.backLink:focus-visible {
+  outline: none; /* Quitamos el borde feo por defecto */
+  box-shadow: 
+    0 0 0 2px #022c22, /* Espacio negativo (offset) */
+    0 0 0 4px #34d399, /* Anillo de luz principal */
+    0 0 15px rgba(52, 211, 153, 0.6); /* Resplandor exterior */
+  transition: box-shadow 0.2s ease;
+  z-index: 10; /* Asegura que el anillo se vea por encima de todo */
+}
+
+/* Ajuste específico para Modern Card (porque tiene bordes redondeados grandes) */
+.modernCard:focus-visible {
+  border-color: #34d399; /* Reforzar el borde físico también */
+}
+
+/* Animación sutil al enfocar */
+@keyframes focusPulse {
+  0% { box-shadow: 0 0 0 2px #022c22, 0 0 0 4px #34d399, 0 0 10px rgba(52, 211, 153, 0.4); }
+  50% { box-shadow: 0 0 0 2px #022c22, 0 0 0 4px #34d399, 0 0 20px rgba(52, 211, 153, 0.8); }
+  100% { box-shadow: 0 0 0 2px #022c22, 0 0 0 4px #34d399, 0 0 10px rgba(52, 211, 153, 0.4); }
+}
+
+/* Aplicar animación solo si el usuario prefiere movimiento */
+@media (prefers-reduced-motion: no-preference) {
+  .modernCard:focus-visible {
+    animation: focusPulse 2s infinite;
   }
 }

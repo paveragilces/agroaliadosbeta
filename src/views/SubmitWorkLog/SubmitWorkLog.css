@@ -1,11 +1,152 @@
 /* En: src/views/SubmitWorkLog/SubmitWorkLog.css */
 /* --- ARCHIVO COMPLETAMENTE REDISEÑADO --- */
 
-.submit-work-log-page p {
-  font-size: 1.1rem;
-  color: #555;
-  margin-top: -15px;
-  margin-bottom: 25px;
+.worklog-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.worklog-hero .hero-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  color: #6b7c72;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.worklog-hero .hero-sub {
+  color: #5b6b63;
+  margin: 4px 0 0;
+}
+
+.knowledge-chip {
+  border-radius: 16px;
+  padding: 14px 18px;
+  border: 1px solid rgba(15, 107, 70, 0.2);
+  background: rgba(15, 107, 70, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 220px;
+}
+
+.knowledge-chip .chip-label {
+  font-weight: 700;
+  color: #0f2f25;
+}
+
+.knowledge-chip small {
+  color: #6b7280;
+}
+
+.knowledge-banner {
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(15, 107, 70, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.knowledge-banner.status-refuerzo,
+.knowledge-banner.status-pendiente {
+  border-color: rgba(247, 181, 55, 0.28);
+  background: rgba(247, 181, 55, 0.12);
+}
+
+.knowledge-banner.status-sin-registro {
+  border-color: rgba(148, 163, 184, 0.2);
+  background: rgba(241, 245, 249, 0.8);
+}
+
+.knowledge-banner.status-apto {
+  border-color: rgba(15, 107, 70, 0.25);
+  background: rgba(15, 107, 70, 0.09);
+}
+
+.banner-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0 0 6px;
+}
+
+.knowledge-banner h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.banner-copy {
+  margin: 8px 0 0;
+  color: #4b5563;
+  max-width: 580px;
+}
+
+.banner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.banner-actions .button {
+  min-width: 180px;
+  justify-content: center;
+}
+
+.score-pill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 107, 70, 0.3);
+  color: #0f6b46;
+  font-weight: 700;
+}
+
+.training-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px dashed rgba(239, 68, 68, 0.3);
+  background: rgba(254, 242, 242, 0.8);
+}
+
+.training-inline h3 {
+  margin: 6px 0;
+}
+
+.training-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: #b45309;
+  margin: 0;
+}
+
+.training-copy {
+  margin: 0;
+  color: #4b5563;
+  max-width: 520px;
+}
+
+.training-actions .button {
+  justify-content: center;
+}
+
+.submit-work-log-page .pending-helper {
+  font-size: 1rem;
+  color: #5b6b63;
+  margin: 0 0 18px;
 }
 
 /* --- NUEVO: Estilos para la lista de tarjetas de día --- */
@@ -54,6 +195,21 @@
   display: flex;
   align-items: center;
   gap: 5px;
+}
+
+.suspicion-inline {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #eef0f2;
+  border-radius: 10px;
+  background: #f9fbfa;
+}
+
+.checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
 }
 
 /* --- Estilos para el formulario (DENTRO DEL MODAL) --- */
@@ -110,4 +266,27 @@
 .submit-work-log-page .label-palette,
 .modal-content .label-palette {
   margin-bottom: 15px;
+}
+
+.worklog-section {
+  padding: 14px 16px;
+  border: 1px solid #eef0f2;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+  margin-bottom: 14px;
+}
+
+.section-eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7a8a84;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.section-title {
+  margin: 4px 0 12px;
+  font-size: 18px;
 }

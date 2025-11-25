@@ -198,36 +198,34 @@
 
 /* --- Grid de Contenido Principal --- */
 .plan-content-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: 28px;
-}
-
-/* --- NUEVO CONTENEDOR PARA LA COLUMNA IZQUIERDA --- */
-.plan-main-content {
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+.plan-stats-wrapper {
+  width: 100%;
 }
 
 /* --- ESTILOS DE STATS (MOVIDOS Y MODIFICADOS) --- */
 
 .plan-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 18px;
+  align-items: stretch;
 }
 
 /* --- .stat-card MODIFICADO PARA FONDO CLARO --- */
 .stat-card {
   background: #ffffff;
   border: 1px solid rgba(15, 118, 110, 0.16);
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: 24px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  min-height: 140px;
+  gap: 10px;
+  min-height: 180px;
   box-shadow: 0 16px 36px rgba(15, 55, 40, 0.12);
 }
 
@@ -237,24 +235,35 @@
   gap: 10px;
   font-weight: 600;
   color: var(--containment-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.stat-card strong {
-  font-size: 1.8rem;
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 2rem;
   font-weight: 700;
   color: #1a202c;
 }
 
-.stat-card p {
+.stat-detail {
   margin: 0;
   color: var(--containment-muted);
   font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .stat-card .progress-bar {
   width: 100%;
   height: 6px;
-  background: #e2e8f0; /* Fondo claro */
+  background: #e2e8f0;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -266,15 +275,24 @@
 }
 
 .stat-card.highlight {
-  background: linear-gradient(135deg, rgba(240, 253, 250, 0.9), rgba(236, 253, 245, 0.7));
+  background: linear-gradient(135deg, rgba(240, 253, 250, 0.95), rgba(236, 253, 245, 0.8));
   border-color: rgba(31, 157, 102, 0.35);
 }
 
-/* Colores de texto para la tarjeta highlight */
 .stat-card.highlight header,
 .stat-card.highlight strong,
 .stat-card.highlight p {
   color: #123524;
+}
+
+.stat-card.highlight .stat-value {
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+.stat-card.highlight .stat-detail {
+  font-size: 0.95rem;
+  color: #14532d;
 }
 
 /* --- RESTO DE ESTILOS --- */
@@ -306,9 +324,9 @@
   max-width: 640px;
 }
 
-.plan-side-panel {
-  display: flex;
-  flex-direction: column;
+.plan-insight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
 

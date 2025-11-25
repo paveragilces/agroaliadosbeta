@@ -191,6 +191,33 @@ const ContainmentPlanViewer = ({ producer, plans, fincas, onUpdatePlanTask, onNa
     });
   };
 
+  const statSummaryCards = [
+    {
+      key: 'progress',
+      icon: <ListChecks size={18} />,
+      label: 'Avance del plan',
+      value: `${planAnalytics.completionPercent}%`,
+      detail: `${planAnalytics.completedTasks} de ${planAnalytics.totalTasks} tareas completadas`,
+      progress: true,
+    },
+    {
+      key: 'tracking',
+      icon: <Clock size={18} />,
+      label: 'Tareas en seguimiento',
+      value: planAnalytics.inProgressTasks,
+      detail: `${planAnalytics.pendingTasks} pendientes por iniciar`,
+    },
+    {
+      key: 'created',
+      icon: <CalendarDays size={18} />,
+      label: 'Creado',
+      value: formatDate(selectedPlan?.createdAt),
+      detail: planAnalytics.latestUpdate
+        ? `Última actualización ${formatDate(planAnalytics.latestUpdate.date)}`
+        : 'Aún sin registros',
+    },
+  ];
+
   return (
     <div className="containment-plan-page">
       {editingTask && (
@@ -274,41 +301,25 @@ const ContainmentPlanViewer = ({ producer, plans, fincas, onUpdatePlanTask, onNa
       {/* --- CONTENIDO PRINCIPAL DE LA PÁGINA --- */}
       {selectedPlan && (
         <div className="plan-content-grid">
-          
-          {/* Columna Principal (Izquierda) */}
-          <div className="plan-main-content">
-            
-            {/* --- GRID DE ESTADÍSTICAS (MOVIDO AQUÍ) --- */}
+          <section className="plan-stats-wrapper">
             <div className="plan-stats-grid">
-              <article className="stat-card">
-                <header>
-                  <ListChecks size={20} />
-                  <span>Avance del plan</span>
-                </header>
-                <strong>{planAnalytics.completionPercent}%</strong>
-                <p>
-                  {planAnalytics.completedTasks} de {planAnalytics.totalTasks} tareas completadas
-                </p>
-                <div className="progress-bar">
-                  <div style={{ width: `${planAnalytics.completionPercent}%` }} />
-                </div>
-              </article>
-              <article className="stat-card">
-                <header>
-                  <Clock size={20} />
-                  <span>Tareas en seguimiento</span>
-                </header>
-                <strong>{planAnalytics.inProgressTasks}</strong>
-                <p>{planAnalytics.pendingTasks} pendientes por iniciar</p>
-              </article>
-              <article className="stat-card">
-                <header>
-                  <CalendarDays size={20} />
-                  <span>Creado</span>
-                </header>
-                <strong>{formatDate(selectedPlan.createdAt)}</strong>
-                <p>Última actualización {formatDate(planAnalytics.latestUpdate?.date)}</p>
-              </article>
+              {statSummaryCards.map((card) => (
+                <article key={card.key} className="stat-card">
+                  <header>
+                    {card.icon}
+                    <span className="stat-label">{card.label}</span>
+                  </header>
+                  <div className="stat-content">
+                    <strong className="stat-value">{card.value}</strong>
+                    <p className="stat-detail">{card.detail}</p>
+                    {card.progress && (
+                      <div className="progress-bar">
+                        <div style={{ width: `${planAnalytics.completionPercent}%` }} />
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ))}
               <article className="stat-card highlight">
                 <header>
                   <Zap size={20} />
@@ -327,21 +338,19 @@ const ContainmentPlanViewer = ({ producer, plans, fincas, onUpdatePlanTask, onNa
                 )}
               </article>
             </div>
+          </section>
 
-            {/* --- ITINERARIO DEL PLAN (STEPPER) --- */}
-            <div className="plan-overview-card">
-              <div className="plan-overview-header">
-                <div>
-                  <h2 className="h2">Itinerario del plan</h2>
-                  <p>{selectedPlan.description}</p>
-                </div>
+          <section className="plan-overview-card">
+            <div className="plan-overview-header">
+              <div>
+                <h2 className="h2">Itinerario del plan</h2>
+                <p>{selectedPlan.description}</p>
               </div>
-              <PlanStepper plan={selectedPlan} onOpenTaskDetails={handleOpenTaskDetails} />
             </div>
-          </div>
+            <PlanStepper plan={selectedPlan} onOpenTaskDetails={handleOpenTaskDetails} />
+          </section>
 
-          {/* Columna Lateral (Derecha) */}
-          <aside className="plan-side-panel">
+          <section className="plan-insight-grid">
             <div className="side-card">
               <header>
                 <Info size={18} />
@@ -409,7 +418,7 @@ const ContainmentPlanViewer = ({ producer, plans, fincas, onUpdatePlanTask, onNa
                 </ul>
               )}
             </div>
-          </aside>
+          </section>
         </div>
       )}
     </div>
